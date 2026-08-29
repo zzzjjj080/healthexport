@@ -63,8 +63,8 @@ public enum Purpose: String, CaseIterable, Codable, Sendable {
 
     public func detail(_ language: Language) -> String {
         switch (self, language) {
-        case (.general, .ja):     return "記録があるもの全部。迷ったらこれ"
-        case (.general, .en):     return "Everything you have. Start here"
+        case (.general, .ja):     return "記録があるもの全部"
+        case (.general, .en):     return "Everything you have"
         case (.sleep, .ja):       return "睡眠と、影響する項目"
         case (.sleep, .en):       return "Sleep and what affects it"
         case (.training, .ja):    return "運動量と、疲れの回復"

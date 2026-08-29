@@ -107,6 +107,22 @@ final class ExportModel {
         phase = .idle
     }
 
+    /// 断ったあとで、もう一度ヘルスケアの許可を求める。
+    ///
+    /// **一度断った項目については、この呼び出しでは画面が出ない。**
+    /// HealthKitは「前に聞いた型」を二度は聞かないため。
+    /// なので画面には必ず、設定アプリへ行く道も一緒に出しておく。
+    func requestAuthorizationAgain() async {
+        errorMessage = nil
+        #if DEBUG
+        if DemoData.isEnabled { await rescan(); return }
+        #endif
+        if await reader.requestAuthorization() == false {
+            errorMessage = reader.lastError
+        }
+        await rescan()
+    }
+
     /// 目的を選び直す。期間も項目も、目的にまかせる状態に戻す。
     func choose(_ purpose: Purpose) {
         settings.purpose = purpose

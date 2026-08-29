@@ -50,44 +50,66 @@ struct SettingsSheet: View {
     // MARK: - 期間
 
     private static let presets: [(String, Int)] = [
-        ("1週間", 7), ("1ヶ月", 30), ("3ヶ月", 90), ("6ヶ月", 180), ("1年", 365)
+        ("1週間", 7), ("2週間", 14), ("1ヶ月", 30), ("3ヶ月", 90), ("6ヶ月", 180), ("1年", 365)
     ]
+
+    private var isPresetActive: (Int) -> Bool {
+        { days in
+            model.settings.customRange == nil
+                && (model.settings.customDays ?? model.settings.purpose.days) == days
+        }
+    }
 
     private var periodTab: some View {
         List {
             Section {
-                ForEach(Self.presets, id: \.0) { label, days in
-                    Button {
-                        model.settings.customRange = nil
-                        model.settings.customDays = days
-                        Task { await model.rescan() }
-                    } label: {
-                        HStack {
+                LazyVGrid(columns: [GridItem(.flexible(), spacing: 10),
+                                    GridItem(.flexible(), spacing: 10),
+                                    GridItem(.flexible(), spacing: 10)], spacing: 10) {
+                    ForEach(Self.presets, id: \.0) { label, days in
+                        let active = isPresetActive(days)
+                        Button {
+                            Haptics.tap()
+                            model.settings.customRange = nil
+                            model.settings.customDays = days
+                            Task { await model.rescan() }
+                        } label: {
                             Text(label)
-                            Spacer()
-                            if model.settings.customRange == nil,
-                               (model.settings.customDays ?? model.settings.purpose.days) == days {
-                                Image(systemName: "checkmark").foregroundStyle(Palette.accent)
-                            }
+                                .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                                .foregroundStyle(active ? Color.white : Color.primary)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 11)
+                                .background(RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .fill(active ? AnyShapeStyle(Palette.accentGradient)
+                                                 : AnyShapeStyle(Color(.tertiarySystemFill))))
+                                // Spacer は描画を持たないので、これが無いと文字の上しか押せない
+                                .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("period-\(days)")
                     }
-                    .buttonStyle(.plain)
                 }
+                .padding(.vertical, 4)
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
             } header: {
                 Text("直近")
             } footer: {
                 Text("いまの期間: \(model.range.from.iso) 〜 \(model.range.to.iso)（\(model.range.dayCount)日間）")
             }
 
-            Section("日付で指定") {
-                DatePicker("はじめ", selection: fromBinding, displayedComponents: .date)
-                DatePicker("おわり", selection: toBinding, displayedComponents: .date)
+            Section {
+                DatePicker("はじめ", selection: fromBinding, in: ...Date(), displayedComponents: .date)
+                DatePicker("おわり", selection: toBinding, in: ...Date(), displayedComponents: .date)
                 if model.settings.customRange != nil {
                     Button("日付の指定をやめる") {
                         model.settings.customRange = nil
                         Task { await model.rescan() }
                     }
                 }
+            } header: {
+                Text("日付で指定")
+            } footer: {
+                Text("日付を選ぶと、上の「直近」より優先されます。")
             }
         }
     }
@@ -117,10 +139,38 @@ struct SettingsSheet: View {
     private var metricsTab: some View {
         List {
             Section {
-                Text("この期間に記録があった項目だけを出しています。"
-                     + "チェックを外すと書き出しから抜けます。")
-                    .font(.caption).foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("この期間に記録があった項目だけを出しています。"
+                         + "チェックを外すと書き出しから抜けます。")
+                        .font(.caption).foregroundStyle(.secondary)
+                    Button {
+                        Haptics.tap()
+                        Task { await model.requestAuthorizationAgain() }
+                    } label: {
+                        Label("ヘルスケアの許可をもう一度求める", systemImage: "heart.text.square")
+                            .font(.callout.weight(.medium))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                    }
+                    .accessibilityIdentifier("reauthorizeButton")
+                    // 一度断った項目は、アプリから呼んでもダイアログが出ない。逃げ道を必ず用意する
+                    Text("最初に「許可しない」を選んだ場合、この操作では画面が出ないことがあります。"
+                         + "そのときは設定アプリから変えてください。")
+                        .font(.caption2).foregroundStyle(.secondary)
+                    Button {
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    } label: {
+                        Label("設定アプリを開く", systemImage: "gear")
+                            .font(.callout.weight(.medium))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                    }
+                }
+                .padding(.vertical, 2)
             }
+
             ForEach(MetricCategory.allCases, id: \.self) { category in
                 let metrics = MetricCatalog.all.filter {
                     $0.category == category && (model.availability[$0.id]?.hasData ?? false)
@@ -133,6 +183,7 @@ struct SettingsSheet: View {
                     }
                 }
             }
+
             let missing = MetricCatalog.all.filter { !(model.availability[$0.id]?.hasData ?? false) }
             if !missing.isEmpty {
                 Section {
@@ -152,6 +203,7 @@ struct SettingsSheet: View {
         let availability = model.availability[metric.id]
         return VStack(alignment: .leading, spacing: 6) {
             Button {
+                Haptics.tap()
                 toggle(metric)
             } label: {
                 HStack(alignment: .top, spacing: 10) {
@@ -166,6 +218,7 @@ struct SettingsSheet: View {
                     }
                     Spacer()
                 }
+                .contentShape(Rectangle())   // これが無いと文字の上しか押せない
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("metric-\(metric.id.rawValue)")

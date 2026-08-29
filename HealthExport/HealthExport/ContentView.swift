@@ -294,6 +294,14 @@ private struct PurposeTile: View {
                         .foregroundStyle(Palette.accent)
                 }
             }
+            if purpose == .general {
+                Text("まずはこれ")
+                    .font(.system(size: 10, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 3)
+                    .background(Capsule().fill(Palette.accentGradient))
+            }
             Text(purpose.title(.ja))
                 .font(.system(.subheadline, design: .rounded, weight: .semibold))
                 .foregroundStyle(.primary)
@@ -305,7 +313,7 @@ private struct PurposeTile: View {
             Spacer(minLength: 0)
         }
         .padding(12)
-        .frame(maxWidth: .infinity, minHeight: 122, alignment: .topLeading)
+        .frame(maxWidth: .infinity, minHeight: 142, alignment: .topLeading)
         .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
             .fill(Color(.secondarySystemGroupedBackground)))
         .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous)
