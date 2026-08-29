@@ -45,18 +45,6 @@ struct ContentView: View {
             .background(Color(.systemGroupedBackground))
             .navigationTitle("ヘルスケア書き出し")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        settingsTab = .metrics
-                        showingSettings = true
-                    } label: {
-                        Image(systemName: "slider.horizontal.3")
-                    }
-                    .accessibilityIdentifier("settingsButton")
-                    .accessibilityLabel("詳しい設定")
-                }
-            }
             .safeAreaInset(edge: .bottom) { exportBar }
             .sheet(isPresented: $showingResult) { ResultSheet(model: model) }
             .sheet(isPresented: $showingSettings) { SettingsSheet(model: model, initialTab: settingsTab) }
@@ -196,6 +184,26 @@ struct ContentView: View {
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 11)
+
+                if detailExpanded {
+                    Button {
+                        settingsTab = .metrics
+                        showingSettings = true
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text("項目や形式を変える")
+                            Image(systemName: "chevron.right").font(.caption2)
+                        }
+                        .font(.caption.weight(.medium))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 14)
+                        .padding(.bottom, 12)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(Palette.accent)
+                    .accessibilityIdentifier("settingsButton")
+                }
             }
 
             Divider().padding(.horizontal, 14)
