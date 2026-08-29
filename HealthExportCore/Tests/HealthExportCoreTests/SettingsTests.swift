@@ -169,3 +169,44 @@ struct DeviceNameTests {
         #expect(ExportText.build(request).contains("iPhone Air"))
     }
 }
+
+struct DefaultPurposeTests {
+
+    /// 既定は「記録があるものを全部」。
+    /// 何が役に立つかは渡してみないと分からないので、選ぶ手間をかけさせない。
+    @Test func ふだんの管理は記録がある項目をすべて選ぶ() {
+        let settings = AppSettings()
+        #expect(settings.purpose == .general)
+        let available: Set<MetricID> = [.steps, .sleep, .headphoneAudio, .mindful, .walkingSpeed]
+        #expect(settings.effectiveMetrics(available: available).count == 5)
+    }
+
+    /// 全項目でも、日ごとにまとめてあればチャット欄に貼れる量におさまる。
+    @Test func 全項目を90日ぶん出しても貼れる大きさにおさまる() {
+        let range = DateRange(from: YMD(2026, 6, 1), to: YMD(2026, 8, 29))
+        var daily: [YMD: [MetricID: MetricValue]] = [:]
+        for day in range.days {
+            var row: [MetricID: MetricValue] = [:]
+            for metric in MetricCatalog.all {
+                switch metric.aggregation {
+                case .workoutList: continue
+                case .sleep:
+                    row[metric.id] = .sleep(SleepSummary(total: 7.2, deep: 1.1, rem: 1.5, core: 4.6,
+                                                         awake: 0.3, bedMinute: 1350, wakeMinute: 400))
+                case .minMaxAverage:
+                    row[metric.id] = .stats(average: 72, min: 50, max: 140)
+                case .moodLatest:
+                    row[metric.id] = .text("ふつう")
+                default:
+                    row[metric.id] = .number(1234.5)
+                }
+            }
+            daily[day] = row
+        }
+        let text = ExportText.build(ExportRequest(range: range, metrics: MetricCatalog.all,
+                                                  daily: daily, purpose: .general))
+        let estimate = SizeEstimate.of(text)
+        #expect(estimate.verdict == .comfortable)
+        #expect(estimate.approximateTokens < 30_000)
+    }
+}

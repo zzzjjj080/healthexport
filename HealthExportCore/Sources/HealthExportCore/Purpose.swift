@@ -21,10 +21,11 @@ public enum Purpose: String, CaseIterable, Codable, Sendable {
     /// nil は「記録がある項目すべて」。
     public var metricIDs: [MetricID]? {
         switch self {
+        // 既定は「記録がある項目を全部」。
+        // 何が役に立つかは渡してみないと分からないし、日ごとにまとめてあれば
+        // 全項目でも3ヶ月で2万字ほどにしかならない。選ぶ手間をかけさせない。
         case .general:
-            return [.steps, .distance, .activeEnergy, .exerciseTime, .sleep,
-                    .heartRate, .restingHeartRate, .hrv, .oxygenSaturation, .respiratoryRate,
-                    .workouts, .bodyMass]
+            return nil
         case .sleep:
             return [.sleep, .heartRate, .restingHeartRate, .hrv, .respiratoryRate,
                     .oxygenSaturation, .wristTemperature, .steps, .activeEnergy, .exerciseTime]
@@ -49,23 +50,23 @@ public enum Purpose: String, CaseIterable, Codable, Sendable {
         case (.training, .en):    return "Ask about my training"
         case (.condition, .ja):   return "体調の変化を見てほしい"
         case (.condition, .en):   return "Check for changes in my condition"
-        case (.everything, .ja):  return "全部渡す"
-        case (.everything, .en):  return "Export everything"
+        case (.everything, .ja):  return "質問せずに渡す"
+        case (.everything, .en):  return "Hand over without asking"
         }
     }
 
     public func detail(_ language: Language) -> String {
         switch (self, language) {
-        case (.general, .ja):     return "全体の傾向を見てもらう。迷ったらこれ。"
-        case (.general, .en):     return "Overall trends. Start here if unsure."
+        case (.general, .ja):     return "記録があるものを全部渡して、全体を見てもらう。迷ったらこれ。"
+        case (.general, .en):     return "Everything you have, for an overall read. Start here."
         case (.sleep, .ja):       return "睡眠と、それに影響する項目にしぼる。"
         case (.sleep, .en):       return "Sleep and what affects it."
         case (.training, .ja):    return "運動量と、疲れの回復ぐあいを見てもらう。"
         case (.training, .en):    return "Training load and recovery."
         case (.condition, .ja):   return "ふだんと違う時期を見つけてもらう。直近1ヶ月。"
         case (.condition, .en):   return "Find periods that differ from baseline. Last month."
-        case (.everything, .ja):  return "記録がある項目をすべて。長くなる。"
-        case (.everything, .en):  return "Every metric with data. This gets long."
+        case (.everything, .ja):  return "こちらからは何も聞かず、まず自由に見てもらう。"
+        case (.everything, .en):  return "No questions from me. Let the AI look freely."
         }
     }
 

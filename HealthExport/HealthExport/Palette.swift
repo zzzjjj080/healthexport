@@ -13,6 +13,12 @@ enum Palette {
     static let accentSoft = dynamic(dark: 0x2A1620, light: 0xFDECF2)
     static let caution = dynamic(dark: 0xFFB27A, light: 0xC2410C)
     static let good = dynamic(dark: 0x6EE7B7, light: 0x1E9E6A)
+
+    /// アイコンと同じ向きの光り方。ボタンと選択中の印に使う。
+    static let accentGradient = LinearGradient(
+        colors: [dynamic(dark: 0xFF7BA3, light: 0xF3487E),
+                 dynamic(dark: 0xE5457B, light: 0xD01455)],
+        startPoint: .topLeading, endPoint: .bottomTrailing)
 }
 
 extension UIColor {

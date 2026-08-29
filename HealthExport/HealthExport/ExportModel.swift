@@ -171,6 +171,26 @@ final class ExportModel {
         return daily
     }
 
+    /// 画面に出すぶんだけを切り出したもの。
+    ///
+    /// 「1件ずつ全部」を選ぶと10万行を超えることがあり、そのまま描くと固まる。
+    /// 見せるのは頭だけでよい。**渡すのは常に全文**（コピーも共有もそちら）。
+    var previewText: String {
+        guard let text = exportedText else { return "" }
+        let limit = 600
+        var lines: [Substring] = []
+        var total = 0
+        for line in text.split(separator: "\n", omittingEmptySubsequences: false) {
+            total += 1
+            if lines.count < limit { lines.append(line) }
+        }
+        guard total > limit else { return text }
+        let omitted = total - limit
+        return lines.joined(separator: "\n")
+            + "\n\n…… ここから先の \(omitted.formatted()) 行は画面に出していません。"
+            + "\nコピーと共有には全部入っています。"
+    }
+
     /// 共有シートに渡すファイル。名前で中身が分かるようにしておく。
     func writeTemporaryFile() -> URL? {
         guard let text = exportedText else { return nil }

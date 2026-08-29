@@ -3,7 +3,7 @@ import UIKit
 import HealthExportCore
 
 /// 書き出した本文を見せて、渡す手段を出す画面。
-/// **何を渡すのかが見えることが大事**なので、本文はそのまま出す。
+/// **何を渡すのかが見えること**が大事なので、本文はそのまま出す。
 struct ResultSheet: View {
     @Bindable var model: ExportModel
     @Environment(\.dismiss) private var dismiss
@@ -14,15 +14,19 @@ struct ResultSheet: View {
         NavigationStack {
             VStack(spacing: 0) {
                 header
-                Divider()
-                MonospacedTextView(text: model.exportedText ?? "")
+                MonospacedTextView(text: model.previewText)
+                    .overlay(alignment: .top) {
+                        LinearGradient(colors: [Color(.separator).opacity(0.35), .clear],
+                                       startPoint: .top, endPoint: .bottom)
+                            .frame(height: 6)
+                    }
             }
-            .background(Color(.systemGroupedBackground))   // 地色を指定しないとカードが同化する（4-14）
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("書き出したもの")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("閉じる") { dismiss() }
+                    Button("閉じる") { dismiss() }.font(.body.weight(.medium))
                 }
             }
             .onAppear { fileURL = model.writeTemporaryFile() }
@@ -30,22 +34,16 @@ struct ResultSheet: View {
     }
 
     private var header: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 14) {
             if let estimate = model.estimate {
-                HStack(spacing: 6) {
-                    Text("\(estimate.characters.formatted())文字")
-                        .font(.headline).monospacedDigit()
-                    Text("／ 約\(estimate.approximateTokens.formatted())トークン ／ \(estimate.lines.formatted())行")
-                        .font(.caption).foregroundStyle(.secondary)
+                HStack(alignment: .firstTextBaseline, spacing: 0) {
+                    measure(estimate.characters.formatted(), "文字")
+                    Rectangle().fill(Color(.separator).opacity(0.5)).frame(width: 1, height: 30)
+                    measure("約" + estimate.approximateTokens.formatted(), "トークン")
+                    Rectangle().fill(Color(.separator).opacity(0.5)).frame(width: 1, height: 30)
+                    measure(estimate.lines.formatted(), "行")
                 }
-                Text(verdictText(estimate.verdict))
-                    .font(.caption)
-                    .foregroundStyle(estimate.verdict == .comfortable ? Palette.good : Palette.caution)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(10)
-                    .background(estimate.verdict == .comfortable
-                                ? Palette.good.opacity(0.12) : Palette.caution.opacity(0.12))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                verdictBanner(estimate.verdict)
             }
             HStack(spacing: 10) {
                 Button {
@@ -58,29 +56,58 @@ struct ResultSheet: View {
                     }
                 } label: {
                     Label(copied ? "コピーしました" : "コピー",
-                          systemImage: copied ? "checkmark" : "doc.on.doc")
+                          systemImage: copied ? "checkmark" : "doc.on.doc.fill")
+                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                        .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 13)
+                        .background(RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .fill(Palette.accentGradient))
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.plain)
                 .accessibilityIdentifier("copyButton")
 
                 if let fileURL {
                     ShareLink(item: fileURL) {
                         Label("共有", systemImage: "square.and.arrow.up")
+                            .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                            .foregroundStyle(Palette.accent)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 4)
+                            .padding(.vertical, 13)
+                            .background(RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .fill(Palette.accent.opacity(0.12)))
                     }
-                    .buttonStyle(.bordered)
                     .accessibilityIdentifier("shareButton")
                 }
             }
-            Text("AIのチャット欄に貼るなら「コピー」、ファイルとして送るなら「共有」。")
+            Text("チャット欄に貼るなら「コピー」、ファイルで送るなら「共有」。")
                 .font(.caption2)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.tertiary)
         }
-        .padding(.horizontal)
-        .padding(.vertical, 12)
+        .padding(.horizontal, 18)
+        .padding(.top, 6)
+        .padding(.bottom, 14)
+    }
+
+    private func measure(_ value: String, _ unit: String) -> some View {
+        VStack(spacing: 2) {
+            Text(value)
+                .font(.system(.title3, design: .rounded, weight: .bold))
+                .monospacedDigit()
+            Text(unit).font(.caption2).foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func verdictBanner(_ verdict: SizeVerdict) -> some View {
+        let tint = verdict == .comfortable ? Palette.good : Palette.caution
+        let symbol = verdict == .comfortable ? "checkmark.seal.fill" : "exclamationmark.triangle.fill"
+        return Label(verdictText(verdict), systemImage: symbol)
+            .font(.caption)
+            .foregroundStyle(tint)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(11)
+            .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(tint.opacity(0.12)))
     }
 
     private func verdictText(_ verdict: SizeVerdict) -> String {
@@ -88,9 +115,9 @@ struct ResultSheet: View {
         case .comfortable:
             return "この量なら、AIのチャット欄にそのまま貼れます。"
         case .heavy:
-            return "貼れますが重めです。長い会話には向きません。項目を減らすか期間を短くすると扱いやすくなります。"
+            return "貼れますが重めです。項目を減らすか期間を短くすると扱いやすくなります。"
         case .tooLarge:
-            return "大きすぎます。多くのAIには貼れません。期間を短くするか、「1件ずつ全部」にした項目を「1日ごと」に戻してください。"
+            return "大きすぎます。期間を短くするか、「1件ずつ全部」にした項目を「1日ごと」に戻してください。"
         }
     }
 }
