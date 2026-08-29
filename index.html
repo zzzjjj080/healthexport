@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ヘルスケア書き出し プロトタイプ</title>
+<style>
+:root{
+  --bg:#F2F3F7; --card:#FFFFFF; --ink:#14161A; --sub:#6B7280; --line:#DFE2E8;
+  --accent:#E5457B; --accent-weak:#FDEDF3; --ok:#1E9E6A; --warn:#C2410C;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
+  font-size:15px;line-height:1.6}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 80px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+h1{font-size:20px;margin:0 0 2px}
+.head{grid-column:1/-1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.head .tag{font-size:12px;color:var(--sub)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+.card h2{font-size:14px;margin:0 0 12px;letter-spacing:.02em;color:var(--sub);font-weight:700}
+.step{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;
+  background:var(--accent);color:#fff;font-size:11px;font-weight:700;margin-right:7px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{font:inherit;cursor:pointer}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 13px;font-size:13px;color:var(--ink)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.use{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;
+  padding:11px 13px;margin-bottom:8px}
+.use.on{border-color:var(--accent);background:var(--accent-weak);box-shadow:inset 0 0 0 1px var(--accent)}
+.use b{font-size:14.5px;display:block}
+.use span{font-size:12px;color:var(--sub);display:block;margin-top:1px}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;font-size:14px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--accent);padding:4px 6px;font-size:12px}
+.btn.wide{width:100%;text-align:center}
+input[type=date],select{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff}
+label.ck{display:flex;gap:8px;align-items:flex-start;padding:7px 4px;border-radius:8px;cursor:pointer}
+label.ck:hover{background:#F7F8FA}
+input[type=checkbox]{margin-top:4px;accent-color:var(--accent);width:16px;height:16px}
+.mname{font-weight:600}
+.meta{font-size:11.5px;color:var(--sub);display:block;margin-top:1px}
+.cat{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+.cat:first-of-type{border-top:0;margin-top:0;padding-top:0}
+.cath{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--sub);font-weight:700;margin-bottom:2px}
+.gsel{font-size:11px;padding:2px 4px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--sub);max-width:180px}
+pre{font-family:var(--mono);font-size:11.5px;line-height:1.5;background:#0F1115;color:#E6E8EC;
+  padding:14px;border-radius:10px;overflow:auto;max-height:460px;white-space:pre;margin:0}
+.count{font-size:12px;color:var(--sub)}
+.count b{color:var(--ink);font-size:14px}
+.warnbox{background:#FFF7ED;border:1px solid #FED7AA;color:var(--warn);border-radius:10px;padding:10px 12px;font-size:12.5px;margin-top:10px}
+.okbox{background:#ECFDF5;border:1px solid #A7F3D0;color:var(--ok);border-radius:10px;padding:10px 12px;font-size:12.5px;margin-top:10px}
+.sim{background:#EEF2FF;border:1px dashed #A5B4FC}
+.sim h2{color:#4338CA}
+.tiny{font-size:11.5px;color:var(--sub)}
+.opt{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;font-size:13.5px}
+.opt+.opt{border-top:1px solid #F0F1F4}
+.bar{height:6px;border-radius:3px;background:#E7E9EE;overflow:hidden;margin-top:6px}
+.bar>i{display:block;height:100%;background:var(--accent)}
+.dev{display:inline-block;font-size:11px;background:#F1F3F7;border-radius:5px;padding:1px 6px;margin-right:4px;color:#4B5563}
+.hidden{display:none}
+.askbox{font-size:12.5px;background:#FAFBFC;border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+  white-space:pre-wrap;color:#374151;max-height:190px;overflow:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <h1>ヘルスケア書き出し</h1>
+    <span class="tag">Health Export / HTMLプロトタイプ</span>
+  </div>
+
+  <div>
+    <div class="card sim">
+      <h2>シミュレーション設定（この画面だけ・実機には出さない）</h2>
+      <div class="tiny" style="margin-bottom:8px">実機では持っている端末を聞かない。ここは擬似ヘルスケアの中身を切り替えて、検出のされ方を試すためのもの。</div>
+      <div id="simDevs" class="row"></div>
+      <label class="tiny" style="margin-top:10px;display:block"><input type="checkbox" id="simSparse"> 途中でデータが欠ける日がある</label>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">1</span>何のためにAIへ渡しますか</h2>
+      <div id="uses"></div>
+      <div class="tiny" style="margin-top:6px">選ぶと、期間・項目・まとめ方・AIへの依頼文がまとめて決まる。</div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">2</span>AIへの依頼文</h2>
+      <label class="tiny" style="display:block;margin-bottom:8px"><input type="checkbox" id="useAsk"> 書き出したテキストの先頭に付ける</label>
+      <div class="askbox" id="askPrev"></div>
+    </div>
+
+    <button class="btn wide" id="advToggle" style="margin-bottom:16px">詳しい設定を開く ▾</button>
+
+    <div id="adv" class="hidden">
+      <div class="card">
+        <h2>期間</h2>
+        <div class="row" id="presets"></div>
+        <div class="row" style="margin-top:10px">
+          <input type="date" id="from"> <span class="tiny">〜</span> <input type="date" id="to">
+          <span class="tiny" id="days"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>書き出す項目<span id="scanNote" class="tiny" style="font-weight:400"></span></h2>
+        <div class="row" style="margin-bottom:6px">
+          <button class="btn ghost" id="allOn">すべて選ぶ</button>
+          <button class="btn ghost" id="allOff">すべて外す</button>
+          <label class="tiny" style="margin-left:auto"><input type="checkbox" id="showEmpty"> データが無い項目も表示</label>
+        </div>
+        <div id="metrics"></div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <h2>できあがり</h2>
+      <div class="count"><b id="chars">0</b> 文字 / 約 <b id="tok">0</b> トークン<span id="lines"></span></div>
+      <div class="bar"><i id="bar" style="width:0%"></i></div>
+      <div id="verdict"></div>
+      <div class="row" style="margin:12px 0">
+        <button class="btn primary" id="copy">コピー</button>
+        <button class="btn" id="share">共有…</button>
+        <button class="btn" id="dl">.txtで保存</button>
+      </div>
+      <pre id="out"></pre>
+    </div>
+
+    <div class="card">
+      <h2>出力の形（ふつうは触らなくてよい）</h2>
+      <div class="opt"><span>言語</span>
+        <select id="lang"><option value="ja">日本語</option><option value="en">English</option></select></div>
+      <div class="opt"><span>表のかたち</span>
+        <select id="style"><option value="wide">日付でそろえた1枚の表</option><option value="block">項目ごとに分ける</option></select></div>
+      <div class="opt"><span>列の区切り</span>
+        <select id="sep"><option value="tab">タブ</option><option value="comma">カンマ</option><option value="pad">見やすく揃える</option></select></div>
+      <div class="opt"><span>列の名前<span class="tiny" style="display:block">短くしても本文の量はほぼ変わらない（凡例が増えるため）</span></span>
+        <select id="colname"><option value="ja">そのまま</option><option value="en">英字の略称＋凡例</option></select></div>
+      <div class="opt"><span>先頭の説明文</span>
+        <select id="header"><option value="full">くわしく</option><option value="min">最小限</option><option value="none">なし</option></select></div>
+      <div class="opt"><span>データが無い日</span>
+        <select id="blank"><option value="skip">行ごと省く</option><option value="empty">空欄で残す</option></select></div>
+    </div>
+  </div>
+</div>
+<script>
+// ============ 擬似ヘルスケア ============
+const DEVICES = [
+  {id:'iphone', name:'iPhone Air', on:true},
+  {id:'watch',  name:'Apple Watch Series 10', on:true},
+  {id:'pods',   name:'AirPods Pro', on:true},
+  {id:'scale',  name:'体組成計（他アプリ経由）', on:false},
+];
+// src: 書き込みうる端末 / per: 1日あたりのサンプル件数の目安 / agg: 日ごとのまとめ方
+const METRICS = [
+ {id:'steps',  ja:'歩数',             enn:'Steps',                  en:'steps',    unit:'歩',   eunit:'steps', cat:'アクティビティ', ecat:'Activity', src:['iphone','watch'], agg:'合計', eagg:'sum', per:60,  base:8000, var:3500, dec:0},
+ {id:'dist',   ja:'歩行+走行距離',     enn:'Walking+running distance',en:'dist_km', unit:'km',   eunit:'km',    cat:'アクティビティ', ecat:'Activity', src:['iphone','watch'], agg:'合計', eagg:'sum', per:60,  base:5.8,  var:2.6, dec:2},
+ {id:'floors', ja:'上った階数',        enn:'Flights climbed',        en:'floors',   unit:'階',   eunit:'floors',cat:'アクティビティ', ecat:'Activity', src:['iphone','watch'], agg:'合計', eagg:'sum', per:20,  base:9,    var:7,   dec:0},
+ {id:'active', ja:'アクティブエネルギー',enn:'Active energy',         en:'kcal_act', unit:'kcal', eunit:'kcal',  cat:'アクティビティ', ecat:'Activity', src:['watch'],          agg:'合計', eagg:'sum', per:96,  base:520,  var:230, dec:0},
+ {id:'basal',  ja:'安静時エネルギー',   enn:'Resting energy',         en:'kcal_bas', unit:'kcal', eunit:'kcal',  cat:'アクティビティ', ecat:'Activity', src:['watch'],          agg:'合計', eagg:'sum', per:96,  base:1620, var:90,  dec:0},
+ {id:'exer',   ja:'エクササイズ時間',   enn:'Exercise minutes',       en:'exer_min', unit:'分',   eunit:'min',   cat:'アクティビティ', ecat:'Activity', src:['watch'],          agg:'合計', eagg:'sum', per:96,  base:34,   var:26,  dec:0},
+ {id:'stand',  ja:'スタンド時間',       enn:'Stand hours',            en:'stand_h',  unit:'時間', eunit:'h',     cat:'アクティビティ', ecat:'Activity', src:['watch'],          agg:'合計', eagg:'sum', per:24,  base:11,   var:3,   dec:0},
+ {id:'workout',ja:'ワークアウト',       enn:'Workouts',               en:'workout',  unit:'',     eunit:'',      cat:'アクティビティ', ecat:'Activity', src:['watch'],          agg:'一覧', eagg:'list',per:1,   special:'workout'},
+
+ {id:'hr',     ja:'心拍数',            enn:'Heart rate',             en:'hr',       unit:'bpm',  eunit:'bpm',   cat:'心臓', ecat:'Heart', src:['watch'], agg:'平均/最小/最大', eagg:'avg/min/max', per:1400, base:72, var:8, dec:0, multi:['avg','min','max']},
+ {id:'rhr',    ja:'安静時心拍数',       enn:'Resting heart rate',     en:'rhr',      unit:'bpm',  eunit:'bpm',   cat:'心臓', ecat:'Heart', src:['watch'], agg:'当日値', eagg:'daily', per:1,   base:56,  var:4,  dec:0},
+ {id:'hrv',    ja:'心拍変動（SDNN）',   enn:'Heart rate variability', en:'hrv_ms',   unit:'ms',   eunit:'ms',    cat:'心臓', ecat:'Heart', src:['watch'], agg:'平均', eagg:'avg', per:6,    base:42,  var:14, dec:0},
+ {id:'whr',    ja:'歩行時平均心拍数',   enn:'Walking heart rate avg', en:'whr',      unit:'bpm',  eunit:'bpm',   cat:'心臓', ecat:'Heart', src:['watch'], agg:'当日値', eagg:'daily', per:1,   base:104, var:9,  dec:0},
+ {id:'vo2',    ja:'心肺機能（VO2max）', enn:'Cardio fitness (VO2max)',en:'vo2',      unit:'',     eunit:'',      cat:'心臓', ecat:'Heart', src:['watch'], agg:'当日値', eagg:'daily', per:1,   base:38.5,var:1.5,dec:1, sparse:6},
+
+ {id:'spo2',   ja:'血中酸素',          enn:'Blood oxygen',           en:'spo2',     unit:'%',    eunit:'%',     cat:'呼吸・体温', ecat:'Respiratory', src:['watch'], agg:'平均', eagg:'avg', per:14, base:97,  var:1.2, dec:0},
+ {id:'resp',   ja:'呼吸数',            enn:'Respiratory rate',       en:'resp',     unit:'回/分', eunit:'br/min',cat:'呼吸・体温', ecat:'Respiratory', src:['watch'], agg:'平均', eagg:'avg', per:9,  base:14.5,var:1.3, dec:1},
+ {id:'wrist',  ja:'手首皮膚温の変化',   enn:'Wrist temperature dev.', en:'temp_dev', unit:'℃',    eunit:'C',     cat:'呼吸・体温', ecat:'Respiratory', src:['watch'], agg:'当日値', eagg:'daily', per:1, base:0, var:0.45,dec:2},
+
+ {id:'sleep',  ja:'睡眠',              enn:'Sleep',                  en:'sleep',    unit:'時間', eunit:'h',     cat:'睡眠', ecat:'Sleep', src:['watch','iphone'], agg:'合計と内訳', eagg:'total+stages', per:40, special:'sleep'},
+
+ {id:'weight', ja:'体重',              enn:'Body mass',              en:'kg',       unit:'kg',   eunit:'kg',    cat:'からだ', ecat:'Body', src:['scale'], agg:'当日値', eagg:'daily', per:1, base:66.4, var:0.7, dec:1},
+ {id:'fat',    ja:'体脂肪率',          enn:'Body fat percentage',    en:'fat_pct',  unit:'%',    eunit:'%',     cat:'からだ', ecat:'Body', src:['scale'], agg:'当日値', eagg:'daily', per:1, base:19.2, var:0.8, dec:1},
+
+ {id:'wspeed', ja:'歩行速度',          enn:'Walking speed',          en:'w_speed',  unit:'km/h', eunit:'km/h',  cat:'歩行の質', ecat:'Mobility', src:['iphone'], agg:'平均', eagg:'avg', per:8, base:4.6, var:0.4, dec:2},
+ {id:'wstep',  ja:'歩幅',              enn:'Walking step length',    en:'w_len_cm', unit:'cm',   eunit:'cm',    cat:'歩行の質', ecat:'Mobility', src:['iphone'], agg:'平均', eagg:'avg', per:8, base:71,  var:4,   dec:0},
+ {id:'wasym',  ja:'歩行の非対称性',     enn:'Walking asymmetry',      en:'w_asym',   unit:'%',    eunit:'%',     cat:'歩行の質', ecat:'Mobility', src:['iphone'], agg:'平均', eagg:'avg', per:8, base:1.4, var:1.1, dec:1},
+
+ {id:'hphone', ja:'ヘッドフォン音量',   enn:'Headphone audio levels', en:'hp_db',    unit:'dB',   eunit:'dB',    cat:'聴覚', ecat:'Hearing', src:['pods'],  agg:'平均', eagg:'avg', per:20, base:73, var:7, dec:0},
+ {id:'envdb',  ja:'環境音レベル',       enn:'Environmental sound',    en:'env_db',   unit:'dB',   eunit:'dB',    cat:'聴覚', ecat:'Hearing', src:['watch'], agg:'平均', eagg:'avg', per:30, base:58, var:9, dec:0},
+
+ {id:'mind',   ja:'マインドフルネス',   enn:'Mindful minutes',        en:'mind_min', unit:'分',   eunit:'min',   cat:'こころ', ecat:'Mind', src:['watch'], agg:'合計', eagg:'sum', per:1, base:0, var:12, dec:0, sparse:3},
+ {id:'mood',   ja:'気分の記録',        enn:'State of mind',          en:'mood',     unit:'',     eunit:'',      cat:'こころ', ecat:'Mind', src:['iphone'],agg:'当日値', eagg:'daily', per:1, special:'mood', sparse:2},
+];
+const CATS = [...new Set(METRICS.map(m=>m.cat))];
+
+// ============ 目的別のおすすめ設定 ============
+const DISCLAIMER_JA='これは医療的な診断のためのものではありません。気になる症状があるときは受診します。';
+const DISCLAIMER_EN='This is not for medical diagnosis. I will see a doctor if I have symptoms of concern.';
+const USES = [
+ {id:'general', ja:'ふだんの管理', desc:'全体の傾向を見てもらう。迷ったらこれ。', days:90,
+  metrics:['steps','dist','active','exer','sleep','hr','rhr','hrv','spo2','resp','workout','weight'],
+  ask_ja:['以下は私のiPhoneのヘルスケアに記録されている、この期間のデータです。',
+          '次のことを教えてください。',
+          '1. この期間の全体的な傾向（良くなっている点・悪くなっている点）',
+          '2. ほかの日と比べて明らかにずれている日と、その日に何があったと考えられるか',
+          '3. 数字から見て、生活のなかで続けるとよさそうなこと',
+          DISCLAIMER_JA],
+  ask_en:['Below is my health data exported from the Health app on my iPhone for this period.',
+          'Please tell me:',
+          '1. The overall trends in this period (what improved, what got worse)',
+          '2. Days that clearly stand out from the rest, and what might explain them',
+          '3. Habits worth keeping, based on what the numbers show',
+          DISCLAIMER_EN]},
+ {id:'sleep', ja:'睡眠のことを相談したい', desc:'睡眠と、それに影響する項目にしぼる。', days:60,
+  metrics:['sleep','hr','rhr','hrv','resp','spo2','wrist','steps','active','exer'],
+  ask_ja:['以下は私の睡眠を中心とした記録です。',
+          '次のことを教えてください。',
+          '1. 睡眠時間と、その内訳（深い・レム・コア）の傾向',
+          '2. よく眠れた日とそうでない日で、日中の活動量や心拍にどんな違いがあるか',
+          '3. 眠りをよくするために、この数字から言えること',
+          DISCLAIMER_JA],
+  ask_en:['Below is my sleep-focused health data.',
+          'Please tell me:',
+          '1. Trends in total sleep and its stages (deep, REM, core)',
+          '2. How daytime activity and heart rate differ between good and bad nights',
+          '3. What these numbers suggest I could try to sleep better',
+          DISCLAIMER_EN]},
+ {id:'training', ja:'運動のことを相談したい', desc:'運動量と、疲れの回復ぐあいを見てもらう。', days:90,
+  metrics:['workout','active','exer','steps','dist','floors','hr','rhr','hrv','vo2','sleep'],
+  ask_ja:['以下は私の運動と回復に関する記録です。',
+          '次のことを教えてください。',
+          '1. 運動量の推移と、負荷が高すぎた時期・少なすぎた時期',
+          '2. 安静時心拍・心拍変動・睡眠から見て、疲れが抜けているかどうか',
+          '3. これを踏まえた、次の1ヶ月の運動の組み立て方',
+          DISCLAIMER_JA],
+  ask_en:['Below is my training and recovery data.',
+          'Please tell me:',
+          '1. How my training load changed, and periods that were too hard or too light',
+          '2. Whether I am recovering, based on resting heart rate, HRV and sleep',
+          '3. How to structure the next month of training given all this',
+          DISCLAIMER_EN]},
+ {id:'condition', ja:'体調の変化を見てほしい', desc:'ふだんと違う時期を見つけてもらう。直近1ヶ月。', days:30,
+  metrics:['rhr','hrv','spo2','resp','wrist','sleep','steps','active','mood'],
+  ask_ja:['以下は私の直近の体調に関する記録です。',
+          '次のことを教えてください。',
+          '1. 安静時心拍・心拍変動・呼吸数・皮膚温から見て、ふだんと違っていた時期',
+          '2. その時期の睡眠や活動量に、いっしょに起きていた変化があるか',
+          '3. 記録のとり方として、足したほうがよい項目',
+          DISCLAIMER_JA],
+  ask_en:['Below is my recent health data.',
+          'Please tell me:',
+          '1. Periods that differ from my baseline in resting heart rate, HRV, respiratory rate and skin temperature',
+          '2. Whether sleep or activity changed at the same time',
+          '3. What else I should start recording',
+          DISCLAIMER_EN]},
+ {id:'all', ja:'全部渡す', desc:'記録がある項目をすべて。長くなる。', days:90, metrics:'all',
+  ask_ja:['以下は私のiPhoneのヘルスケアにある、この期間の記録すべてです。',
+          '気づいたことを自由に指摘してください。',
+          DISCLAIMER_JA],
+  ask_en:['Below is everything recorded in the Health app on my iPhone for this period.',
+          'Please point out anything you notice.',
+          DISCLAIMER_EN]},
+];
+
+// ============ 文言 ============
+const T = {
+ ja:{title:'# ヘルスケアの記録', period:'期間', days:'日間', exported:'書き出し', by:'ヘルスケア書き出し',
+     devices:'記録した端末', nmetrics:'項目数', daily:'## 日ごとの記録', workouts:'## ワークアウト',
+     legend:'## 列の意味', none:'（この期間に記録なし）', detail:'詳細', allof:'全',
+     items:'件', rest:'行はプレビューで省略。実機のファイルには全部入る',
+     note:['この文書はiPhoneのヘルスケアから本人が書き出したもの。',
+           '値は同じ項目に複数の端末が記録した重複をヘルスケアが除いたあとの数字。',
+           '空欄・欠けている日は「記録が無い」ことを表す（値が0という意味ではない）。']},
+ en:{title:'# Health data export', period:'Period', days:'days', exported:'Exported', by:'Health Export',
+     devices:'Recorded by', nmetrics:'Metrics', daily:'## Daily values', workouts:'## Workouts',
+     legend:'## Column meanings', none:'(no records in this period)', detail:'detail', allof:'all',
+     items:'samples', rest:'more rows omitted in this preview; the real file contains all of them',
+     note:['Exported by the owner from the Health app on iPhone.',
+           'Values are what Health reports after removing duplicates recorded by more than one device.',
+           'A blank or missing day means no record exists (it does not mean zero).']},
+};
+const COL_JA={total:'合計',deep:'深い',rem:'レム',core:'コア',awake:'覚醒',bed:'就寝',wake:'起床',avg:'平均',min:'最小',max:'最大'};
+
+// 決定論的な擬似乱数（日付とキーで決まる。リロードしても同じ）
+function rnd(str){ let h=2166136261; for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);} return ((h>>>0)%100000)/100000; }
+function noise(id,day,k){ return rnd(id+'|'+day+'|'+(k||'')); }
+
+const state = {
+  devs: Object.fromEntries(DEVICES.map(d=>[d.id,d.on])),
+  use:'general', ask:true,
+  from:null, to:null, preset:'m3',
+  sel:{}, gran:{},
+  lang:'ja', style:'wide', sep:'tab', colname:'ja', header:'full', blank:'skip',
+  showEmpty:false, sparse:false, adv:false,
+};
+const L = ()=>T[state.lang];
+
+// ============ 期間 ============
+const PRESETS=[['w1','1週間',7],['m1','1ヶ月',30],['m3','3ヶ月',90],['m6','6ヶ月',180],['y1','1年',365],['custom','日付を指定',0]];
+// UTCに変換すると日本時間の日付が1日ずれる。必ずローカルの年月日で組む
+function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function addDays(d,n){ const x=new Date(d.getTime()); x.setDate(x.getDate()+n); return x; }
+function setDays(n){ const to=new Date(); state.to=ymd(to); state.from=ymd(addDays(to,-(n-1)));
+  const p=PRESETS.find(x=>x[2]===n); state.preset=p?p[0]:'custom'; }
+function applyPreset(p){ state.preset=p; if(p==='custom') return; setDays(PRESETS.find(x=>x[0]===p)[2]); }
+function dayList(){
+  const out=[]; let d=new Date(state.from+'T00:00:00'); const end=new Date(state.to+'T00:00:00');
+  while(d<=end){ out.push(ymd(d)); d=addDays(d,1); if(out.length>800) break; }
+  return out;
+}
+
+// ============ 値の生成 ============
+function hasDevice(m){ return m.src.some(s=>state.devs[s]); }
+function dayHasHole(day){ return state.sparse && noise('hole',day)<0.12; }
+function valueFor(m,day){
+  if(!hasDevice(m)) return null;
+  if(dayHasHole(day)) return null;
+  if(m.sparse && noise(m.id+'sp',day)>1/m.sparse) return null;
+  if(m.special==='sleep'){
+    const total=6.2+noise(m.id,day,'t')*2.2;
+    const deep=total*(0.12+noise(m.id,day,'d')*0.07);
+    const rem=total*(0.18+noise(m.id,day,'r')*0.08);
+    const core=total-deep-rem;
+    const awake=0.2+noise(m.id,day,'a')*0.5;
+    const bedH=22+Math.floor(noise(m.id,day,'b')*3);
+    return {total,deep,rem,core,awake,
+      bed:String(bedH%24).padStart(2,'0')+':'+String(Math.floor(noise(m.id,day,'bm')*60)).padStart(2,'0'),
+      wake:'0'+(5+Math.floor(noise(m.id,day,'w')*3))+':'+String(Math.floor(noise(m.id,day,'wm')*60)).padStart(2,'0')};
+  }
+  if(m.special==='workout'){
+    if(noise(m.id,day)>0.42) return null;
+    const kinds=state.lang==='ja'?['ウォーキング','ランニング','サイクリング','筋力トレーニング','ヨガ']
+                                 :['Walking','Running','Cycling','Strength training','Yoga'];
+    const k=kinds[Math.floor(noise(m.id,day,'k')*kinds.length)];
+    const min=Math.round(18+noise(m.id,day,'m')*62);
+    return {kind:k,min,kcal:Math.round(min*(4+noise(m.id,day,'c')*4)),hr:Math.round(112+noise(m.id,day,'h')*30),
+      start:String(6+Math.floor(noise(m.id,day,'s')*13)).padStart(2,'0')+':'+String(Math.floor(noise(m.id,day,'sm')*60)).padStart(2,'0')};
+  }
+  if(m.special==='mood'){
+    const labels=state.lang==='ja'?['とても快い','快い','やや快い','ふつう','やや不快','不快']
+                                  :['very pleasant','pleasant','slightly pleasant','neutral','slightly unpleasant','unpleasant'];
+    return labels[Math.floor(noise(m.id,day)*labels.length)];
+  }
+  const v=m.base+(noise(m.id,day)-0.5)*2*m.var;
+  if(m.multi) return {avg:v, min:v-(14+noise(m.id,day,'n')*10), max:v+(48+noise(m.id,day,'x')*46)};
+  return v;
+}
+function fmt(m,v){
+  if(v===null||v===undefined) return '';
+  if(typeof v==='string') return v;
+  return v.toFixed(m.dec===undefined?1:m.dec);
+}
+
+// ============ 検出（実機ではここが本物のスキャン） ============
+function scan(){
+  const days=dayList(); const res={};
+  for(const m of METRICS){
+    let n=0; const dset=new Set();
+    if(hasDevice(m)){
+      for(const day of days){ if(valueFor(m,day)!==null){ n+=(m.per||1); m.src.forEach(s=>{if(state.devs[s])dset.add(s);}); } }
+    }
+    res[m.id]={count:n, devs:[...dset]};
+  }
+  return res;
+}
+
+// ============ おすすめ設定の適用 ============
+function applyUse(id){
+  const u=USES.find(x=>x.id===id); if(!u) return;
+  state.use=id;
+  setDays(u.days);
+  const res=scan();
+  state.sel={}; state.gran={};
+  for(const m of METRICS){
+    const want = (u.metrics==='all') || u.metrics.includes(m.id);
+    if(want && res[m.id].count>0) state.sel[m.id]=true;
+  }
+}
+function currentAsk(){
+  const u=USES.find(x=>x.id===state.use); if(!u) return '';
+  return (state.lang==='en'?u.ask_en:u.ask_ja).join('\n');
+}
+
+// ============ 本文の組み立て ============
+const MAXRAW=8000;
+let omitted=0, omittedLines=0;
+function selected(){ return METRICS.filter(m=>state.sel[m.id]); }
+function isRaw(m){ return state.gran[m.id]==='raw' && m.per>1 && m.special!=='workout' && m.special!=='mood'; }
+function mname(m){ return state.lang==='en'?m.enn:m.ja; }
+function munit(m){ return state.lang==='en'?m.eunit:m.unit; }
+function magg(m){ return state.lang==='en'?m.eagg:m.agg; }
+function shortCols(){ return state.lang==='en' || state.colname==='en'; }
+function colLabel(m,suffix){
+  if(shortCols()) return m.en+(suffix?'_'+suffix:'');
+  const s=suffix?'('+(COL_JA[suffix]||suffix)+')':(m.unit?'('+m.unit+')':'');
+  return m.ja+s;
+}
+function padTable(rows){
+  const w=[]; const width=c=>[...String(c)].reduce((a,ch)=>a+(ch.charCodeAt(0)>127?2:1),0);
+  rows.forEach(r=>r.forEach((c,i)=>{w[i]=Math.max(w[i]||0,width(c));}));
+  return rows.map(r=>r.map((c,i)=>String(c)+' '.repeat(Math.max(0,w[i]-width(c))+2)).join('').trimEnd()).join('\n');
+}
+function table(rows){
+  if(state.sep==='pad') return padTable(rows);
+  const sep=state.sep==='comma'?',':'\t';
+  return rows.map(r=>r.join(sep)).join('\n');
+}
+function buildHeader(days,ms){
+  if(state.header==='none') return '';
+  const t=L();
+  const devNames=DEVICES.filter(d=>state.devs[d.id]).map(d=>d.name).join(' / ');
+  const out=[t.title, `${t.period}: ${state.from} 〜 ${state.to}（${days.length}${t.days}）`];
+  if(state.lang==='en') out[1]=`${t.period}: ${state.from} to ${state.to} (${days.length} ${t.days})`;
+  if(state.header==='full'){
+    out.push(`${t.exported}: 2026-08-29 14:30 / ${t.by}`);
+    out.push(`${t.devices}: ${devNames||'-'}`);
+    out.push(`${t.nmetrics}: ${ms.length}`);
+    out.push('');
+    t.note.forEach(n=>out.push(n));
+  }
+  out.push('');
+  return out.join('\n');
+}
+function legend(ms){
+  if(!shortCols()) return '';
+  const t=L(); const out=[t.legend];
+  for(const m of ms){
+    if(m.special==='workout') continue;
+    if(m.special==='sleep'){ out.push(`sleep_total, sleep_deep, sleep_rem, sleep_core, sleep_bed, sleep_wake = ${mname(m)} (${munit(m)})`); continue; }
+    if(m.multi){ out.push(`${m.multi.map(k=>m.en+'_'+k).join(', ')} = ${mname(m)}${munit(m)?' ('+munit(m)+')':''}`); continue; }
+    out.push(`${m.en} = ${mname(m)}${munit(m)?' ('+munit(m)+')':''}`);
+  }
+  out.push('');
+  return out.join('\n');
+}
+function wideTable(days,ms){
+  const flat=ms.filter(m=>m.special!=='workout');
+  const head=['date'];
+  for(const m of flat){
+    if(m.special==='sleep') ['total','deep','rem','core','bed','wake'].forEach(k=>head.push(colLabel(m,k)));
+    else if(m.multi) m.multi.forEach(k=>head.push(colLabel(m,k)));
+    else head.push(colLabel(m));
+  }
+  const rows=[head];
+  for(const day of days){
+    const cells=[day]; let any=false;
+    for(const m of flat){
+      const v=valueFor(m,day);
+      if(v!==null&&v!==undefined) any=true;
+      if(m.special==='sleep'){
+        if(!v) cells.push('','','','','','');
+        else cells.push(v.total.toFixed(1),v.deep.toFixed(1),v.rem.toFixed(1),v.core.toFixed(1),v.bed,v.wake);
+      } else if(m.multi){
+        if(!v) m.multi.forEach(()=>cells.push('')); else m.multi.forEach(k=>cells.push(fmt(m,v[k])));
+      } else cells.push(fmt(m,v));
+    }
+    if(!any&&state.blank==='skip') continue;
+    rows.push(cells);
+  }
+  return table(rows);
+}
+function blockTables(days,ms){
+  const out=[];
+  for(const m of ms){
+    if(m.special==='workout') continue;
+    const rows=[];
+    if(m.special==='sleep') rows.push(['date','total','deep','rem','core','awake','bed','wake']);
+    else if(m.multi) rows.push(['date',...m.multi]);
+    else rows.push(['date','value']);
+    for(const day of days){
+      const v=valueFor(m,day);
+      if((v===null||v===undefined)&&state.blank==='skip') continue;
+      if(m.special==='sleep') rows.push(v?[day,v.total.toFixed(1),v.deep.toFixed(1),v.rem.toFixed(1),v.core.toFixed(1),v.awake.toFixed(1),v.bed,v.wake]:[day,'','','','','','','']);
+      else if(m.multi) rows.push(v?[day,...m.multi.map(k=>fmt(m,v[k]))]:[day,'','','']);
+      else rows.push([day,fmt(m,v)]);
+    }
+    out.push(`## ${mname(m)}${munit(m)?'（'+munit(m)+'）':''}  ／${magg(m)}\n`+table(rows));
+  }
+  return out.join('\n\n');
+}
+function workoutBlock(days,ms){
+  const m=ms.find(x=>x.special==='workout'); if(!m) return '';
+  const t=L();
+  const rows=[['date','start','kind','min','kcal','hr_avg']]; let n=0;
+  for(const day of days){ const w=valueFor(m,day); if(!w) continue; n++; rows.push([day,w.start,w.kind,w.min,w.kcal,w.hr]); }
+  if(n===0) return `${t.workouts}\n${t.none}\n`;
+  return `${t.workouts}（${n}）\n`+table(rows);
+}
+function rawSeries(m,day){
+  const out=[];
+  for(let i=0;i<m.per;i++){
+    const minute=Math.floor(i*1440/m.per);
+    const hh=String(Math.floor(minute/60)).padStart(2,'0'), mm=String(minute%60).padStart(2,'0');
+    const circ=Math.sin((minute-360)/1440*Math.PI*2);   // 朝低く昼高い日内変動
+    const v=m.base+circ*m.var*0.5+(noise(m.id,day,'r'+i)-0.5)*m.var;
+    out.push([day+' '+hh+':'+mm, v.toFixed(m.dec===undefined?1:m.dec)]);
+  }
+  return out;
+}
+function sleepRaw(m,day){
+  const v=valueFor(m,day); if(!v) return [];
+  const stages=state.lang==='ja'?['コア','深い','レム','コア','覚醒']:['core','deep','REM','core','awake'];
+  const out=[]; let t=22*60+30+Math.floor(noise(m.id,day,'b')*90);
+  const n=Math.max(6,Math.round(v.total*2.4));
+  const f=x=>String(Math.floor((x%1440)/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');
+  for(let i=0;i<n;i++){
+    const len=Math.round(15+noise(m.id,day,'L'+i)*45);
+    out.push([day+' '+f(t), f(t+len), stages[Math.floor(noise(m.id,day,'S'+i)*stages.length)]]);
+    t+=len;
+  }
+  return out;
+}
+function rawBlock(days,m){
+  const t=L(); const isSleep=m.special==='sleep';
+  const rows=[isSleep?['start','end','stage']:['datetime','value']];
+  let total=0, shown=0, stop=false;
+  for(const day of days){
+    if(valueFor(m,day)===null) continue;
+    const s=isSleep?sleepRaw(m,day):rawSeries(m,day);
+    total+=s.length;
+    if(stop) continue;
+    for(const r of s){ rows.push(r); shown++; if(shown>=MAXRAW){ stop=true; break; } }
+  }
+  let body=table(rows);
+  if(total>shown){
+    omitted+=Math.round(body.length/Math.max(1,shown)*(total-shown));
+    omittedLines+=total-shown;
+    body+='\n…（'+(total-shown).toLocaleString()+' '+t.rest+'）';
+  }
+  return `## ${mname(m)}${munit(m)?'（'+munit(m)+'）':''} ${t.detail}（${t.allof} ${total.toLocaleString()} ${t.items}）\n`+body;
+}
+function build(){
+  omitted=0; omittedLines=0;
+  const days=dayList(); const ms=selected();
+  if(ms.length===0) return '（項目が1つも選ばれていません）';
+  const rawMs=ms.filter(isRaw), sumMs=ms.filter(m=>!isRaw(m));
+  const parts=[];
+  if(state.ask) parts.push(currentAsk()+'\n');
+  parts.push(buildHeader(days,ms), legend(sumMs));
+  if(sumMs.some(m=>m.special!=='workout')){
+    if(state.style==='wide'){ parts.push(L().daily); parts.push(wideTable(days,sumMs)); }
+    else parts.push(blockTables(days,sumMs));
+  }
+  const w=workoutBlock(days,ms); if(w) parts.push('\n'+w);
+  for(const m of rawMs) parts.push('\n'+rawBlock(days,m));
+  return parts.filter(Boolean).join('\n');
+}
+
+// ============ 画面 ============
+const $=s=>document.querySelector(s);
+function renderUses(){
+  $('#uses').innerHTML=USES.map(u=>
+    `<button class="use ${state.use===u.id?'on':''}" data-u="${u.id}"><b>${u.ja}</b><span>${u.desc}</span></button>`).join('');
+  $('#uses').querySelectorAll('button').forEach(b=>b.onclick=()=>{applyUse(b.dataset.u);sync();});
+}
+function renderSimDevs(){
+  $('#simDevs').innerHTML=DEVICES.map(d=>`<button class="chip ${state.devs[d.id]?'on':''}" data-d="${d.id}">${d.name}</button>`).join('');
+  $('#simDevs').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    state.devs[b.dataset.d]=!state.devs[b.dataset.d];
+    applyUse(state.use);   // 端末が変わると取れる項目も変わる。選び直す
+    sync();
+  });
+}
+function renderPresets(){
+  $('#presets').innerHTML=PRESETS.map(p=>`<button class="chip ${state.preset===p[0]?'on':''}" data-p="${p[0]}">${p[1]}</button>`).join('');
+  $('#presets').querySelectorAll('button').forEach(b=>b.onclick=()=>{applyPreset(b.dataset.p);sync();});
+}
+function renderMetrics(){
+  const res=scan(); const box=$('#metrics'); let html=''; let found=0;
+  for(const cat of CATS){
+    const list=METRICS.filter(m=>m.cat===cat).filter(m=>state.showEmpty||res[m.id].count>0);
+    METRICS.filter(m=>m.cat===cat).forEach(m=>{ if(res[m.id].count>0) found++; });
+    if(list.length===0) continue;
+    html+=`<div class="cat"><div class="cath"><span>${cat}</span><button class="btn ghost" data-cat="${cat}">この分類を全部</button></div>`;
+    for(const m of list){
+      const r=res[m.id], empty=r.count===0;
+      const devs=r.devs.map(id=>`<span class="dev">${DEVICES.find(d=>d.id===id).name}</span>`).join('');
+      const cnt=empty?'<span style="color:#9AA0A6">この期間に記録なし</span>':`${r.count.toLocaleString()}件${devs?' ・ ':''}${devs}`;
+      const canRaw=m.per>1&&m.special!=='workout'&&m.special!=='mood';
+      const gran=canRaw?`<select class="gsel" data-g="${m.id}">
+          <option value="day"${state.gran[m.id]!=='raw'?' selected':''}>1日ごとにまとめる（おすすめ）</option>
+          <option value="raw"${state.gran[m.id]==='raw'?' selected':''}>記録を1件ずつ全部（${r.count.toLocaleString()}件）</option></select>`:'';
+      html+=`<label class="ck" ${empty?'style="opacity:.5"':''}>
+        <input type="checkbox" data-m="${m.id}" ${state.sel[m.id]?'checked':''} ${empty?'disabled':''}>
+        <span style="flex:1"><span class="mname">${m.ja}</span>${m.unit?` <span class="tiny">${m.unit}</span>`:''}
+          <span class="meta">${cnt}</span></span>${gran}</label>`;
+    }
+    html+='</div>';
+  }
+  box.innerHTML=html;
+  box.querySelectorAll('input[data-m]').forEach(c=>c.onchange=()=>{state.sel[c.dataset.m]=c.checked;sync();});
+  box.querySelectorAll('select[data-g]').forEach(s=>s.onchange=()=>{state.gran[s.dataset.g]=s.value;sync();});
+  box.querySelectorAll('button[data-cat]').forEach(b=>b.onclick=()=>{
+    const list=METRICS.filter(m=>m.cat===b.dataset.cat&&res[m.id].count>0);
+    const allOn=list.every(m=>state.sel[m.id]);
+    list.forEach(m=>state.sel[m.id]=!allOn); sync();
+  });
+  $('#scanNote').textContent=` — ${METRICS.length}項目中 ${found}項目にデータあり`;
+}
+function estimate(text){
+  const chars=text.length+omitted;
+  let ascii=0; for(const ch of text) if(ch.charCodeAt(0)<128) ascii++;
+  // 日本語は約1文字=1トークン、ASCIIは約3.6文字=1トークンとして概算
+  const tokVisible=ascii/3.6+(text.length-ascii);
+  const tok=Math.round(tokVisible*(chars/Math.max(1,text.length)));
+  return {chars,tok,lines:text.split('\n').length+omittedLines};
+}
+function sync(){
+  $('#from').value=state.from; $('#to').value=state.to;
+  $('#days').textContent=`${dayList().length}日間`;
+  renderUses(); renderSimDevs(); renderPresets(); renderMetrics();
+  $('#askPrev').textContent=currentAsk();
+  $('#askPrev').style.opacity=state.ask?1:.4;
+  const text=build(); $('#out').textContent=text;
+  const e=estimate(text);
+  $('#chars').textContent=e.chars.toLocaleString();
+  $('#tok').textContent=e.tok.toLocaleString();
+  $('#lines').textContent=` / ${e.lines.toLocaleString()}行`;
+  $('#bar').style.width=Math.min(100,e.tok/200000*100)+'%';
+  let v='';
+  if(e.tok>190000) v='<div class="warnbox">大きすぎる。多くのAIのチャット欄に貼れない。期間を短くするか、「1件ずつ全部」を「1日ごと」に戻す。</div>';
+  else if(e.tok>60000) v='<div class="warnbox">貼れるが重い。長い会話には向かない。要る項目だけに絞ると扱いやすい。</div>';
+  else v='<div class="okbox">この量ならチャット欄にそのまま貼れる。</div>';
+  $('#verdict').innerHTML=v;
+  $('#adv').className=state.adv?'':'hidden';
+  $('#advToggle').textContent=state.adv?'詳しい設定を閉じる ▴':'詳しい設定を開く ▾';
+  save();
+}
+function save(){ localStorage.setItem('healthexport',JSON.stringify(state)); }
+function load(){ try{ const s=JSON.parse(localStorage.getItem('healthexport')); if(s) Object.assign(state,s); }catch(e){} }
+
+load();
+if(!state.from) applyUse('general');
+['lang','style','sep','colname','header','blank'].forEach(k=>{
+  const el=$('#'+k); el.value=state[k]; el.onchange=()=>{state[k]=el.value;sync();};
+});
+$('#useAsk').checked=state.ask; $('#useAsk').onchange=e=>{state.ask=e.target.checked;sync();};
+$('#showEmpty').checked=state.showEmpty; $('#showEmpty').onchange=e=>{state.showEmpty=e.target.checked;sync();};
+$('#simSparse').checked=state.sparse; $('#simSparse').onchange=e=>{state.sparse=e.target.checked;sync();};
+$('#advToggle').onclick=()=>{state.adv=!state.adv;sync();};
+$('#from').onchange=e=>{state.from=e.target.value;state.preset='custom';sync();};
+$('#to').onchange=e=>{state.to=e.target.value;state.preset='custom';sync();};
+$('#allOn').onclick=()=>{const r=scan();METRICS.forEach(m=>{if(r[m.id].count>0)state.sel[m.id]=true;});sync();};
+$('#allOff').onclick=()=>{METRICS.forEach(m=>state.sel[m.id]=false);sync();};
+$('#copy').onclick=()=>{navigator.clipboard.writeText(build()).then(()=>{
+  $('#copy').textContent='コピーした';setTimeout(()=>$('#copy').textContent='コピー',1200);});};
+$('#share').onclick=()=>alert('実機では共有シートが開く（AirDrop / メール / ファイル / 各種アプリ）');
+$('#dl').onclick=()=>{const b=new Blob([build()],{type:'text/plain'});const a=document.createElement('a');
+  a.href=URL.createObjectURL(b);a.download=`health_${state.from}_${state.to}.txt`;a.click();};
+sync();
+</script>
+</body>
+</html>
