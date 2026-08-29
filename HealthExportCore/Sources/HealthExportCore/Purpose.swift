@@ -6,7 +6,7 @@ import Foundation
 /// 「日ごとにまとめるか、1件ずつ全部か」を素人が判断できない以上、
 /// **既定でうまくいく組み合わせを用意しておくのがアプリの仕事。**
 public enum Purpose: String, CaseIterable, Codable, Sendable {
-    case general, sleep, training, condition, everything
+    case general, sleep, training, condition, mind, everything
 
     public var days: Int {
         switch self {
@@ -14,6 +14,7 @@ public enum Purpose: String, CaseIterable, Codable, Sendable {
         case .sleep:      return 60
         case .training:   return 90
         case .condition:  return 30
+        case .mind:       return 60
         case .everything: return 90
         }
     }
@@ -35,6 +36,9 @@ public enum Purpose: String, CaseIterable, Codable, Sendable {
         case .condition:
             return [.restingHeartRate, .hrv, .oxygenSaturation, .respiratoryRate, .wristTemperature,
                     .sleep, .steps, .activeEnergy, .stateOfMind]
+        case .mind:
+            return [.stateOfMind, .mindful, .sleep, .hrv, .restingHeartRate,
+                    .respiratoryRate, .steps, .activeEnergy, .exerciseTime]
         case .everything:
             return nil
         }
@@ -44,29 +48,33 @@ public enum Purpose: String, CaseIterable, Codable, Sendable {
         switch (self, language) {
         case (.general, .ja):     return "ふだんの管理"
         case (.general, .en):     return "General check-in"
-        case (.sleep, .ja):       return "睡眠のことを相談したい"
-        case (.sleep, .en):       return "Ask about my sleep"
-        case (.training, .ja):    return "運動のことを相談したい"
-        case (.training, .en):    return "Ask about my training"
-        case (.condition, .ja):   return "体調の変化を見てほしい"
-        case (.condition, .en):   return "Check for changes in my condition"
+        case (.sleep, .ja):       return "睡眠のこと"
+        case (.sleep, .en):       return "Sleep"
+        case (.training, .ja):    return "運動のこと"
+        case (.training, .en):    return "Training"
+        case (.condition, .ja):   return "体調の変化"
+        case (.condition, .en):   return "Condition"
+        case (.mind, .ja):        return "こころの調子"
+        case (.mind, .en):        return "Mood"
         case (.everything, .ja):  return "質問せずに渡す"
-        case (.everything, .en):  return "Hand over without asking"
+        case (.everything, .en):  return "No questions"
         }
     }
 
     public func detail(_ language: Language) -> String {
         switch (self, language) {
-        case (.general, .ja):     return "記録があるものを全部渡して、全体を見てもらう。迷ったらこれ。"
-        case (.general, .en):     return "Everything you have, for an overall read. Start here."
-        case (.sleep, .ja):       return "睡眠と、それに影響する項目にしぼる。"
-        case (.sleep, .en):       return "Sleep and what affects it."
-        case (.training, .ja):    return "運動量と、疲れの回復ぐあいを見てもらう。"
-        case (.training, .en):    return "Training load and recovery."
-        case (.condition, .ja):   return "ふだんと違う時期を見つけてもらう。直近1ヶ月。"
-        case (.condition, .en):   return "Find periods that differ from baseline. Last month."
-        case (.everything, .ja):  return "こちらからは何も聞かず、まず自由に見てもらう。"
-        case (.everything, .en):  return "No questions from me. Let the AI look freely."
+        case (.general, .ja):     return "記録があるもの全部。迷ったらこれ"
+        case (.general, .en):     return "Everything you have. Start here"
+        case (.sleep, .ja):       return "睡眠と、影響する項目"
+        case (.sleep, .en):       return "Sleep and what affects it"
+        case (.training, .ja):    return "運動量と、疲れの回復"
+        case (.training, .en):    return "Training load and recovery"
+        case (.condition, .ja):   return "ふだんと違う時期を探す"
+        case (.condition, .en):   return "Find days unlike your usual"
+        case (.mind, .ja):        return "気分と、体の記録の関係"
+        case (.mind, .en):        return "Mood against body data"
+        case (.everything, .ja):  return "何も聞かず、自由に見てもらう"
+        case (.everything, .en):  return "Let the AI look freely"
         }
     }
 
@@ -131,6 +139,20 @@ public enum Purpose: String, CaseIterable, Codable, Sendable {
                     "1. Periods that differ from my baseline in resting heart rate, HRV, respiratory rate and skin temperature",
                     "2. Whether sleep or activity changed at the same time",
                     "3. What else I should start recording",
+                    disclaimerEn]
+        case (.mind, .ja):
+            return ["以下は私の気分の記録と、そのころの体の記録です。",
+                    "次のことを教えてください。",
+                    "1. 気分の記録と、睡眠・活動量・心拍変動のあいだに見える関係",
+                    "2. 気分が下がっていた時期に、体の記録のほうで何が起きていたか",
+                    "3. 調子を整えるために、この数字から言えること",
+                    disclaimerJa]
+        case (.mind, .en):
+            return ["Below are my state of mind entries and my body data from the same period.",
+                    "Please tell me:",
+                    "1. Relationships between my mood and sleep, activity and HRV",
+                    "2. What my body data was doing during periods when my mood was low",
+                    "3. What these numbers suggest I could do to feel steadier",
                     disclaimerEn]
         case (.everything, .ja):
             return ["以下は私のiPhoneのヘルスケアにある、この期間の記録すべてです。",

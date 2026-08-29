@@ -28,7 +28,12 @@ final class ExportModel {
     let reader = HealthReader()
     private let defaults: UserDefaults
     private let settingsKey = "settings.v1"
+    private let introKey = "hasSeenIntro.v1"
     private var hasScanned = false
+
+    /// 初回だけ説明を出す。2回目からは本題だけ見せる。
+    var needsIntro: Bool { !defaults.bool(forKey: introKey) }
+    func markIntroSeen() { defaults.set(true, forKey: introKey) }
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults

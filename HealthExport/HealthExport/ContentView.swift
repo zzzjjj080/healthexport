@@ -6,10 +6,11 @@ extension Purpose {
     /// 目的ごとの記号。文字を読む前に、絵で見当がつくようにする。
     var symbolName: String {
         switch self {
-        case .general:    return "chart.line.uptrend.xyaxis"
+        case .general:    return "square.grid.2x2.fill"
         case .sleep:      return "moon.stars.fill"
         case .training:   return "figure.run"
         case .condition:  return "waveform.path.ecg"
+        case .mind:       return "brain.head.profile"
         case .everything: return "text.append"
         }
     }
@@ -20,29 +21,30 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var showingResult = false
     @State private var showingSettings = false
+    @State private var showingIntro = false
+    @State private var askExpanded = false
+
+    private let columns = [GridItem(.flexible(), spacing: 11), GridItem(.flexible(), spacing: 11)]
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 26) {
-                    hero
-                    purposeList
-                    summaryCard
+                VStack(spacing: 18) {
+                    purposeGrid
+                    contentCard
                     if model.foundNothing { emptyCard }
                     if let message = model.errorMessage { errorCard(message) }
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 4)
-                .padding(.bottom, 24)
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
+                .padding(.bottom, 20)
             }
             .background(Color(.systemGroupedBackground))
             .navigationTitle("ヘルスケア書き出し")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showingSettings = true
-                    } label: {
+                    Button { showingSettings = true } label: {
                         Image(systemName: "slider.horizontal.3")
                     }
                     .accessibilityIdentifier("settingsButton")
@@ -52,8 +54,17 @@ struct ContentView: View {
             .safeAreaInset(edge: .bottom) { exportBar }
             .sheet(isPresented: $showingResult) { ResultSheet(model: model) }
             .sheet(isPresented: $showingSettings) { SettingsSheet(model: model) }
+            .fullScreenCover(isPresented: $showingIntro) {
+                IntroSheet {
+                    model.markIntroSeen()
+                    showingIntro = false
+                }
+            }
             // 起動時・復帰時・日をまたいだとき、の3つとも要る。（引き継ぎ書 4-18）
-            .task { await model.refresh() }
+            .task {
+                if model.needsIntro { showingIntro = true }
+                await model.refresh()
+            }
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active { Task { await model.refresh() } }
             }
@@ -64,32 +75,19 @@ struct ContentView: View {
         }
     }
 
-    // MARK: - 見出し
-
-    private var hero: some View {
-        VStack(alignment: .leading, spacing: 7) {
-            Text("ヘルスケアの記録を、\nAIに渡せる文章に。")
-                .font(.system(.title2, design: .rounded, weight: .bold))
-                .lineSpacing(2)
-            Text("期間も項目も、目的を選べば決まります。")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.top, 6)
-    }
-
     // MARK: - 目的
 
-    private var purposeList: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            sectionLabel("何のためにAIへ渡しますか")
+    private var purposeGrid: some View {
+        LazyVGrid(columns: columns, spacing: 11) {
             ForEach(Purpose.allCases, id: \.self) { purpose in
                 Button {
                     Haptics.tap()
-                    withAnimation(.snappy(duration: 0.2)) { model.choose(purpose) }
+                    withAnimation(.snappy(duration: 0.22)) {
+                        model.choose(purpose)
+                        askExpanded = false
+                    }
                 } label: {
-                    PurposeCard(purpose: purpose, isSelected: model.settings.purpose == purpose)
+                    PurposeTile(purpose: purpose, isSelected: model.settings.purpose == purpose)
                 }
                 .buttonStyle(.plain)   // 付けないと中の文字色が青に染まる（引き継ぎ書 4-13）
                 .accessibilityIdentifier("purpose-\(purpose.rawValue)")
@@ -97,45 +95,77 @@ struct ContentView: View {
         }
     }
 
-    // MARK: - 書き出す内容
+    // MARK: - このまま書き出すと
 
-    private var summaryCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            sectionLabel("書き出す内容")
-            VStack(spacing: 0) {
-                HStack(spacing: 0) {
-                    stat(value: "\(model.range.dayCount)", unit: "日間", caption: "期間")
-                    divider
-                    stat(value: model.phase == .scanning ? "…" : "\(model.selectedMetrics.count)",
-                         unit: "項目", caption: "書き出す")
-                    divider
-                    stat(value: "\(model.range.from.iso.dropFirst(5))",
-                         unit: "から", caption: model.range.to.iso.dropFirst(5) + " まで")
-                }
-                .padding(.vertical, 16)
-
-                if !model.selectedMetrics.isEmpty {
-                    Divider().padding(.horizontal, 16)
-                    Text(model.selectedMetrics.map(\.jaName).joined(separator: "、"))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(16)
-                }
+    private var contentCard: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Text("このまま書き出すと")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Button("変える") { showingSettings = true }
+                    .font(.caption.weight(.medium))
             }
-            .background(cardBackground)
-            Text("記録が見つからなかった項目は自動で外れます。")
-                .font(.caption2)
-                .foregroundStyle(.tertiary)
-                .padding(.leading, 4)
+            .padding(.horizontal, 14)
+            .padding(.top, 13)
+            .padding(.bottom, 10)
+
+            HStack(spacing: 0) {
+                stat("\(model.range.dayCount)", "日間",
+                     "\(model.range.from.iso.dropFirst(5)) 〜 \(model.range.to.iso.dropFirst(5))")
+                Rectangle().fill(Color(.separator).opacity(0.5)).frame(width: 1, height: 32)
+                stat(model.phase == .scanning ? "…" : "\(model.selectedMetrics.count)", "項目",
+                     model.phase == .scanning ? "調べています" : "記録があったもの")
+            }
+            .padding(.bottom, 12)
+
+            if !model.selectedMetrics.isEmpty {
+                Divider().padding(.horizontal, 14)
+                FlowLayout(spacing: 5) {
+                    ForEach(model.selectedMetrics) { metric in
+                        Text(metric.jaName)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Capsule().fill(Color(.tertiarySystemFill)))
+                    }
+                }
+                .padding(14)
+            }
+
+            Divider().padding(.horizontal, 14)
+            Button {
+                withAnimation(.snappy(duration: 0.2)) { askExpanded.toggle() }
+            } label: {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Label("AIへの依頼文がつきます", systemImage: "text.bubble.fill")
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(Palette.accent)
+                        Spacer()
+                        Image(systemName: askExpanded ? "chevron.up" : "chevron.down")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    Text(model.settings.purpose.askText(model.settings.options.language))
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(askExpanded ? nil : 2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(14)
+            }
+            .buttonStyle(.plain)
         }
+        .background(RoundedRectangle(cornerRadius: 18, style: .continuous)
+            .fill(Color(.secondarySystemGroupedBackground)))
     }
 
-    private var divider: some View {
-        Rectangle().fill(Color(.separator).opacity(0.5)).frame(width: 1, height: 34)
-    }
-
-    private func stat(value: some StringProtocol, unit: String, caption: some StringProtocol) -> some View {
+    private func stat(_ value: String, _ unit: String, _ caption: String) -> some View {
         VStack(spacing: 3) {
             HStack(alignment: .firstTextBaseline, spacing: 2) {
                 Text(value)
@@ -146,18 +176,6 @@ struct ContentView: View {
             Text(caption).font(.caption2).foregroundStyle(.tertiary)
         }
         .frame(maxWidth: .infinity)
-    }
-
-    private func sectionLabel(_ text: String) -> some View {
-        Text(text)
-            .font(.footnote.weight(.semibold))
-            .foregroundStyle(.secondary)
-            .padding(.leading, 4)
-    }
-
-    private var cardBackground: some View {
-        RoundedRectangle(cornerRadius: 18, style: .continuous)
-            .fill(Color(.secondarySystemGroupedBackground))
     }
 
     // MARK: - 記録が無いとき
@@ -182,7 +200,8 @@ struct ContentView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(cardBackground)
+        .background(RoundedRectangle(cornerRadius: 18, style: .continuous)
+            .fill(Color(.secondarySystemGroupedBackground)))
     }
 
     private func errorCard(_ message: String) -> some View {
@@ -191,14 +210,12 @@ struct ContentView: View {
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Palette.caution)
             Text(message).font(.caption).foregroundStyle(.secondary)
-            Button("閉じる") { model.errorMessage = nil }
-                .font(.caption.weight(.medium))
+            Button("閉じる") { model.errorMessage = nil }.font(.caption.weight(.medium))
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Palette.caution.opacity(0.10)))
+        .background(RoundedRectangle(cornerRadius: 18, style: .continuous)
+            .fill(Palette.caution.opacity(0.10)))
     }
 
     // MARK: - 書き出しボタン
@@ -229,10 +246,9 @@ struct ContentView: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 15)
-                .background(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(Palette.accentGradient)
-                        .opacity(canExport ? 1 : 0.35))
+                .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Palette.accentGradient)
+                    .opacity(canExport ? 1 : 0.35))
             }
             .buttonStyle(.plain)
             .disabled(!canExport)
@@ -245,7 +261,7 @@ struct ContentView: View {
                 .font(.caption)
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 16)
         .padding(.top, 10)
         .padding(.bottom, 12)
         .background(.bar)
@@ -254,43 +270,45 @@ struct ContentView: View {
     private var canExport: Bool { !model.isBusy && !model.selectedMetrics.isEmpty }
 }
 
-/// 目的ひとつぶんのカード。
-private struct PurposeCard: View {
+/// 目的ひとつぶんのタイル。2列に並ぶので、縦に積む。
+private struct PurposeTile: View {
     let purpose: Purpose
     let isSelected: Bool
 
     var body: some View {
-        HStack(spacing: 14) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 13, style: .continuous)
-                    .fill(isSelected ? AnyShapeStyle(Palette.accentGradient)
-                                     : AnyShapeStyle(Color(.tertiarySystemFill)))
-                    .frame(width: 46, height: 46)
-                Image(systemName: purpose.symbolName)
-                    .font(.system(size: 19, weight: .semibold))
-                    .foregroundStyle(isSelected ? Color.white : Color.secondary)
+        VStack(alignment: .leading, spacing: 7) {
+            HStack {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(isSelected ? AnyShapeStyle(Palette.accentGradient)
+                                         : AnyShapeStyle(Color(.tertiarySystemFill)))
+                        .frame(width: 34, height: 34)
+                    Image(systemName: purpose.symbolName)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(isSelected ? Color.white : Color.secondary)
+                }
+                Spacer(minLength: 0)
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.subheadline)
+                        .foregroundStyle(Palette.accent)
+                }
             }
-            VStack(alignment: .leading, spacing: 3) {
-                Text(purpose.title(.ja))
-                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                    .foregroundStyle(.primary)
-                Text(purpose.detail(.ja))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            Spacer(minLength: 4)
-            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                .foregroundStyle(isSelected ? Palette.accent : Color(.tertiaryLabel))
-                .font(.title3)
+            Text(purpose.title(.ja))
+                .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                .foregroundStyle(.primary)
+            Text(purpose.detail(.ja))
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
         }
-        .padding(14)
-        .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color(.secondarySystemGroupedBackground)))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .strokeBorder(isSelected ? Palette.accent.opacity(0.9) : .clear, lineWidth: 1.6))
-        .shadow(color: .black.opacity(isSelected ? 0.06 : 0.03), radius: isSelected ? 8 : 3, y: 2)
+        .padding(12)
+        .frame(maxWidth: .infinity, minHeight: 122, alignment: .topLeading)
+        .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
+            .fill(Color(.secondarySystemGroupedBackground)))
+        .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous)
+            .strokeBorder(isSelected ? Palette.accent.opacity(0.9) : .clear, lineWidth: 1.6))
     }
 }
