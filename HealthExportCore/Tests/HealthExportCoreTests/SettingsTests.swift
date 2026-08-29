@@ -33,11 +33,19 @@ struct DateRangeTests {
 
 struct AppSettingsTests {
 
-    @Test func 目的を選ぶだけで期間が決まる() {
+    /// 期間は目的と切り離してある。
+    /// 目的を変えるたびに期間まで動くと、いま何日ぶんを見ているのかが分からなくなる。
+    @Test func 目的を変えても期間は変わらない() {
         let today = YMD(2026, 8, 29)
-        #expect(AppSettings(purpose: .general).effectiveRange(today: today).dayCount == 90)
-        #expect(AppSettings(purpose: .condition).effectiveRange(today: today).dayCount == 30)
-        #expect(AppSettings(purpose: .sleep).effectiveRange(today: today).dayCount == 60)
+        for purpose in Purpose.allCases {
+            #expect(AppSettings(purpose: purpose).effectiveRange(today: today).dayCount == 90)
+        }
+    }
+
+    @Test func 期間は自分で決めたぶんが使われる() {
+        let today = YMD(2026, 8, 29)
+        let settings = AppSettings(purpose: .sleep, customDays: 14)
+        #expect(settings.effectiveRange(today: today).dayCount == 14)
     }
 
     @Test func 日付を直に指定するとそちらが優先される() {
@@ -208,5 +216,38 @@ struct DefaultPurposeTests {
         let estimate = SizeEstimate.of(text)
         #expect(estimate.verdict == .comfortable)
         #expect(estimate.approximateTokens < 30_000)
+    }
+}
+
+
+struct PeriodChoiceTests {
+
+    @Test func 段階は短いほうから長いほうへ並ぶ() {
+        #expect(PeriodChoice.steps == [14, 30, 90, 180, 365])
+        #expect(PeriodChoice.defaultDays == 90)
+    }
+
+    @Test func 段階を1つずつ動かせる() {
+        #expect(PeriodChoice.stepped(from: 90, by: -1) == 30)
+        #expect(PeriodChoice.stepped(from: 30, by: -1) == 14)
+        #expect(PeriodChoice.stepped(from: 90, by: 1) == 180)
+        #expect(PeriodChoice.stepped(from: 180, by: 1) == 365)
+    }
+
+    @Test func 端では止まる() {
+        #expect(PeriodChoice.stepped(from: 14, by: -1) == 14)
+        #expect(PeriodChoice.stepped(from: 365, by: 1) == 365)
+    }
+
+    @Test func 段階に無い日数からでも動かせる() {
+        // 日付で指定したあとに矢印を押した場合。既定の位置から動かす
+        #expect(PeriodChoice.stepped(from: 51, by: -1) == 30)
+        #expect(PeriodChoice.stepped(from: 51, by: 1) == 180)
+    }
+
+    @Test func 呼び名は言語で変わる() {
+        #expect(PeriodChoice.label(90, .ja) == "3ヶ月")
+        #expect(PeriodChoice.label(90, .en) == "3 months")
+        #expect(PeriodChoice.label(51, .ja) == "51日間")
     }
 }

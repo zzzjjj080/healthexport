@@ -94,3 +94,36 @@ public struct DateRange: Equatable, Sendable, Codable {
 
     public var dayCount: Int { days.count }
 }
+
+/// 画面から選べる期間の段階。
+///
+/// **目的とは切り離してある。** 目的を変えるたびに期間まで動くと、
+/// いま何日ぶんを見ているのかが分からなくなる。既定はどの目的でも3ヶ月。
+public enum PeriodChoice {
+    public static let defaultDays = 90
+    public static let steps = [14, 30, 90, 180, 365]
+
+    public static func label(_ days: Int, _ language: Language) -> String {
+        switch (days, language) {
+        case (14, .ja):  return "2週間"
+        case (14, .en):  return "2 weeks"
+        case (30, .ja):  return "1ヶ月"
+        case (30, .en):  return "1 month"
+        case (90, .ja):  return "3ヶ月"
+        case (90, .en):  return "3 months"
+        case (180, .ja): return "6ヶ月"
+        case (180, .en): return "6 months"
+        case (365, .ja): return "1年"
+        case (365, .en): return "1 year"
+        case (_, .ja):   return "\(days)日間"
+        case (_, .en):   return "\(days) days"
+        }
+    }
+
+    /// いまの日数から1段ずらす。端では止まる。
+    public static func stepped(from days: Int, by direction: Int) -> Int {
+        let index = steps.firstIndex(of: days) ?? steps.firstIndex(of: defaultDays)!
+        let moved = min(max(index + direction, 0), steps.count - 1)
+        return steps[moved]
+    }
+}

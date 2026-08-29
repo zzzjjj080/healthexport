@@ -33,12 +33,12 @@ func heartPath(cx: CGFloat, cy: CGFloat, rx: CGFloat, ry: CGFloat) -> CGPath {
     let p = CGMutablePath()
     func P(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: cx + x*rx, y: cy + y*ry) }
     p.move(to: P(0, -1.0))
-    p.addCurve(to: P(-1.0, 0.35), control1: P(-0.42, -0.52), control2: P(-1.0, -0.12))
-    p.addCurve(to: P(-0.52, 1.0), control1: P(-1.0, 0.76),   control2: P(-0.88, 1.0))
-    p.addCurve(to: P(0, 0.42),    control1: P(-0.22, 1.0),   control2: P(0, 0.80))
-    p.addCurve(to: P(0.52, 1.0),  control1: P(0, 0.80),      control2: P(0.22, 1.0))
-    p.addCurve(to: P(1.0, 0.35),  control1: P(0.88, 1.0),    control2: P(1.0, 0.76))
-    p.addCurve(to: P(0, -1.0),    control1: P(1.0, -0.12),   control2: P(0.42, -0.52))
+    p.addCurve(to: P(-1.0, 0.40), control1: P(-0.34, -0.66), control2: P(-1.0, -0.02))
+    p.addCurve(to: P(-0.50, 1.0), control1: P(-1.0, 0.84),   control2: P(-0.90, 1.0))
+    p.addCurve(to: P(0, 0.50),    control1: P(-0.20, 1.0),   control2: P(-0.02, 0.84))
+    p.addCurve(to: P(0.50, 1.0),  control1: P(0.02, 0.84),   control2: P(0.20, 1.0))
+    p.addCurve(to: P(1.0, 0.40),  control1: P(0.90, 1.0),    control2: P(1.0, 0.84))
+    p.addCurve(to: P(0, -1.0),    control1: P(1.0, -0.02),   control2: P(0.34, -0.66))
     p.closeSubpath()
     return p
 }
@@ -62,6 +62,22 @@ func bar(_ ctx: CGContext, x: CGFloat, y: CGFloat, w: CGFloat, h: CGFloat, _ c: 
                        cornerWidth: h/2, cornerHeight: h/2, transform: nil))
     ctx.fillPath()
 }
+/// パスの中だけをグラデーションで塗る。
+/// 純正ヘルスケアのハートは単色ではなくグラデーション。単色だと色味が違って見える。
+func fillPathGradient(_ ctx: CGContext, _ path: CGPath, _ a: UInt32, _ b: UInt32) {
+    let box = path.boundingBox
+    let g = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB)!,
+                       colors: [color(a), color(b)] as CFArray, locations: [0, 1])!
+    ctx.saveGState()
+    ctx.addPath(path)
+    ctx.clip()
+    ctx.drawLinearGradient(g,
+                           start: CGPoint(x: box.minX, y: box.maxY),
+                           end: CGPoint(x: box.maxX, y: box.minY),
+                           options: [])
+    ctx.restoreGState()
+}
+
 func fillGradient(_ ctx: CGContext, _ a: UInt32, _ b: UInt32, size: CGFloat) {
     let g = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB)!,
                        colors: [color(a), color(b)] as CFArray, locations: [0, 1])!
@@ -143,6 +159,31 @@ func drawIcon(_ ctx: CGContext, _ variant: Int, _ size: CGFloat) {
         bar(ctx, x: x6, y: 512*k, w: 200*k, h: t6, color(0xD81B60))
         bar(ctx, x: x6, y: 374*k, w: 122*k, h: t6, color(0xD81B60))
 
+    // A4: A2と同じ構図で、ハートと線をグラデーションにする。
+    // 色は純正ヘルスケアに寄せた明るいピンク→濃い赤。
+    case 7:
+        fillGradient(ctx, 0xFFFFFF, 0xFDECF2, size: size)
+        let heart7 = heartPath(cx: 335*k, cy: 512*k, rx: 278*k, ry: 268*k)
+        fillPathGradient(ctx, heart7, 0xFF6B8B, 0xF3054E)
+        let t7 = 96*k, x7 = 648*k
+        for (y, w) in [(650*k, 280*k), (512*k, 200*k), (374*k, 122*k)] {
+            let bar = CGPath(roundedRect: CGRect(x: x7, y: y - t7/2, width: w, height: t7),
+                             cornerWidth: t7/2, cornerHeight: t7/2, transform: nil)
+            fillPathGradient(ctx, bar, 0xFF6B8B, 0xF3054E)
+        }
+
+    // A5: A4より赤に寄せたもの。純正はかなり赤い。
+    case 8:
+        fillGradient(ctx, 0xFFFFFF, 0xFDECF2, size: size)
+        let heart8 = heartPath(cx: 335*k, cy: 512*k, rx: 278*k, ry: 268*k)
+        fillPathGradient(ctx, heart8, 0xFF5A6E, 0xEB0033)
+        let t8 = 96*k, x8 = 648*k
+        for (y, w) in [(650*k, 280*k), (512*k, 200*k), (374*k, 122*k)] {
+            let bar = CGPath(roundedRect: CGRect(x: x8, y: y - t8/2, width: w, height: t8),
+                             cornerWidth: t8/2, cornerHeight: t8/2, transform: nil)
+            fillPathGradient(ctx, bar, 0xFF5A6E, 0xEB0033)
+        }
+
     default: break
     }
     ctx.restoreGState()
@@ -155,8 +196,8 @@ func iconImage(_ variant: Int, _ size: CGFloat) -> CGImage {
 }
 
 // ---- 1024pxを3案ぶん書き出す ----
-for v in [1, 5, 6] {
-    savePNG(iconImage(v, S), "icon-\(["", "A1", "", "", "", "A2", "A3"][v]).png")
+for v in [5, 7, 8] {
+    savePNG(iconImage(v, S), "icon-\(["", "", "", "", "", "A2", "", "A4", "A5"][v]).png")
 }
 
 // ---- 比較シート。角丸マスクを掛けて、実際の見え方に近づける ----
@@ -166,7 +207,7 @@ let sheetW = Int(pad*2 + cols.reduce(0, +) + gapY*CGFloat(cols.count-1))
 let sheetH = Int(pad*2 + (256+gapY)*3)
 let sheet = newContext(sheetW, sheetH)
 sheet.setFillColor(color(0xF2F3F7)); sheet.fill(CGRect(x: 0, y: 0, width: sheetW, height: sheetH))
-for (row, v) in [1, 5, 6].enumerated() {
+for (row, v) in [5, 7, 8].enumerated() {
     var x = pad
     let rowTop = CGFloat(sheetH) - pad - CGFloat(row)*(256+gapY)
     for c in cols {
@@ -181,4 +222,4 @@ for (row, v) in [1, 5, 6].enumerated() {
     }
 }
 savePNG(sheet.makeImage()!, "icon-sheet.png")
-print("icon-A1/A2/A3.png と icon-sheet.png")
+print("icon-A2/A4/A5.png と icon-sheet.png")

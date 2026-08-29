@@ -6,6 +6,7 @@ import HealthExportCore
 /// 「形式」を触るつもりで「項目」を変えてしまう、という事故を避ける。
 struct SettingsSheet: View {
     @Bindable var model: ExportModel
+    var initialTab: Tab = .period
     @Environment(\.dismiss) private var dismiss
     @State private var tab: Tab = .period
 
@@ -32,6 +33,7 @@ struct SettingsSheet: View {
                 }
             }
             .background(Color(.systemGroupedBackground))
+            .onAppear { tab = initialTab }
             .navigationTitle("詳しい設定")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -49,15 +51,10 @@ struct SettingsSheet: View {
 
     // MARK: - 期間
 
-    private static let presets: [(String, Int)] = [
-        ("1週間", 7), ("2週間", 14), ("1ヶ月", 30), ("3ヶ月", 90), ("6ヶ月", 180), ("1年", 365)
-    ]
+    private var presets: [Int] { PeriodChoice.steps }
 
-    private var isPresetActive: (Int) -> Bool {
-        { days in
-            model.settings.customRange == nil
-                && (model.settings.customDays ?? model.settings.purpose.days) == days
-        }
+    private func isPresetActive(_ days: Int) -> Bool {
+        model.settings.customRange == nil && model.currentDays == days
     }
 
     private var periodTab: some View {
@@ -66,7 +63,7 @@ struct SettingsSheet: View {
                 LazyVGrid(columns: [GridItem(.flexible(), spacing: 10),
                                     GridItem(.flexible(), spacing: 10),
                                     GridItem(.flexible(), spacing: 10)], spacing: 10) {
-                    ForEach(Self.presets, id: \.0) { label, days in
+                    ForEach(presets, id: \.self) { days in
                         let active = isPresetActive(days)
                         Button {
                             Haptics.tap()
@@ -74,7 +71,7 @@ struct SettingsSheet: View {
                             model.settings.customDays = days
                             Task { await model.rescan() }
                         } label: {
-                            Text(label)
+                            Text(PeriodChoice.label(days, .ja))
                                 .font(.system(.subheadline, design: .rounded, weight: .semibold))
                                 .foregroundStyle(active ? Color.white : Color.primary)
                                 .frame(maxWidth: .infinity)

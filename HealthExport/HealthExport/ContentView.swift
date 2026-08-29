@@ -21,30 +21,36 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var showingResult = false
     @State private var showingSettings = false
+    @State private var settingsTab: SettingsSheet.Tab = .period
     @State private var showingIntro = false
     @State private var askExpanded = false
+    @State private var detailExpanded = false
 
     private let columns = [GridItem(.flexible(), spacing: 11), GridItem(.flexible(), spacing: 11)]
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 18) {
+                VStack(spacing: 12) {
                     purposeGrid
+                    periodCard
                     contentCard
                     if model.foundNothing { emptyCard }
                     if let message = model.errorMessage { errorCard(message) }
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 10)
-                .padding(.bottom, 20)
+                .padding(.top, 8)
+                .padding(.bottom, 16)
             }
             .background(Color(.systemGroupedBackground))
             .navigationTitle("ヘルスケア書き出し")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button { showingSettings = true } label: {
+                    Button {
+                        settingsTab = .metrics
+                        showingSettings = true
+                    } label: {
                         Image(systemName: "slider.horizontal.3")
                     }
                     .accessibilityIdentifier("settingsButton")
@@ -53,7 +59,7 @@ struct ContentView: View {
             }
             .safeAreaInset(edge: .bottom) { exportBar }
             .sheet(isPresented: $showingResult) { ResultSheet(model: model) }
-            .sheet(isPresented: $showingSettings) { SettingsSheet(model: model) }
+            .sheet(isPresented: $showingSettings) { SettingsSheet(model: model, initialTab: settingsTab) }
             .fullScreenCover(isPresented: $showingIntro) {
                 IntroSheet {
                     model.markIntroSeen()
@@ -95,51 +101,108 @@ struct ContentView: View {
         }
     }
 
-    // MARK: - このまま書き出すと
+    // MARK: - 期間
+
+    /// 期間は目的と切り離してある。押すたびに1段ずつ動く。
+    private var periodCard: some View {
+        HStack(spacing: 10) {
+            Text("期間")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            HStack(spacing: 0) {
+                stepButton(systemName: "minus", direction: -1, enabled: model.canStepShorter)
+                VStack(spacing: 0) {
+                    Text(model.periodLabel)
+                        .font(.system(.subheadline, design: .rounded, weight: .bold))
+                        .monospacedDigit()
+                    Text(model.periodDetail)
+                        .font(.system(size: 10))
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                }
+                .frame(minWidth: 104)
+                stepButton(systemName: "plus", direction: 1, enabled: model.canStepLonger)
+            }
+            .background(Capsule().fill(Color(.tertiarySystemFill)))
+
+            Spacer(minLength: 0)
+
+            Button {
+                settingsTab = .period
+                showingSettings = true
+            } label: {
+                Text("日付で指定")
+                    .font(.caption.weight(.medium))
+                    .contentShape(Rectangle())
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
+            .fill(Color(.secondarySystemGroupedBackground)))
+    }
+
+    private func stepButton(systemName: String, direction: Int, enabled: Bool) -> some View {
+        Button {
+            Haptics.tap()
+            Task { await model.stepPeriod(direction) }
+        } label: {
+            Image(systemName: systemName)
+                .font(.system(size: 13, weight: .bold))
+                .foregroundStyle(enabled ? Palette.accent : Color(.tertiaryLabel))
+                .frame(width: 42, height: 40)
+                .contentShape(Rectangle())   // Spacer と同じで、これが無いと文字の上しか押せない
+        }
+        .buttonStyle(.plain)
+        .disabled(!enabled || model.isBusy)
+        .accessibilityIdentifier("period-\(systemName)")
+    }
+
+    // MARK: - 書き出されるデータ
 
     private var contentCard: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Text("このまま書き出すと")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Button("変える") { showingSettings = true }
-                    .font(.caption.weight(.medium))
+            Button {
+                withAnimation(.snappy(duration: 0.2)) { detailExpanded.toggle() }
+            } label: {
+                HStack(spacing: 6) {
+                    Text("書き出されるデータ")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Text(model.phase == .scanning ? "調べています…" : "\(model.selectedMetrics.count)項目")
+                        .font(.system(.subheadline, design: .rounded, weight: .bold))
+                        .monospacedDigit()
+                    Image(systemName: detailExpanded ? "chevron.up" : "chevron.down")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+                .contentShape(Rectangle())
             }
-            .padding(.horizontal, 14)
-            .padding(.top, 13)
-            .padding(.bottom, 10)
-
-            HStack(spacing: 0) {
-                stat("\(model.range.dayCount)", "日間",
-                     "\(model.range.from.iso.dropFirst(5)) 〜 \(model.range.to.iso.dropFirst(5))")
-                Rectangle().fill(Color(.separator).opacity(0.5)).frame(width: 1, height: 32)
-                stat(model.phase == .scanning ? "…" : "\(model.selectedMetrics.count)", "項目",
-                     model.phase == .scanning ? "調べています" : "記録があったもの")
-            }
-            .padding(.bottom, 12)
+            .buttonStyle(.plain)
 
             if !model.selectedMetrics.isEmpty {
                 Divider().padding(.horizontal, 14)
                 FlowLayout(spacing: 5) {
-                    ForEach(model.selectedMetrics) { metric in
-                        Text(metric.jaName)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Capsule().fill(Color(.tertiarySystemFill)))
+                    ForEach(shownMetrics) { metric in
+                        chip(metric.jaName)
+                    }
+                    if !detailExpanded, hiddenMetricCount > 0 {
+                        chip("ほか\(hiddenMetricCount)項目")
                     }
                 }
-                .padding(14)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 11)
             }
 
             Divider().padding(.horizontal, 14)
             Button {
                 withAnimation(.snappy(duration: 0.2)) { askExpanded.toggle() }
             } label: {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 5) {
                     HStack {
                         Label("AIへの依頼文がつきます", systemImage: "text.bubble.fill")
                             .font(.caption.weight(.medium))
@@ -149,33 +212,40 @@ struct ContentView: View {
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
-                    Text(model.settings.purpose.askText(model.settings.options.language))
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.leading)
-                        .lineLimit(askExpanded ? nil : 2)
-                        .fixedSize(horizontal: false, vertical: true)
+                    if askExpanded {
+                        Text(model.settings.purpose.askText(model.settings.options.language))
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(14)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 11)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
         }
-        .background(RoundedRectangle(cornerRadius: 18, style: .continuous)
+        .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
             .fill(Color(.secondarySystemGroupedBackground)))
     }
 
-    private func stat(_ value: String, _ unit: String, _ caption: String) -> some View {
-        VStack(spacing: 3) {
-            HStack(alignment: .firstTextBaseline, spacing: 2) {
-                Text(value)
-                    .font(.system(.title3, design: .rounded, weight: .bold))
-                    .monospacedDigit()
-                Text(unit).font(.caption2).foregroundStyle(.secondary)
-            }
-            Text(caption).font(.caption2).foregroundStyle(.tertiary)
-        }
-        .frame(maxWidth: .infinity)
+    /// たたんでいるときは頭の数個だけ見せる。全部並べると縦に伸びて、画面から溢れる。
+    private var shownMetrics: [Metric] {
+        detailExpanded ? model.selectedMetrics : Array(model.selectedMetrics.prefix(6))
+    }
+    private var hiddenMetricCount: Int {
+        max(0, model.selectedMetrics.count - 6)
+    }
+
+    private func chip(_ text: String) -> some View {
+        Text(text)
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(Capsule().fill(Color(.tertiarySystemFill)))
     }
 
     // MARK: - 記録が無いとき
@@ -276,44 +346,40 @@ private struct PurposeTile: View {
     let isSelected: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 7) {
-            HStack {
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(spacing: 6) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    RoundedRectangle(cornerRadius: 9, style: .continuous)
                         .fill(isSelected ? AnyShapeStyle(Palette.accentGradient)
                                          : AnyShapeStyle(Color(.tertiarySystemFill)))
-                        .frame(width: 34, height: 34)
+                        .frame(width: 30, height: 30)
                     Image(systemName: purpose.symbolName)
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(isSelected ? Color.white : Color.secondary)
                 }
                 Spacer(minLength: 0)
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.subheadline)
-                        .foregroundStyle(Palette.accent)
+                if purpose == .general {
+                    Text("まずはこれ")
+                        .font(.system(size: 9, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(Palette.accentGradient))
                 }
-            }
-            if purpose == .general {
-                Text("まずはこれ")
-                    .font(.system(size: 10, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 3)
-                    .background(Capsule().fill(Palette.accentGradient))
             }
             Text(purpose.title(.ja))
                 .font(.system(.subheadline, design: .rounded, weight: .semibold))
                 .foregroundStyle(.primary)
             Text(purpose.detail(.ja))
-                .font(.caption2)
+                .font(.system(size: 11))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.leading)
+                .lineLimit(2)
                 .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 0)
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, minHeight: 142, alignment: .topLeading)
+        .padding(11)
+        .frame(maxWidth: .infinity, minHeight: 104, alignment: .topLeading)
         .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
             .fill(Color(.secondarySystemGroupedBackground)))
         .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous)

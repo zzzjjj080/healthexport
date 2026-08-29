@@ -92,7 +92,7 @@ public struct AppSettings: Equatable, Sendable, Codable {
     /// 実際に書き出す期間。日付を直に指定していればそれを、無ければ目的の日数から作る。
     public func effectiveRange(today: YMD = .today()) -> DateRange {
         if let customRange { return customRange }
-        return DateRange.recent(days: customDays ?? purpose.days, today: today)
+        return DateRange.recent(days: customDays ?? PeriodChoice.defaultDays, today: today)
     }
 
     /// 実際に書き出す項目。記録がある項目だけに絞ってから返す。

@@ -123,15 +123,41 @@ final class ExportModel {
         await rescan()
     }
 
-    /// 目的を選び直す。期間も項目も、目的にまかせる状態に戻す。
+    /// 目的を選び直す。
+    /// **期間には触らない。** 目的を変えるたびに日数まで動くと、
+    /// いま何日ぶんを見ているのかが分からなくなる。
     func choose(_ purpose: Purpose) {
         settings.purpose = purpose
-        settings.customDays = nil
-        settings.customRange = nil
         settings.customMetrics = nil
         settings.options.rawMetrics = []
         exportedText = nil
         estimate = nil
+    }
+
+    // MARK: - 期間
+
+    var isCustomRange: Bool { settings.customRange != nil }
+    var currentDays: Int { settings.customDays ?? PeriodChoice.defaultDays }
+
+    /// 期間の呼び名。日付で指定したときも幅が変わらないよう、日数で言う。
+    var periodLabel: String {
+        if isCustomRange { return "\(range.dayCount)日間" }
+        return PeriodChoice.label(currentDays, settings.options.language)
+    }
+
+    /// その下に小さく出す、実際の日付。
+    var periodDetail: String {
+        "\(range.from.iso.dropFirst(5)) 〜 \(range.to.iso.dropFirst(5))"
+    }
+
+    var canStepShorter: Bool { isCustomRange || currentDays != PeriodChoice.steps.first }
+    var canStepLonger: Bool { isCustomRange || currentDays != PeriodChoice.steps.last }
+
+    func stepPeriod(_ direction: Int) async {
+        let base = isCustomRange ? range.dayCount : currentDays
+        settings.customRange = nil
+        settings.customDays = PeriodChoice.stepped(from: base, by: direction)
+        await rescan()
     }
 
     // MARK: - 書き出し

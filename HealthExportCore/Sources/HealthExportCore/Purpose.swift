@@ -8,17 +8,6 @@ import Foundation
 public enum Purpose: String, CaseIterable, Codable, Sendable {
     case general, sleep, training, condition, mind, everything
 
-    public var days: Int {
-        switch self {
-        case .general:    return 90
-        case .sleep:      return 60
-        case .training:   return 90
-        case .condition:  return 30
-        case .mind:       return 60
-        case .everything: return 90
-        }
-    }
-
     /// nil は「記録がある項目すべて」。
     public var metricIDs: [MetricID]? {
         switch self {
