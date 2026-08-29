@@ -42,6 +42,8 @@ struct ContentView: View {
                 .padding(.top, 8)
                 .padding(.bottom, 16)
             }
+            // 収まっているときは弾ませない。溢れる端末・大きい文字のときだけスクロールする
+            .scrollBounceBehavior(.basedOnSize)
             .background(Color(.systemGroupedBackground))
             .navigationTitle("ヘルスケア書き出し")
             .navigationBarTitleDisplayMode(.inline)
@@ -122,6 +124,10 @@ struct ContentView: View {
             } label: {
                 Text("日付で指定")
                     .font(.caption.weight(.medium))
+                    // 文字を大きくしている人だと「日/付/で/指定」と折り返して崩れる
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                    .fixedSize(horizontal: true, vertical: false)
                     .contentShape(Rectangle())
             }
         }
