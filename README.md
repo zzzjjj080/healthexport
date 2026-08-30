@@ -12,10 +12,11 @@ iPhoneのヘルスケアに入っている記録を、**AIに渡せるテキス�
 
 | 場所 | 役割 |
 |---|---|
-| `index.html` | HTMLプロトタイプ。出力テキストの形はここで決めた |
+| `prototype/index.html` | HTMLプロトタイプ。出力テキストの形はここで決めた |
 | `HealthExportCore/` | UIにもHealthKitにも依存しないロジック層。`swift test` で回せる |
 | `HealthExport/` | アプリ本体（SwiftUI + HealthKit） |
 | `Tools-MakeIcon.swift` | アプリアイコンの生成 |
+| `docs/` | サポートページとプライバシーポリシー（GitHub Pagesで公開） |
 
 ### 設計で外せないところ
 
