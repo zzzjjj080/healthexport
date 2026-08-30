@@ -1,0 +1,51 @@
+No account, login, or credentials are required. There are no in-app purchases,
+no subscriptions, no user-generated content, and no network connections of any kind.
+
+WHAT THE APP DOES
+Health Export reads records the user already has in HealthKit and turns them into
+one plain-text document that the user can hand to an AI assistant of their choice.
+It reformats existing data. It does not measure, diagnose or interpret anything.
+
+IMPORTANT FOR REVIEW
+On a review device HealthKit is usually empty. In that case the app correctly shows
+"記録が1件も見つかりませんでした" (No records found) and the Export button stays
+disabled. This is expected behaviour, not a malfunction. The app cannot tell the
+difference between "no data" and "read access denied" because HealthKit returns an
+empty result in both cases, so the message mentions both possibilities.
+
+To see the app working with data, please add a few samples first:
+1. Open the Health app, then Browse > Activity > Steps > Add Data.
+2. Enter a value for two or three different days.
+3. Return to Health Export. The metric appears automatically.
+
+HOW TO EXERCISE THE APP
+1. Launch the app and tap "はじめる" (Start) on the intro screen.
+2. In the HealthKit permission sheet, tap "すべてオンにする" (Turn all on), then "許可" (Allow).
+3. Choose one of six purposes. "ふだんの管理" (General) is selected by default and
+   includes every metric that has data.
+4. Optionally change the period with the - / + buttons (2 weeks to 1 year), or set
+   exact dates from "日付で指定".
+5. Tap "書き出す" (Export). A sheet appears with the generated text, its character
+   and token count, and Copy / Share buttons.
+6. "コピー" copies the text to the clipboard. "共有" opens the standard share sheet
+   with a .txt file.
+7. Detailed settings are reached from "書き出されるデータ" > "項目や形式を変える".
+
+PERMISSIONS
+HealthKit read access only. The app never writes to HealthKit. It does not request
+clinical health records; the healthkit.access entitlement is an empty array.
+
+EXTERNAL SERVICES
+None. Only Apple frameworks (HealthKit, SwiftUI). All processing happens on device
+and nothing is transmitted by the app. What the user does with the exported text
+afterwards is their own choice; the privacy policy states this explicitly and
+explains how to omit device names, which can contain the owner's name.
+
+REGIONAL DIFFERENCES
+None. Japanese and English are supported, and the exported text can be produced in
+either language.
+
+NOT A MEDICAL APP
+No diagnosis, no treatment, no health claims. The request text the app attaches for
+the AI always ends with a sentence stating that the document is not for medical
+diagnosis and that the user will see a doctor if they have symptoms of concern.
