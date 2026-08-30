@@ -44,8 +44,32 @@ cd HealthExport && xcodebuild -project HealthExport.xcodeproj -scheme HealthExpo
 SIMCTL_CHILD_HEALTHEXPORT_DEMO=1 xcrun simctl launch booted com.zzzjjj080.HealthExport
 ```
 
-## 残っていること
+## リリース
 
-- Explicit App ID（`com.zzzjjj080.HealthExport`）の登録と HealthKit の有効化
-- Xcode に Apple ID を追加（いまは `No Accounts` で実機ビルドが止まる）
-- 実機での確認、ストア掲載情報、プライバシーポリシー
+- App ID `6806698295` / バンドルID `com.zzzjjj080.HealthExport`
+- 1.0 (1) をアップロード済み。**初回は日本のみで配信する。**
+- サポートページ: https://zzzjjj080.github.io/healthexport/
+- 掲載情報は App Store Connect API から入れている（`Tools-ASCToken.swift`）
+
+### グローバル版でやること
+
+アプリ本体は日英に対応済み（書き出すテキストの言語も選べる）。
+足りないのは**ストア側**だけなので、次の3つを揃えれば配信地域を広げられる。
+**配信地域の追加に審査は要らない。**
+
+1. 英語の掲載情報（概要・キーワード・プロモーション文・サブタイトル）
+   → `PATCH /v1/appStoreVersionLocalizations` で en-US を足す
+2. **英語UIのスクリーンショット**。シミュレータの言語を英語にして撮り直す。
+   `store/MakeScreenshots.swift` のキャプションも英語に差し替える
+
+   ```bash
+   xcrun simctl spawn booted defaults write -g AppleLanguages -array en
+   ```
+3. 配信地域にアメリカなどを足す（価格および配信状況の画面）
+
+EU に広げるときだけ**トレーダーステータス（氏名・住所・電話の公開）**が要る。
+日本と米国だけなら不要。
+
+## そのほか残っていること
+
+- 実機での長期運用の確認（数ヶ月ぶんの記録での書き出し速度）
