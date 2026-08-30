@@ -60,6 +60,9 @@ struct ContentView: View {
             .task {
                 if model.needsIntro { showingIntro = true }
                 await model.refresh()
+                #if DEBUG
+                await openForScreenshot()
+                #endif
             }
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active { Task { await model.refresh() } }
@@ -352,6 +355,33 @@ struct ContentView: View {
     }
 
     private var canExport: Bool { !model.isBusy && !model.selectedMetrics.isEmpty }
+
+    #if DEBUG
+    /// ストア用のスクリーンショットを撮るために、目的の画面を開いた状態で起動する。
+    /// シミュレータへの合成タップはシートに届かないので、こちらから開く。（引き継ぎ書 4-24）
+    ///
+    ///     SIMCTL_CHILD_HEALTHEXPORT_DEMO=1 SIMCTL_CHILD_HEALTHEXPORT_SHOT=result \
+    ///       xcrun simctl launch booted com.zzzjjj080.HealthExport
+    private func openForScreenshot() async {
+        guard let shot = ProcessInfo.processInfo.environment["HEALTHEXPORT_SHOT"] else { return }
+        switch shot {
+        case "result":
+            await model.export()
+            showingResult = true
+        case "detail":
+            detailExpanded = true
+            askExpanded = true
+        case "settings":
+            settingsTab = .metrics
+            showingSettings = true
+        case "period":
+            settingsTab = .period
+            showingSettings = true
+        default:
+            break
+        }
+    }
+    #endif
 }
 
 /// 目的ひとつぶんのタイル。2列に並ぶので、縦に積む。
