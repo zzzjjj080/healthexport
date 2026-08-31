@@ -47,7 +47,8 @@ SIMCTL_CHILD_HEALTHEXPORT_DEMO=1 xcrun simctl launch booted com.zzzjjj080.Health
 ## リリース
 
 - App ID `6806698295` / バンドルID `com.zzzjjj080.HealthExport`
-- 1.0 (1) をアップロード済み。**初回は日本のみで配信する。**
+- **1.0 (1) を 2026-08-30 に審査提出済み**（提出ID `316f91f3-671d-4f6e-9290-a91da431a763`）
+- 配信は日本のみ。無料。リリースは手動（承認されても自分のタイミングで出せる）
 - サポートページ: https://zzzjjj080.github.io/healthexport/
 - 掲載情報は App Store Connect API から入れている（`Tools-ASCToken.swift`）
 
