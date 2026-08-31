@@ -9,6 +9,7 @@ struct SettingsSheet: View {
     var initialTab: Tab = .period
     @Environment(\.dismiss) private var dismiss
     @State private var tab: Tab = .period
+    @State private var tipJar = TipJar(productID: TipJar.productID)
 
     enum Tab: String, CaseIterable {
         case period = "期間"
@@ -306,6 +307,8 @@ struct SettingsSheet: View {
                 Text("説明文には「値は重複を除いたあとの数字」「空欄は記録が無いという意味で、0ではない」という断りが入ります。"
                      + "AIの読み違いを防ぐためのものなので、残しておくのがおすすめです。")
             }
+
+            CoffeeTipSection(tipJar: tipJar)
         }
     }
 }
