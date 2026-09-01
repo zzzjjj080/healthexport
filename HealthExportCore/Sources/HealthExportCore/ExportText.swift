@@ -166,7 +166,7 @@ public enum ExportText {
     }
 
     /// 1項目ぶんのセル。値が無ければ列の数だけ空文字を返す。
-    static func cells(_ metric: Metric, value: MetricValue?) -> [String] {
+    static func cells(_ metric: Metric, value: MetricValue?, language: Language = .ja) -> [String] {
         let keys = columnKeys(metric)
         guard let value else { return Array(repeating: "", count: keys.count) }
         switch value {
@@ -185,11 +185,24 @@ public enum ExportText {
                     sleep.wakeMinute.map(clockLabel) ?? ""]
         case .text(let text):
             return [text]
+        case .bilingual(let ja, let en):
+            return [language == .ja ? ja : en]
         }
     }
 
     static func number(_ value: Double, decimals: Int) -> String {
         String(format: "%.\(max(0, decimals))f", value)
+    }
+
+    /// 3桁ごとにカンマを入れる。`formatted()` は端末の言語で結果が変わるので使わない。
+    static func grouped(_ value: Int) -> String {
+        let digits = String(abs(value))
+        var out = ""
+        for (index, character) in digits.enumerated() {
+            if index > 0, (digits.count - index) % 3 == 0 { out.append(",") }
+            out.append(character)
+        }
+        return (value < 0 ? "-" : "") + out
     }
 
     // MARK: - 日ごとの表
@@ -210,7 +223,7 @@ public enum ExportText {
             for metric in metrics {
                 let value = values?[metric.id]
                 if value != nil { hasAny = true }
-                row.append(contentsOf: cells(metric, value: value))
+                row.append(contentsOf: cells(metric, value: value, language: options.language))
             }
             if !hasAny && options.skipEmptyDays { continue }
             rows.append(row)
@@ -235,7 +248,7 @@ public enum ExportText {
             for day in request.range.days {
                 let value = request.daily[day]?[metric.id]
                 if value == nil && options.skipEmptyDays { continue }
-                rows.append([day.iso] + cells(metric, value: value))
+                rows.append([day.iso] + cells(metric, value: value, language: language))
             }
             let unit = metric.unit(language)
             let heading = "## \(metric.name(language))"
@@ -281,13 +294,13 @@ public enum ExportText {
         let language = options.language
         var rows: [[String]] = []
         switch series {
-        case .numbers(let samples):
+        case .numbers(let samples, _):
             rows.append(language == .ja ? ["日時", "値"] : ["datetime", "value"])
             for sample in samples {
                 rows.append(["\(sample.day.iso) \(clockLabel(sample.minute))",
                              number(sample.value, decimals: metric.decimals)])
             }
-        case .sleepSegments(let segments):
+        case .sleepSegments(let segments, _):
             rows.append(language == .ja ? ["開始", "終了", "段階"] : ["start", "end", "stage"])
             for segment in segments {
                 rows.append(["\(segment.day.iso) \(clockLabel(segment.startMinute))",
@@ -296,13 +309,19 @@ public enum ExportText {
             }
         }
         let unit = metric.unit(language)
-        let heading: String
+        var heading: String
         if language == .ja {
             heading = "## \(metric.name(language))" + (unit.isEmpty ? "" : "（\(unit)）")
-                + " 詳細（全 \(series.count) 件）"
+                + " 詳細（全 \(grouped(series.total)) 件）"
         } else {
             heading = "## \(metric.name(language))" + (unit.isEmpty ? "" : " (\(unit))")
-                + " detail (\(series.count) samples)"
+                + " detail (\(grouped(series.total)) samples)"
+        }
+        // 黙って減らすと、AIが「この期間はこれだけしか記録が無い」と誤解する
+        if series.isTruncated {
+            heading += language == .ja
+                ? "\n（多すぎるため、古いほうから \(grouped(series.count)) 件だけ載せています）"
+                : "\n(too many to include; only the first \(grouped(series.count)) are listed)"
         }
         return heading + "\n" + table(rows, separator: options.separator)
     }

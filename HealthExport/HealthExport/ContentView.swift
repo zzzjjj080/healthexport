@@ -36,7 +36,7 @@ struct ContentView: View {
                     periodCard
                     contentCard
                     if model.foundNothing { emptyCard }
-                    if let message = model.errorMessage { errorCard(message) }
+                    if !model.problems.isEmpty { errorCard(model.problems) }
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
@@ -291,12 +291,20 @@ struct ContentView: View {
             .fill(Color(.secondarySystemGroupedBackground)))
     }
 
-    private func errorCard(_ message: String) -> some View {
+    private func errorCard(_ messages: [String]) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("うまくいかなかったこと", systemImage: "exclamationmark.triangle.fill")
+            Label(messages.count == 1 ? "うまくいかなかったこと"
+                                      : "うまくいかなかったこと（\(messages.count)件）",
+                  systemImage: "exclamationmark.triangle.fill")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Palette.caution)
-            Text(message).font(.caption).foregroundStyle(.secondary)
+            // 1件で上書きすると、最初に起きた本当の原因が消える
+            ForEach(messages, id: \.self) { message in
+                Text("・" + message)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             Button("閉じる") { model.errorMessage = nil }.font(.caption.weight(.medium))
         }
         .padding(16)

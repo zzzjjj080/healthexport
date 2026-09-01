@@ -23,7 +23,16 @@ final class ExportModel {
     private(set) var exportedText: String?
     private(set) var estimate: SizeEstimate?
     private(set) var lastExportedAt: Date?
-    var errorMessage: String?
+    /// 画面に出す、うまくいかなかったことの一覧。
+    /// 1件で上書きすると、最初に起きた本当の原因が消える。
+    private(set) var problems: [String] = []
+
+    var errorMessage: String? {
+        get { problems.first }
+        set {
+            if let newValue { problems = [newValue] } else { problems.removeAll() }
+        }
+    }
 
     let reader = HealthReader()
     private let defaults: UserDefaults
@@ -84,7 +93,7 @@ final class ExportModel {
         #endif
         if !hasScanned {
             guard await reader.requestAuthorization() else {
-                errorMessage = reader.lastError
+                problems = reader.errors
                 return
             }
         }
@@ -103,7 +112,7 @@ final class ExportModel {
         #endif
         availability = await reader.scan(range: range)
         hasScanned = true
-        if let error = reader.lastError { errorMessage = error }
+        problems = reader.errors
         phase = .idle
     }
 
@@ -113,13 +122,12 @@ final class ExportModel {
     /// HealthKitは「前に聞いた型」を二度は聞かないため。
     /// なので画面には必ず、設定アプリへ行く道も一緒に出しておく。
     func requestAuthorizationAgain() async {
-        errorMessage = nil
+        problems.removeAll()
+        reader.clearError()
         #if DEBUG
         if DemoData.isEnabled { await rescan(); return }
         #endif
-        if await reader.requestAuthorization() == false {
-            errorMessage = reader.lastError
-        }
+        _ = await reader.requestAuthorization()
         await rescan()
     }
 
@@ -186,7 +194,7 @@ final class ExportModel {
         #else
         daily = await readFromHealthKit(metrics: metrics, rawSeries: &rawSeries)
         #endif
-        if let error = reader.lastError { errorMessage = error }
+        problems = reader.errors
 
         let request = ExportRequest(range: range,
                                     metrics: metrics,
@@ -206,12 +214,15 @@ final class ExportModel {
 
     private func readFromHealthKit(metrics: [Metric],
                                    rawSeries: inout [MetricID: RawSeries]) async -> DailyReadResult {
-        let daily = await reader.readDaily(range: range, metrics: metrics)
+        let daily = await reader.readDaily(range: range, metrics: metrics) { [weak self] index, total, name in
+            self?.phase = .reading("\(index)/\(total) \(name)")
+        }
         for id in settings.options.rawMetrics {
             let metric = MetricCatalog.metric(id)
             guard metric.supportsRawSamples, metrics.contains(where: { $0.id == id }) else { continue }
             phase = .reading("\(metric.jaName)を1件ずつ読んでいます")
-            if let series = await reader.readRaw(metric: metric, range: range) {
+            let estimated = availability[id]?.estimatedSamples ?? 0
+            if let series = await reader.readRaw(metric: metric, range: range, estimatedTotal: estimated) {
                 rawSeries[id] = series
             }
         }

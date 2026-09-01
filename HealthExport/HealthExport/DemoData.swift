@@ -88,8 +88,10 @@ enum DemoData {
                 case .moodLatest:
                     guard noise(metric.id.rawValue, day, "mood") < 0.5 else { continue }
                     let labels = ["とても快い", "快い", "やや快い", "ふつう", "やや不快", "不快"]
+                    let labelsEn = ["very pleasant", "pleasant", "slightly pleasant", "neutral", "slightly unpleasant", "unpleasant"]
+                    let index = Int(noise(metric.id.rawValue, day) * Double(labels.count))
                     result.daily[day, default: [:]][metric.id] =
-                        .text(labels[Int(noise(metric.id.rawValue, day) * Double(labels.count))])
+                        .bilingual(ja: labels[index], en: labelsEn[index])
                 case .minMaxAverage:
                     let base = center(metric)
                     let average = base + (noise(metric.id.rawValue, day) - 0.5) * spread(metric) * 2
@@ -117,7 +119,7 @@ enum DemoData {
                                               + (noise(metric.id.rawValue, day, "r\(index)") - 0.5) * spread(metric)))
             }
         }
-        return .numbers(samples)
+        return .numbers(samples, total: samples.count)
     }
 
     private static func center(_ metric: Metric) -> Double {

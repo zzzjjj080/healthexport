@@ -255,7 +255,7 @@ struct ExportTextTests {
         var options = ExportOptions(includeAsk: false)
         options.rawMetrics = [.heartRate]
         let samples = (0..<5).map { RawSample(day: Self.day1, minute: $0 * 60, value: 70 + Double($0)) }
-        let text = ExportText.build(Self.request(options: options, rawSeries: [.heartRate: .numbers(samples)]))
+        let text = ExportText.build(Self.request(options: options, rawSeries: [.heartRate: .numbers(samples, total: samples.count)]))
         let head = Self.lines(text).first { $0.hasPrefix("date") }!
         #expect(!head.contains("心拍数"))            // 日ごとの表には出ない
         #expect(text.contains("## 心拍数（bpm） 詳細（全 5 件）"))
@@ -268,7 +268,7 @@ struct ExportTextTests {
         let segments = [SleepSegment(day: Self.day1, startMinute: 22 * 60, endMinute: 23 * 60,
                                      stageJa: "コア", stageEn: "core")]
         let text = ExportText.build(Self.request(metrics: [.sleep], options: options,
-                                                 rawSeries: [.sleep: .sleepSegments(segments)]))
+                                                 rawSeries: [.sleep: .sleepSegments(segments, total: segments.count)]))
         #expect(text.contains("開始\t終了\t段階"))
         #expect(text.contains("2026-06-01 22:00\t23:00\tコア"))
     }
@@ -295,5 +295,91 @@ struct ExportTextTests {
     @Test func 見積もりは日本語と英数字を分けて数える() {
         #expect(SizeEstimate.of("abcd").approximateTokens == 1)     // 3.6文字で1
         #expect(SizeEstimate.of("あいう").approximateTokens == 3)   // 1文字で1
+    }
+}
+
+
+/// 気分のように言葉で表す値は、日英の両方を持たせる。
+/// 片方だけだと、英語で書き出したのに1列だけ日本語、ということが起きる。
+struct BilingualValueTests {
+
+    static func request(_ options: ExportOptions) -> ExportRequest {
+        ExportRequest(range: DateRange(from: YMD(2026, 6, 1), to: YMD(2026, 6, 1)),
+                      metrics: MetricCatalog.metrics([.stateOfMind]),
+                      daily: [YMD(2026, 6, 1): [.stateOfMind: .bilingual(ja: "やや快い", en: "slightly pleasant")]],
+                      options: options)
+    }
+
+    @Test func 言語に合わせて言葉が切り替わる() {
+        var ja = ExportOptions(includeAsk: false)
+        ja.language = .ja
+        #expect(ExportText.build(Self.request(ja)).contains("やや快い"))
+
+        var en = ExportOptions(includeAsk: false)
+        en.language = .en
+        let text = ExportText.build(Self.request(en))
+        #expect(text.contains("slightly pleasant"))
+        #expect(!text.contains("やや快い"))   // 日本語が混ざらない
+    }
+
+    @Test func 項目ごとに分ける形でも切り替わる() {
+        var en = ExportOptions(includeAsk: false)
+        en.language = .en
+        en.layout = .block
+        let text = ExportText.build(Self.request(en))
+        #expect(text.contains("slightly pleasant"))
+        #expect(!text.contains("やや快い"))
+    }
+}
+
+/// 「1件ずつ全部」が多すぎるときは切るが、切ったことを本文に書く。
+/// 黙って減らすと、AIが「この期間はこれだけしか記録が無い」と誤解する。
+struct TruncatedRawTests {
+
+    static func request(shown: Int, total: Int, language: Language = .ja) -> ExportRequest {
+        var options = ExportOptions(includeAsk: false)
+        options.language = language
+        options.rawMetrics = [.heartRate]
+        let samples = (0..<shown).map { RawSample(day: YMD(2026, 6, 1), minute: $0, value: 70) }
+        return ExportRequest(range: DateRange(from: YMD(2026, 6, 1), to: YMD(2026, 6, 1)),
+                             metrics: MetricCatalog.metrics([.heartRate]),
+                             rawSeries: [.heartRate: .numbers(samples, total: total)],
+                             options: options)
+    }
+
+    @Test func 切ったときは元の件数と断りが入る() {
+        let text = ExportText.build(Self.request(shown: 100, total: 250_000))
+        #expect(text.contains("全 250,000 件"))
+        #expect(text.contains("100 件だけ載せています"))
+    }
+
+    @Test func 切っていなければ断りは入らない() {
+        let text = ExportText.build(Self.request(shown: 100, total: 100))
+        #expect(text.contains("全 100 件"))
+        #expect(!text.contains("だけ載せています"))
+    }
+
+    @Test func 英語でも断りが入る() {
+        let text = ExportText.build(Self.request(shown: 100, total: 250_000, language: .en))
+        #expect(text.contains("250,000 samples"))
+        #expect(text.contains("only the first 100"))
+    }
+
+    @Test func 切ったかどうかは件数で決まる() {
+        #expect(RawSeries.numbers([], total: 5).isTruncated)
+        #expect(!RawSeries.numbers([], total: 0).isTruncated)
+    }
+}
+
+struct GroupedNumberTests {
+
+    /// 端末の言語で結果が変わらないこと。`formatted()` を使うと変わる。
+    @Test func 三桁ごとにカンマが入る() {
+        #expect(ExportText.grouped(0) == "0")
+        #expect(ExportText.grouped(999) == "999")
+        #expect(ExportText.grouped(1000) == "1,000")
+        #expect(ExportText.grouped(250_000) == "250,000")
+        #expect(ExportText.grouped(1_234_567) == "1,234,567")
+        #expect(ExportText.grouped(-4500) == "-4,500")
     }
 }

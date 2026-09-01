@@ -30,11 +30,21 @@ final class HealthReader {
 
     /// 失敗した理由。**握り潰さない。**（引き継ぎ書 4-1）
     /// 無反応が一番たちが悪いので、必ず画面に出す。
-    private(set) var lastError: String?
+    ///
+    /// 1件だけ持つと、あとの失敗で最初の原因が消える。
+    /// 最初に起きたことのほうが本当の原因であることが多いので、全部ためる。
+    private(set) var errors: [String] = []
+
+    var lastError: String? { errors.first }
 
     static var isAvailable: Bool { HKHealthStore.isHealthDataAvailable() }
 
-    func clearError() { lastError = nil }
+    func clearError() { errors.removeAll() }
+
+    private func note(_ message: String) {
+        guard !errors.contains(message) else { return }   // 同じものを何度も並べない
+        errors.append(message)
+    }
 
     // MARK: - 型の変換
 
@@ -73,17 +83,17 @@ final class HealthReader {
     /// 全項目ぶんを一度に求める。あとから足すと、そのたびにダイアログが出て煩わしい。
     func requestAuthorization() async -> Bool {
         guard Self.isAvailable else {
-            lastError = "この端末ではヘルスケアを使えません。"
+            note("この端末ではヘルスケアを使えません。")
             return false
         }
         let types = Set(MetricCatalog.all.compactMap { objectType(for: $0) })
         do {
             try await store.requestAuthorization(toShare: [], read: types)
-            lastError = nil
+            errors.removeAll()
             return true
         } catch {
             // ここで握り潰すと、ボタンを押しても無反応になって原因が分からなくなる
-            lastError = "ヘルスケアの許可を求められませんでした: \(error.localizedDescription)"
+            note("ヘルスケアの許可を求められませんでした: \(error.localizedDescription)")
             return false
         }
     }
@@ -132,19 +142,23 @@ final class HealthReader {
                                       sourceNames: names.sorted(),
                                       estimatedSamples: metric.samplesPerDay * days)
         } catch {
-            lastError = "\(metric.jaName)を調べられませんでした: \(error.localizedDescription)"
+            note("\(metric.jaName)を調べられませんでした: \(error.localizedDescription)")
             return empty
         }
     }
 
     // MARK: - 日ごとの値を読む
 
-    func readDaily(range: DateRange, metrics: [Metric]) async -> DailyReadResult {
+    /// - Parameter progress: 何番目のどの項目を読んでいるかを知らせる。
+    ///   24項目を1年ぶん読むと十数秒かかるので、進みを見せないと固まったように見える。
+    func readDaily(range: DateRange, metrics: [Metric],
+                   progress: ((Int, Int, String) -> Void)? = nil) async -> DailyReadResult {
         var result = DailyReadResult()
         var names: Set<String> = []
         guard let predicate = datePredicate(range) else { return result }
 
-        for metric in metrics {
+        for (index, metric) in metrics.enumerated() {
+            progress?(index + 1, metrics.count, metric.jaName)
             switch metric.aggregation {
             case .sum, .average, .minMaxAverage, .latest:
                 if metric.source.isQuantity {
@@ -209,7 +223,7 @@ final class HealthReader {
                 if let value { result.daily[day, default: [:]][metric.id] = value }
             }
         } catch {
-            lastError = "\(metric.jaName)を読めませんでした: \(error.localizedDescription)"
+            note("\(metric.jaName)を読めませんでした: \(error.localizedDescription)")
         }
     }
 
@@ -232,7 +246,7 @@ final class HealthReader {
                 result.daily[day, default: [:]][metric.id] = .number(value)
             }
         } catch {
-            lastError = "\(metric.jaName)を読めませんでした: \(error.localizedDescription)"
+            note("\(metric.jaName)を読めませんでした: \(error.localizedDescription)")
         }
     }
 
@@ -300,14 +314,20 @@ final class HealthReader {
                 result.daily[day, default: [:]][metric.id] = .sleep(summary)
             }
         } catch {
-            lastError = "睡眠を読めませんでした: \(error.localizedDescription)"
+            note("睡眠を読めませんでした: \(error.localizedDescription)")
         }
     }
 
     // MARK: - 1件ずつ全部
 
+    /// 一度に持つ上限。心拍を1年ぶん選ぶと数十万件になり、そのまま持つと落ちる。
+    static let rawSampleLimit = 50_000
+
     /// 「1件ずつ全部」を選んだ項目を読む。心拍は3ヶ月で10万件を超えるので、時間がかかる。
-    func readRaw(metric: Metric, range: DateRange) async -> RawSeries? {
+    ///
+    /// - Parameter estimatedTotal: 期間内にあると見込まれる件数。
+    ///   上限で切ったときに「本当は何件あったか」を書き出しに残すために使う。
+    func readRaw(metric: Metric, range: DateRange, estimatedTotal: Int = 0) async -> RawSeries? {
         guard let predicate = datePredicate(range) else { return nil }
         do {
             if metric.aggregation == .sleep {
@@ -323,20 +343,25 @@ final class HealthReader {
                                                  endMinute: minuteOfDay(sample.endDate),
                                                  stageJa: names.ja, stageEn: names.en))
                 }
-                return .sleepSegments(segments)
+                return .sleepSegments(segments, total: segments.count)
             }
             guard let (type, unit, scale) = quantityType(metric) else { return nil }
             let samples = try await HKSampleQueryDescriptor(
                 predicates: [.quantitySample(type: type, predicate: predicate)],
-                sortDescriptors: [SortDescriptor(\.startDate)]).result(for: store)
+                sortDescriptors: [SortDescriptor(\.startDate)],
+                limit: Self.rawSampleLimit).result(for: store)
             let values = samples.map {
                 RawSample(day: YMD.from($0.startDate),
                           minute: minuteOfDay($0.startDate),
                           value: $0.quantity.doubleValue(for: unit) * scale)
             }
-            return .numbers(values)
+            // 上限ちょうどで返ってきたら、まだ先がある。見込みの件数のほうを総数として残す
+            let total = samples.count < Self.rawSampleLimit
+                ? samples.count
+                : max(estimatedTotal, samples.count)
+            return .numbers(values, total: total)
         } catch {
-            lastError = "\(metric.jaName)の詳細を読めませんでした: \(error.localizedDescription)"
+            note("\(metric.jaName)の詳細を読めませんでした: \(error.localizedDescription)")
             return nil
         }
     }
@@ -377,7 +402,7 @@ final class HealthReader {
                 names.insert(workout.sourceRevision.source.name)
             }
         } catch {
-            lastError = "ワークアウトを読めませんでした: \(error.localizedDescription)"
+            note("ワークアウトを読めませんでした: \(error.localizedDescription)")
         }
     }
 
@@ -390,24 +415,27 @@ final class HealthReader {
                 sortDescriptors: [SortDescriptor(\.startDate)]).result(for: store)
             for sample in samples {
                 let day = YMD.from(sample.startDate)
-                result.daily[day, default: [:]][metric.id] = .text(Self.valenceLabel(sample.valenceClassification))
+                let label = Self.valenceLabel(sample.valenceClassification)
+                result.daily[day, default: [:]][metric.id] = .bilingual(ja: label.ja, en: label.en)
             }
         } catch {
-            lastError = "気分の記録を読めませんでした: \(error.localizedDescription)"
+            note("気分の記録を読めませんでした: \(error.localizedDescription)")
         }
     }
 
+    /// 気分の言い表し方。**日英の両方を返す。**
+    /// 読み出す時点では、どちらの言語で書き出すか決まっていない。
     @available(iOS 18.0, *)
-    static func valenceLabel(_ classification: HKStateOfMind.ValenceClassification) -> String {
+    static func valenceLabel(_ classification: HKStateOfMind.ValenceClassification) -> (ja: String, en: String) {
         switch classification {
-        case .veryUnpleasant:     return "とても不快"
-        case .unpleasant:         return "不快"
-        case .slightlyUnpleasant: return "やや不快"
-        case .neutral:            return "ふつう"
-        case .slightlyPleasant:   return "やや快い"
-        case .pleasant:           return "快い"
-        case .veryPleasant:       return "とても快い"
-        @unknown default:         return "ふつう"
+        case .veryUnpleasant:     return ("とても不快", "very unpleasant")
+        case .unpleasant:         return ("不快", "unpleasant")
+        case .slightlyUnpleasant: return ("やや不快", "slightly unpleasant")
+        case .neutral:            return ("ふつう", "neutral")
+        case .slightlyPleasant:   return ("やや快い", "slightly pleasant")
+        case .pleasant:           return ("快い", "pleasant")
+        case .veryPleasant:       return ("とても快い", "very pleasant")
+        @unknown default:         return ("ふつう", "neutral")
         }
     }
 }
