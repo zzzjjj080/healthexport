@@ -308,6 +308,7 @@ struct SettingsSheet: View {
                      + "AIの読み違いを防ぐためのものなので、残しておくのがおすすめです。")
             }
 
+            FeedbackSection()
             CoffeeTipSection(tipJar: tipJar)
         }
     }
