@@ -47,7 +47,17 @@ SIMCTL_CHILD_HEALTHEXPORT_DEMO=1 xcrun simctl launch booted com.zzzjjj080.Health
 ## リリース
 
 - App ID `6806698295` / バンドルID `com.zzzjjj080.HealthExport`
-- **1.0 (1) を 2026-08-30 に審査提出済み**（提出ID `316f91f3-671d-4f6e-9290-a91da431a763`）
+- **1.0 (1) を 2026-09-02 に公開**（App Store: https://apps.apple.com/jp/app/id6806698295 ）
+- 公開した 1.0 に投げ銭は入っていない。8/30にアップロードしたあとで実装したため。
+
+### 1.1 で出すもの（未提出）
+
+- 投げ銭「開発者にコーヒーを奢る」
+  - **課金アイテムは `MISSING_METADATA`。** 情報を埋めないと審査に出せない
+  - **最初の課金はアプリのバージョンと一緒に提出する必要がある**
+  - 有料App契約・銀行口座・税務情報が先に要る（引き継ぎ書11節）
+- 不具合の報告・要望を送るボタン
+- バグ修正5件（気分のラベルの言語、生データの上限、エラーの蓄積、進捗表示、年をまたぐ期間の表示）
 - 配信は日本のみ。無料。リリースは手動（承認されても自分のタイミングで出せる）
 - サポートページ: https://zzzjjj080.github.io/healthexport/
 - 掲載情報は App Store Connect API から入れている（`Tools-ASCToken.swift`）
