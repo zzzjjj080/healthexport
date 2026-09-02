@@ -9,6 +9,7 @@ struct ResultSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var fileURL: URL?
     @State private var copied = false
+    @State private var tipJar = TipJar(productID: TipJar.productID)
 
     var body: some View {
         NavigationStack {
@@ -83,6 +84,10 @@ struct ResultSheet: View {
             Text("チャット欄に貼るなら「コピー」、ファイルで送るなら「共有」。")
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
+            // 役に立った直後がいちばん自然な置き場所。
+            // 主張はさせない（書き出す前のメイン画面には置かない）
+            CoffeeTipLink(tipJar: tipJar, tint: Palette.accent)
+                .padding(.top, 2)
         }
         .padding(.horizontal, 18)
         .padding(.top, 6)
