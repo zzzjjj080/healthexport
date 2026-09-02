@@ -52,6 +52,13 @@ final class ExportModel {
         } else {
             settings = AppSettings()
         }
+        #if DEBUG
+        // 長い期間の重さを測るため。SIMCTL_CHILD_HEALTHEXPORT_DAYS=365 で起動する
+        if let days = ProcessInfo.processInfo.environment["HEALTHEXPORT_DAYS"].flatMap(Int.init) {
+            settings.customRange = nil
+            settings.customDays = days
+        }
+        #endif
     }
 
     private func save() {
@@ -154,8 +161,14 @@ final class ExportModel {
     }
 
     /// その下に小さく出す、実際の日付。
+    ///
+    /// 年をまたぐときは年も出す。月日だけだと「09-03 〜 09-02」となり、
+    /// 1年ぶんなのに1日しかないように見える。
     var periodDetail: String {
-        "\(range.from.iso.dropFirst(5)) 〜 \(range.to.iso.dropFirst(5))"
+        if range.from.year == range.to.year {
+            return "\(range.from.iso.dropFirst(5)) 〜 \(range.to.iso.dropFirst(5))"
+        }
+        return "\(range.from.iso) 〜 \(range.to.iso)"
     }
 
     var canStepShorter: Bool { isCustomRange || currentDays != PeriodChoice.steps.first }

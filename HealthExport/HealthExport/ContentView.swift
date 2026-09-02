@@ -113,6 +113,8 @@ struct ContentView: View {
                         .font(.system(size: 10))
                         .foregroundStyle(.secondary)
                         .monospacedDigit()
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)   // 年をまたぐと長くなる
                 }
                 .frame(minWidth: 104)
                 stepButton(systemName: "plus", direction: 1, enabled: model.canStepLonger)
