@@ -62,6 +62,18 @@ SIMCTL_CHILD_HEALTHEXPORT_DEMO=1 xcrun simctl launch booted com.zzzjjj080.Health
 - サポートページ: https://zzzjjj080.github.io/healthexport/
 - 掲載情報は App Store Connect API から入れている（`Tools-ASCToken.swift`）
 
+### 1.2（2026-09-09 審査提出。英語対応・全世界配信の準備）
+
+- 英語のストア名は **Health for AI**。`Health Export` `HealthPrompt` `HealthBrief`
+  `Health Handoff` `HealthText` はすべて他のアカウントで使用済みだった。
+  **App Store の名前は世界で一意。** 日本語名と揃える必要はない（引き継ぎ書 4-88）。
+- ホーム画面と画面上部の表示も英語では Health for AI に揃えてある。
+- 掲載情報・スクリーンショットは日英とも登録済み。
+
+**配信地域は承認されるまで日本のまま。** いま広げると、英語のページを持たない
+1.1 が全世界に出てしまう。**リリースするときに一緒に広げる。**
+課金は「新しい国を自動追加」が有効なので、アプリを広げれば追随する。
+
 ### グローバル版でやること
 
 アプリ本体は日英に対応済み（書き出すテキストの言語も選べる）。
