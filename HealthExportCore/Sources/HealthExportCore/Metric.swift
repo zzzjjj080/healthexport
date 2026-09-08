@@ -78,6 +78,14 @@ public enum HealthSource: Equatable, Sendable {
     case stateOfMind
 }
 
+/// ヤード・ポンド法で書き出すときの単位。距離・体重など一部の項目だけが持つ。
+/// **手首皮膚温の「変化」は変換しない。** 差分の値に華氏の換算（×1.8+32）を掛けると壊れる。
+public struct ImperialUnit: Equatable, Sendable {
+    public let label: String     // 表示（"mi" など。日英で同じ）
+    public let hkUnit: String    // HealthKit に渡す単位の文字列（"mi/hr" など）
+    public let shortKey: String  // 列名を短くしたときの名前（"dist_mi" など）
+}
+
 public struct Metric: Identifiable, Equatable, Sendable {
     public let id: MetricID
     public let category: MetricCategory
@@ -92,9 +100,27 @@ public struct Metric: Identifiable, Equatable, Sendable {
     public let decimals: Int
     /// 「1件ずつ全部」を選んだときの重さを見積もるための、1日あたりの件数の目安。
     public let samplesPerDay: Int
+    /// ヤード・ポンド法での単位。無いものはどちらの単位系でも同じ表記。
+    public var imperial: ImperialUnit? = nil
 
     public func name(_ language: Language) -> String { language == .ja ? jaName : enName }
-    public func unit(_ language: Language) -> String { language == .ja ? jaUnit : enUnit }
+
+    public func unit(_ language: Language, _ system: UnitSystem = .metric) -> String {
+        if system == .imperial, let imperial { return imperial.label }
+        return language == .ja ? jaUnit : enUnit
+    }
+
+    public func shortKey(_ system: UnitSystem) -> String {
+        if system == .imperial, let imperial { return imperial.shortKey }
+        return shortKey
+    }
+
+    /// HealthKit から値を取り出すときの単位。数値の項目でなければ nil。
+    public func healthKitUnit(_ system: UnitSystem) -> String? {
+        guard case .quantity(_, let unit, _) = source else { return nil }
+        if system == .imperial, let imperial { return imperial.hkUnit }
+        return unit
+    }
 
     /// 1件ずつの書き出しに意味があるか。ワークアウトと気分は元から件数が少ない。
     public var supportsRawSamples: Bool {
@@ -115,7 +141,8 @@ public enum MetricCatalog {
         Metric(id: .distance, category: .activity, jaName: "歩行+走行距離", enName: "Walking+running distance",
                jaUnit: "km", enUnit: "km", shortKey: "dist_km",
                source: .quantity(identifier: "HKQuantityTypeIdentifierDistanceWalkingRunning", unit: "km", scale: 1),
-               aggregation: .sum, decimals: 2, samplesPerDay: 60),
+               aggregation: .sum, decimals: 2, samplesPerDay: 60,
+               imperial: ImperialUnit(label: "mi", hkUnit: "mi", shortKey: "dist_mi")),
         Metric(id: .flights, category: .activity, jaName: "上った階数", enName: "Flights climbed",
                jaUnit: "階", enUnit: "floors", shortKey: "floors",
                source: .quantity(identifier: "HKQuantityTypeIdentifierFlightsClimbed", unit: "count", scale: 1),
@@ -183,7 +210,8 @@ public enum MetricCatalog {
         Metric(id: .bodyMass, category: .body, jaName: "体重", enName: "Body mass",
                jaUnit: "kg", enUnit: "kg", shortKey: "kg",
                source: .quantity(identifier: "HKQuantityTypeIdentifierBodyMass", unit: "kg", scale: 1),
-               aggregation: .latest, decimals: 1, samplesPerDay: 1),
+               aggregation: .latest, decimals: 1, samplesPerDay: 1,
+               imperial: ImperialUnit(label: "lb", hkUnit: "lb", shortKey: "lb")),
         Metric(id: .bodyFat, category: .body, jaName: "体脂肪率", enName: "Body fat percentage",
                jaUnit: "%", enUnit: "%", shortKey: "fat_pct",
                source: .quantity(identifier: "HKQuantityTypeIdentifierBodyFatPercentage", unit: "%", scale: 100),
@@ -192,11 +220,13 @@ public enum MetricCatalog {
         Metric(id: .walkingSpeed, category: .mobility, jaName: "歩行速度", enName: "Walking speed",
                jaUnit: "km/h", enUnit: "km/h", shortKey: "w_speed",
                source: .quantity(identifier: "HKQuantityTypeIdentifierWalkingSpeed", unit: "km/hr", scale: 1),
-               aggregation: .average, decimals: 2, samplesPerDay: 8),
+               aggregation: .average, decimals: 2, samplesPerDay: 8,
+               imperial: ImperialUnit(label: "mph", hkUnit: "mi/hr", shortKey: "w_speed")),
         Metric(id: .stepLength, category: .mobility, jaName: "歩幅", enName: "Walking step length",
                jaUnit: "cm", enUnit: "cm", shortKey: "w_len_cm",
                source: .quantity(identifier: "HKQuantityTypeIdentifierWalkingStepLength", unit: "cm", scale: 1),
-               aggregation: .average, decimals: 0, samplesPerDay: 8),
+               aggregation: .average, decimals: 0, samplesPerDay: 8,
+               imperial: ImperialUnit(label: "in", hkUnit: "in", shortKey: "w_len_in")),
         Metric(id: .walkingAsymmetry, category: .mobility, jaName: "歩行の非対称性", enName: "Walking asymmetry",
                jaUnit: "%", enUnit: "%", shortKey: "w_asym",
                source: .quantity(identifier: "HKQuantityTypeIdentifierWalkingAsymmetryPercentage", unit: "%", scale: 100),

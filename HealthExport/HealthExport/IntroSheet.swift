@@ -54,7 +54,8 @@ struct IntroSheet: View {
         .background(Color(.systemGroupedBackground))
     }
 
-    private func step(_ number: String, _ title: String, _ detail: String, symbol: String) -> some View {
+    private func step(_ number: String, _ title: LocalizedStringKey, _ detail: LocalizedStringKey,
+                      symbol: String) -> some View {
         HStack(alignment: .top, spacing: 14) {
             ZStack {
                 Circle().fill(Palette.accent.opacity(0.12)).frame(width: 40, height: 40)

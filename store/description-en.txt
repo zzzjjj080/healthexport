@@ -1,0 +1,91 @@
+Your iPhone has been keeping years of records — steps, sleep, heart rate.
+But the moment you want to ask an AI about them, you stop: where do you even get the data out?
+
+This app gathers those records into one text file that an AI can read.
+
+
+■ Hand it to whichever AI you already use
+
+What comes out is plain text. No integration to set up, no account to create.
+
+・Tap Copy and paste it into your usual AI chat
+・For longer periods, share it as a text file instead
+
+It doesn't matter which AI you use. This app's job ends at preparing one
+readable piece of text for whoever you choose to give it to.
+
+
+■ You only pick a purpose
+
+Deciding what to include, and how to summarise it, is hard if you haven't done it before.
+So six purposes each set everything for you.
+
+・General check-in … everything you have. Start here if unsure
+・Sleep … sleep and the things that affect it
+・Training … training load, and whether you're recovering
+・Condition … find the days unlike your usual
+・Mood … your mood entries against your body data
+・No questions … ask nothing, let the AI look freely
+
+Along with the period, metrics and summarising, it writes the request for the AI too.
+A line like "tell me the trends in this period" goes at the top, so you don't have to
+think about what to ask after handing it over.
+
+
+■ No need to tell it what devices you own
+
+It never asks whether you have an Apple Watch, or what your earbuds can measure.
+It looks at the period you chose and lists only the metrics that actually have records.
+Nothing you can't measure appears in the list, and no empty columns end up in the file.
+
+
+■ You know whether it fits before you send it
+
+Chat boxes have limits. After exporting you see the character count and an
+approximate token count, and whether it will paste as is. If it's too long,
+it tells you what to shorten.
+
+Three months of every metric comes to about 15,000 characters when summarised by day.
+You can switch individual metrics to every single sample when you need the detail.
+
+
+■ What gets exported
+
+Steps, walking+running distance, flights climbed, active and resting energy,
+exercise minutes, stand minutes, workouts, heart rate, resting heart rate,
+heart rate variability, walking heart rate average, cardio fitness, blood oxygen,
+respiratory rate, wrist temperature deviation, sleep (total and stages), body mass,
+body fat percentage, walking speed, step length, walking asymmetry,
+headphone audio levels, environmental sound levels, mindful minutes, state of mind.
+
+Only the ones with records in your chosen period are included.
+
+Distance and weight can be shown in miles and pounds, or kilometres and kilograms.
+
+
+■ Getting the numbers across correctly
+
+・Some metrics, like steps, are written by both your iPhone and your Apple Watch.
+  Adding them up would overstate them, so the values are what Health reports
+  after removing duplicates.
+・Sleep can also be recorded twice for the same night, so overlaps are merged first.
+・A blank means no record exists — not a value of zero. The file says so.
+
+These notes go at the top of the document, so whoever reads it doesn't misread it.
+
+
+■ It doesn't connect to anything
+
+Data is handled only on this device. This app never sends it anywhere.
+You decide who receives the exported text.
+No account, no sign-in.
+
+
+■ Please note
+
+This is not a medical device and not for diagnosis or treatment.
+If something concerns you, please see a doctor.
+An AI's answer is a reference, not a substitute for medical judgement.
+
+
+Available in English and Japanese, and you can choose which language the text is written in.

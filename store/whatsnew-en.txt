@@ -1,0 +1,8 @@
+・The app is now available in English, and can write the exported text in English.
+・Distance and weight can be shown in miles and pounds.
+・You can now buy the developer a coffee from the screen shown after an export.
+・Added a button in the detailed settings for reporting problems and requests.
+・Fixed mood entries staying in Japanese when exporting in English.
+・Exporting every single sample is now capped, and the file says when it was cut.
+・All problems are now shown, not just the first one.
+・Added progress while reading, and fixed a one-year period looking like a single day.

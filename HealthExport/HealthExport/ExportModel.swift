@@ -50,7 +50,11 @@ final class ExportModel {
            let restored = try? JSONDecoder().decode(AppSettings.self, from: data) {
             settings = restored
         } else {
-            settings = AppSettings()
+            // 初回だけ端末に合わせる。以後は本人が設定で変えたものを守る
+            var fresh = AppSettings()
+            fresh.options.language = Language.ui
+            fresh.options.unitSystem = UnitSystem.forLocale()
+            settings = fresh
         }
         #if DEBUG
         // 長い期間の重さを測るため。SIMCTL_CHILD_HEALTHEXPORT_DAYS=365 で起動する
@@ -156,7 +160,7 @@ final class ExportModel {
 
     /// 期間の呼び名。日付で指定したときも幅が変わらないよう、日数で言う。
     var periodLabel: String {
-        if isCustomRange { return "\(range.dayCount)日間" }
+        if isCustomRange { return L("\(range.dayCount)日間", "\(range.dayCount) days") }
         return PeriodChoice.label(currentDays, settings.options.language)
     }
 
@@ -187,10 +191,11 @@ final class ExportModel {
         guard !isBusy else { return }
         let metrics = selectedMetrics
         guard !metrics.isEmpty else {
-            errorMessage = "書き出せる項目がありません。ヘルスケアの許可と、選んでいる期間を確かめてください。"
+            errorMessage = L("書き出せる項目がありません。ヘルスケアの許可と、選んでいる期間を確かめてください。",
+                             "Nothing to export. Check Health access and the selected period.")
             return
         }
-        phase = .reading("記録を読んでいます")
+        phase = .reading(L("記録を読んでいます", "Reading records"))
         var daily: DailyReadResult
         var rawSeries: [MetricID: RawSeries] = [:]
         #if DEBUG
@@ -227,13 +232,14 @@ final class ExportModel {
 
     private func readFromHealthKit(metrics: [Metric],
                                    rawSeries: inout [MetricID: RawSeries]) async -> DailyReadResult {
+        reader.unitSystem = settings.options.unitSystem
         let daily = await reader.readDaily(range: range, metrics: metrics) { [weak self] index, total, name in
             self?.phase = .reading("\(index)/\(total) \(name)")
         }
         for id in settings.options.rawMetrics {
             let metric = MetricCatalog.metric(id)
             guard metric.supportsRawSamples, metrics.contains(where: { $0.id == id }) else { continue }
-            phase = .reading("\(metric.jaName)を1件ずつ読んでいます")
+            phase = .reading(L("\(metric.name(.ja))を1件ずつ読んでいます", "Reading every sample of \(metric.name(.en))"))
             let estimated = availability[id]?.estimatedSamples ?? 0
             if let series = await reader.readRaw(metric: metric, range: range, estimatedTotal: estimated) {
                 rawSeries[id] = series
@@ -258,8 +264,8 @@ final class ExportModel {
         guard total > limit else { return text }
         let omitted = total - limit
         return lines.joined(separator: "\n")
-            + "\n\n…… ここから先の \(omitted.formatted()) 行は画面に出していません。"
-            + "\nコピーと共有には全部入っています。"
+            + L("\n\n…… ここから先の \(omitted.formatted()) 行は画面に出していません。\nコピーと共有には全部入っています。",
+                "\n\n…… \(omitted.formatted()) more lines are not shown here.\nCopy and Share include everything.")
     }
 
     /// 共有シートに渡すファイル。名前で中身が分かるようにしておく。
@@ -271,7 +277,8 @@ final class ExportModel {
             try text.write(to: url, atomically: true, encoding: .utf8)
             return url
         } catch {
-            errorMessage = "ファイルを作れませんでした: \(error.localizedDescription)"
+            errorMessage = L("ファイルを作れませんでした: \(error.localizedDescription)",
+                             "Could not create the file: \(error.localizedDescription)")
             return nil
         }
     }

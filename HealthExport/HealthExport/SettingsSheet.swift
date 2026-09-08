@@ -11,17 +11,24 @@ struct SettingsSheet: View {
     @State private var tab: Tab = .period
     @State private var tipJar = TipJar(productID: TipJar.productID)
 
-    enum Tab: String, CaseIterable {
-        case period = "期間"
-        case metrics = "項目"
-        case format = "形式"
+    enum Tab: CaseIterable {
+        case period, metrics, format
+
+        // rawValue の String を Text に渡すと訳されない。キーとして持つ（引き継ぎ書 4-87 ①）
+        var title: LocalizedStringKey {
+            switch self {
+            case .period:  return "期間"
+            case .metrics: return "項目"
+            case .format:  return "形式"
+            }
+        }
     }
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
                 Picker("", selection: $tab) {
-                    ForEach(Tab.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                    ForEach(Tab.allCases, id: \.self) { Text($0.title).tag($0) }
                 }
                 .pickerStyle(.segmented)
                 .padding(.horizontal)
@@ -72,7 +79,7 @@ struct SettingsSheet: View {
                             model.settings.customDays = days
                             Task { await model.rescan() }
                         } label: {
-                            Text(PeriodChoice.label(days, .ja))
+                            Text(PeriodChoice.label(days, .ui))
                                 .font(.system(.subheadline, design: .rounded, weight: .semibold))
                                 .foregroundStyle(active ? Color.white : Color.primary)
                                 .frame(maxWidth: .infinity)
@@ -92,7 +99,8 @@ struct SettingsSheet: View {
             } header: {
                 Text("直近")
             } footer: {
-                Text("いまの期間: \(model.range.from.iso) 〜 \(model.range.to.iso)（\(model.range.dayCount)日間）")
+                Text(L("いまの期間: \(model.range.from.iso) 〜 \(model.range.to.iso)（\(model.range.dayCount)日間）",
+                       "Current period: \(model.range.from.iso) – \(model.range.to.iso) (\(model.range.dayCount) days)"))
             }
 
             Section {
@@ -138,8 +146,7 @@ struct SettingsSheet: View {
         List {
             Section {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("この期間に記録があった項目だけを出しています。"
-                         + "チェックを外すと書き出しから抜けます。")
+                    Text("この期間に記録があった項目だけを出しています。チェックを外すと書き出しから抜けます。")
                         .font(.caption).foregroundStyle(.secondary)
                     Button {
                         Haptics.tap()
@@ -152,8 +159,7 @@ struct SettingsSheet: View {
                     }
                     .accessibilityIdentifier("reauthorizeButton")
                     // 一度断った項目は、アプリから呼んでもダイアログが出ない。逃げ道を必ず用意する
-                    Text("最初に「許可しない」を選んだ場合、この操作では画面が出ないことがあります。"
-                         + "そのときは設定アプリから変えてください。")
+                    Text("最初に「許可しない」を選んだ場合、この操作では画面が出ないことがあります。そのときは設定アプリから変えてください。")
                         .font(.caption2).foregroundStyle(.secondary)
                     Button {
                         if let url = URL(string: UIApplication.openSettingsURLString) {
@@ -174,7 +180,7 @@ struct SettingsSheet: View {
                     $0.category == category && (model.availability[$0.id]?.hasData ?? false)
                 }
                 if !metrics.isEmpty {
-                    Section(category.name(.ja)) {
+                    Section(category.name(.ui)) {
                         ForEach(metrics) { metric in
                             metricRow(metric)
                         }
@@ -185,7 +191,7 @@ struct SettingsSheet: View {
             let missing = MetricCatalog.all.filter { !(model.availability[$0.id]?.hasData ?? false) }
             if !missing.isEmpty {
                 Section {
-                    Text(missing.map(\.jaName).joined(separator: "、"))
+                    Text(missing.map { $0.name(.ui) }.joined(separator: L("、", ", ")))
                         .font(.caption).foregroundStyle(.secondary)
                 } header: {
                     Text("この期間に記録が無かった項目")
@@ -208,7 +214,7 @@ struct SettingsSheet: View {
                     Image(systemName: selected ? "checkmark.square.fill" : "square")
                         .foregroundStyle(selected ? Palette.accent : .secondary)
                     VStack(alignment: .leading, spacing: 1) {
-                        Text(metric.jaName)
+                        Text(metric.name(.ui))
                         if let names = availability?.sourceNames, !names.isEmpty {
                             Text(names.joined(separator: " / "))
                                 .font(.caption2).foregroundStyle(.secondary)
@@ -224,7 +230,8 @@ struct SettingsSheet: View {
             if selected, metric.supportsRawSamples, let availability {
                 Picker("まとめ方", selection: granularityBinding(metric)) {
                     Text("1日ごとにまとめる（おすすめ）").tag(false)
-                    Text("記録を1件ずつ全部（およそ\(availability.estimatedSamples.formatted())件）").tag(true)
+                    Text(L("記録を1件ずつ全部（およそ\(availability.estimatedSamples.formatted())件）",
+                           "Every sample (about \(availability.estimatedSamples.formatted()))")).tag(true)
                 }
                 .pickerStyle(.menu)
                 .font(.caption)
@@ -264,6 +271,16 @@ struct SettingsSheet: View {
             }
 
             Section {
+                Picker("単位", selection: $model.settings.options.unitSystem) {
+                    Text("メートル法（km・kg）").tag(UnitSystem.metric)
+                    Text("ヤード・ポンド法（mi・lb）").tag(UnitSystem.imperial)
+                }
+                .pickerStyle(.segmented)
+            } header: {
+                Text("距離と体重の単位")
+            }
+
+            Section {
                 Toggle("AIへの依頼文を付ける", isOn: $model.settings.options.includeAsk)
                 if model.settings.options.includeAsk {
                     Text(model.settings.purpose.askText(model.settings.options.language))
@@ -279,8 +296,7 @@ struct SettingsSheet: View {
             Section {
                 Toggle("端末の名前を入れる", isOn: $model.settings.options.includeDeviceNames)
             } footer: {
-                Text("ヘルスケアの端末名は「〇〇のApple Watch」のように、名前が入っていることがあります。"
-                     + "渡す相手によっては外してください。")
+                Text("ヘルスケアの端末名は「〇〇のApple Watch」のように、名前が入っていることがあります。渡す相手によっては外してください。")
             }
 
             Section("表のかたち") {
@@ -304,8 +320,7 @@ struct SettingsSheet: View {
                 }
                 Toggle("記録が無い日は行ごと省く", isOn: $model.settings.options.skipEmptyDays)
             } footer: {
-                Text("説明文には「値は重複を除いたあとの数字」「空欄は記録が無いという意味で、0ではない」という断りが入ります。"
-                     + "AIの読み違いを防ぐためのものなので、残しておくのがおすすめです。")
+                Text("説明文には「値は重複を除いたあとの数字」「空欄は記録が無いという意味で、0ではない」という断りが入ります。AIの読み違いを防ぐためのものなので、残しておくのがおすすめです。")
             }
 
             FeedbackSection()

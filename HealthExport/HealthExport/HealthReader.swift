@@ -28,6 +28,9 @@ final class HealthReader {
 
     private let store = HKHealthStore()
 
+    /// 距離・体重をどの単位で取り出すか。書き出す前に ExportModel が設定から写す。
+    var unitSystem: UnitSystem = .metric
+
     /// 失敗した理由。**握り潰さない。**（引き継ぎ書 4-1）
     /// 無反応が一番たちが悪いので、必ず画面に出す。
     ///
@@ -64,9 +67,11 @@ final class HealthReader {
     }
 
     private func quantityType(_ metric: Metric) -> (type: HKQuantityType, unit: HKUnit, scale: Double)? {
-        guard case .quantity(let identifier, let unitString, let scale) = metric.source,
+        guard case .quantity(let identifier, let metricUnit, let scale) = metric.source,
               let type = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier(rawValue: identifier))
         else { return nil }
+        // HealthKit の中身はメートル法。米国式ならマイル・ポンドで取り出す
+        let unitString = metric.healthKitUnit(unitSystem) ?? metricUnit
         return (type, HKUnit(from: unitString), scale)
     }
 
@@ -83,7 +88,7 @@ final class HealthReader {
     /// 全項目ぶんを一度に求める。あとから足すと、そのたびにダイアログが出て煩わしい。
     func requestAuthorization() async -> Bool {
         guard Self.isAvailable else {
-            note("この端末ではヘルスケアを使えません。")
+            note(L("この端末ではヘルスケアを使えません。", "Health data is not available on this device."))
             return false
         }
         let types = Set(MetricCatalog.all.compactMap { objectType(for: $0) })
@@ -93,7 +98,8 @@ final class HealthReader {
             return true
         } catch {
             // ここで握り潰すと、ボタンを押しても無反応になって原因が分からなくなる
-            note("ヘルスケアの許可を求められませんでした: \(error.localizedDescription)")
+            note(L("ヘルスケアの許可を求められませんでした: \(error.localizedDescription)",
+                   "Could not request Health access: \(error.localizedDescription)"))
             return false
         }
     }
@@ -142,7 +148,8 @@ final class HealthReader {
                                       sourceNames: names.sorted(),
                                       estimatedSamples: metric.samplesPerDay * days)
         } catch {
-            note("\(metric.jaName)を調べられませんでした: \(error.localizedDescription)")
+            note(L("\(metric.name(.ja))を調べられませんでした: \(error.localizedDescription)",
+                   "Could not check \(metric.name(.en)): \(error.localizedDescription)"))
             return empty
         }
     }
@@ -158,7 +165,7 @@ final class HealthReader {
         guard let predicate = datePredicate(range) else { return result }
 
         for (index, metric) in metrics.enumerated() {
-            progress?(index + 1, metrics.count, metric.jaName)
+            progress?(index + 1, metrics.count, metric.name(.ui))
             switch metric.aggregation {
             case .sum, .average, .minMaxAverage, .latest:
                 if metric.source.isQuantity {
@@ -223,7 +230,8 @@ final class HealthReader {
                 if let value { result.daily[day, default: [:]][metric.id] = value }
             }
         } catch {
-            note("\(metric.jaName)を読めませんでした: \(error.localizedDescription)")
+            note(L("\(metric.name(.ja))を読めませんでした: \(error.localizedDescription)",
+                   "Could not read \(metric.name(.en)): \(error.localizedDescription)"))
         }
     }
 
@@ -246,7 +254,8 @@ final class HealthReader {
                 result.daily[day, default: [:]][metric.id] = .number(value)
             }
         } catch {
-            note("\(metric.jaName)を読めませんでした: \(error.localizedDescription)")
+            note(L("\(metric.name(.ja))を読めませんでした: \(error.localizedDescription)",
+                   "Could not read \(metric.name(.en)): \(error.localizedDescription)"))
         }
     }
 
@@ -314,7 +323,8 @@ final class HealthReader {
                 result.daily[day, default: [:]][metric.id] = .sleep(summary)
             }
         } catch {
-            note("睡眠を読めませんでした: \(error.localizedDescription)")
+            note(L("睡眠を読めませんでした: \(error.localizedDescription)",
+                   "Could not read sleep: \(error.localizedDescription)"))
         }
     }
 
@@ -361,7 +371,8 @@ final class HealthReader {
                 : max(estimatedTotal, samples.count)
             return .numbers(values, total: total)
         } catch {
-            note("\(metric.jaName)の詳細を読めませんでした: \(error.localizedDescription)")
+            note(L("\(metric.name(.ja))の詳細を読めませんでした: \(error.localizedDescription)",
+                   "Could not read samples of \(metric.name(.en)): \(error.localizedDescription)"))
             return nil
         }
     }
@@ -402,7 +413,8 @@ final class HealthReader {
                 names.insert(workout.sourceRevision.source.name)
             }
         } catch {
-            note("ワークアウトを読めませんでした: \(error.localizedDescription)")
+            note(L("ワークアウトを読めませんでした: \(error.localizedDescription)",
+                   "Could not read workouts: \(error.localizedDescription)"))
         }
     }
 
@@ -419,7 +431,8 @@ final class HealthReader {
                 result.daily[day, default: [:]][metric.id] = .bilingual(ja: label.ja, en: label.en)
             }
         } catch {
-            note("気分の記録を読めませんでした: \(error.localizedDescription)")
+            note(L("気分の記録を読めませんでした: \(error.localizedDescription)",
+                   "Could not read state of mind: \(error.localizedDescription)"))
         }
     }
 

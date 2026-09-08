@@ -4,6 +4,18 @@ public enum Layout: String, Codable, Sendable, CaseIterable { case wide, block }
 public enum Separator: String, Codable, Sendable, CaseIterable { case tab, comma, aligned }
 public enum HeaderDetail: String, Codable, Sendable, CaseIterable { case full, minimal, none }
 
+/// 距離・体重などの単位系。
+/// HealthKit の中身はどの国でもメートル法で持っているが、
+/// 英語圏の人に km と kg を渡しても、AIも本人も実感が持てない。
+public enum UnitSystem: String, Codable, Sendable, CaseIterable {
+    case metric, imperial
+
+    /// 端末の設定から決める。米国式（マイル・ポンド）のときだけ imperial。
+    public static func forLocale(_ locale: Locale = .current) -> UnitSystem {
+        locale.measurementSystem == .us ? .imperial : .metric
+    }
+}
+
 /// 書き出しの形。ふつうは触らずに済むよう、既定でうまくいく値を入れてある。
 public struct ExportOptions: Equatable, Sendable, Codable {
     public var language: Language
@@ -20,6 +32,8 @@ public struct ExportOptions: Equatable, Sendable, Codable {
     /// ヘルスケアの端末名は「〇〇のApple Watch」のように**本名が入っていることが多い。**
     /// 渡す相手によっては外したいので、切れるようにしてある。
     public var includeDeviceNames: Bool
+    /// 距離・体重などの単位。既定はメートル法。
+    public var unitSystem: UnitSystem
 
     public init(language: Language = .ja,
                 layout: Layout = .wide,
@@ -29,7 +43,8 @@ public struct ExportOptions: Equatable, Sendable, Codable {
                 includeAsk: Bool = true,
                 skipEmptyDays: Bool = true,
                 rawMetrics: Set<MetricID> = [],
-                includeDeviceNames: Bool = true) {
+                includeDeviceNames: Bool = true,
+                unitSystem: UnitSystem = .metric) {
         self.language = language
         self.layout = layout
         self.separator = separator
@@ -39,6 +54,7 @@ public struct ExportOptions: Equatable, Sendable, Codable {
         self.skipEmptyDays = skipEmptyDays
         self.rawMetrics = rawMetrics
         self.includeDeviceNames = includeDeviceNames
+        self.unitSystem = unitSystem
     }
 
     // 項目を1つ足しただけで、それまでの設定が丸ごと読めなくなるのを防ぐ。
@@ -54,6 +70,7 @@ public struct ExportOptions: Equatable, Sendable, Codable {
         skipEmptyDays = try c.decodeIfPresent(Bool.self, forKey: .skipEmptyDays) ?? true
         rawMetrics = try c.decodeIfPresent(Set<MetricID>.self, forKey: .rawMetrics) ?? []
         includeDeviceNames = try c.decodeIfPresent(Bool.self, forKey: .includeDeviceNames) ?? true
+        unitSystem = try c.decodeIfPresent(UnitSystem.self, forKey: .unitSystem) ?? .metric
     }
 }
 

@@ -1,0 +1,756 @@
+{
+  "sourceLanguage": "ja",
+  "version": "1.0",
+  "strings": {
+    "ヘルスケア書き出し": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health Export"
+          }
+        }
+      }
+    },
+    "期間": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Period"
+          }
+        }
+      }
+    },
+    "日付で指定": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick dates"
+          }
+        }
+      }
+    },
+    "書き出されるデータ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What gets exported"
+          }
+        }
+      }
+    },
+    "項目や形式を変える": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change metrics or format"
+          }
+        }
+      }
+    },
+    "AIへの依頼文がつきます": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A request for the AI is included"
+          }
+        }
+      }
+    },
+    "記録が1件も見つかりませんでした": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No records found"
+          }
+        }
+      }
+    },
+    "この期間に記録が無いか、ヘルスケアの読み取りが許可されていない可能性があります。「設定」→「プライバシーとセキュリティ」→「ヘルスケア」→「ヘルスケア書き出し」で、読み取りがオンになっているか確かめてください。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Either there are no records in this period, or Health access hasn't been granted. Check Settings → Privacy & Security → Health → Health Export and make sure reading is on."
+          }
+        }
+      }
+    },
+    "設定アプリを開く": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings"
+          }
+        }
+      }
+    },
+    "閉じる": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        }
+      }
+    },
+    "書き出す": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export"
+          }
+        }
+      }
+    },
+    "まずはこれ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start here"
+          }
+        }
+      }
+    },
+    "書き出したもの": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exported text"
+          }
+        }
+      }
+    },
+    "共有": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share"
+          }
+        }
+      }
+    },
+    "チャット欄に貼るなら「コピー」、ファイルで送るなら「共有」。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy to paste into a chat, or Share to send it as a file."
+          }
+        }
+      }
+    },
+    "項目": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Metrics"
+          }
+        }
+      }
+    },
+    "形式": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Format"
+          }
+        }
+      }
+    },
+    "詳しい設定": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detailed settings"
+          }
+        }
+      }
+    },
+    "完了": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        }
+      }
+    },
+    "目的にまかせる": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset to purpose"
+          }
+        }
+      }
+    },
+    "直近": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recent"
+          }
+        }
+      }
+    },
+    "はじめ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From"
+          }
+        }
+      }
+    },
+    "おわり": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To"
+          }
+        }
+      }
+    },
+    "日付の指定をやめる": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear dates"
+          }
+        }
+      }
+    },
+    "日付を選ぶと、上の「直近」より優先されます。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picked dates take priority over the presets above."
+          }
+        }
+      }
+    },
+    "この期間に記録があった項目だけを出しています。チェックを外すと書き出しから抜けます。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only metrics with records in this period are listed. Uncheck one to leave it out."
+          }
+        }
+      }
+    },
+    "ヘルスケアの許可をもう一度求める": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask for Health access again"
+          }
+        }
+      }
+    },
+    "最初に「許可しない」を選んだ場合、この操作では画面が出ないことがあります。そのときは設定アプリから変えてください。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If you chose Don't Allow the first time, this may not show a prompt. Change it in the Settings app instead."
+          }
+        }
+      }
+    },
+    "この期間に記録が無かった項目": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Metrics with no records in this period"
+          }
+        }
+      }
+    },
+    "持っている端末で測れないもののほか、ヘルスケアの読み取りが許可されていない場合もここに入ります。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This includes things your devices can't measure, and anything Health access hasn't been granted for."
+          }
+        }
+      }
+    },
+    "まとめ方": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detail"
+          }
+        }
+      }
+    },
+    "1日ごとにまとめる（おすすめ）": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One row per day (recommended)"
+          }
+        }
+      }
+    },
+    "書き出す言語": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export language"
+          }
+        }
+      }
+    },
+    "言語": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language"
+          }
+        }
+      }
+    },
+    "日本語": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Japanese"
+          }
+        }
+      }
+    },
+    "距離と体重の単位": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Units for distance and weight"
+          }
+        }
+      }
+    },
+    "単位": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Units"
+          }
+        }
+      }
+    },
+    "メートル法（km・kg）": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Metric (km, kg)"
+          }
+        }
+      }
+    },
+    "ヤード・ポンド法（mi・lb）": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "US (mi, lb)"
+          }
+        }
+      }
+    },
+    "AIへの依頼文を付ける": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Include a request for the AI"
+          }
+        }
+      }
+    },
+    "依頼文": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Request text"
+          }
+        }
+      }
+    },
+    "目的を変えると内容も変わります。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changes with the purpose you pick."
+          }
+        }
+      }
+    },
+    "端末の名前を入れる": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Include device names"
+          }
+        }
+      }
+    },
+    "ヘルスケアの端末名は「〇〇のApple Watch」のように、名前が入っていることがあります。渡す相手によっては外してください。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Device names in Health often contain your own name (e.g. “Jin's Apple Watch”). Turn this off if that matters for who you're sending it to."
+          }
+        }
+      }
+    },
+    "表のかたち": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Table layout"
+          }
+        }
+      }
+    },
+    "並べ方": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Layout"
+          }
+        }
+      }
+    },
+    "日付でそろえた1枚の表": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One table by date"
+          }
+        }
+      }
+    },
+    "項目ごとに分ける": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One table per metric"
+          }
+        }
+      }
+    },
+    "列の区切り": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Separator"
+          }
+        }
+      }
+    },
+    "タブ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tab"
+          }
+        }
+      }
+    },
+    "カンマ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comma"
+          }
+        }
+      }
+    },
+    "見やすく揃える": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aligned columns"
+          }
+        }
+      }
+    },
+    "列名を英字の略称にする": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Short column names"
+          }
+        }
+      }
+    },
+    "先頭の説明文": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Header notes"
+          }
+        }
+      }
+    },
+    "くわしく": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full"
+          }
+        }
+      }
+    },
+    "最小限": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minimal"
+          }
+        }
+      }
+    },
+    "なし": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "None"
+          }
+        }
+      }
+    },
+    "記録が無い日は行ごと省く": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip days with no records"
+          }
+        }
+      }
+    },
+    "説明文には「値は重複を除いたあとの数字」「空欄は記録が無いという意味で、0ではない」という断りが入ります。AIの読み違いを防ぐためのものなので、残しておくのがおすすめです。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The header explains that values are deduplicated and that a blank means no record, not zero. It keeps the AI from misreading the data, so leaving it on is recommended."
+          }
+        }
+      }
+    },
+    "ヘルスケアの記録を、\nAIに渡せる文章に。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn your Health records\ninto text an AI can read."
+          }
+        }
+      }
+    },
+    "目的を選ぶ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick a purpose"
+          }
+        }
+      }
+    },
+    "期間も項目も、AIへの依頼文も、それだけで決まります。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That alone sets the period, the metrics, and the request for the AI."
+          }
+        }
+      }
+    },
+    "ヘルスケアから読んで、1枚のテキストにまとめます。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reads from Health and builds one text file."
+          }
+        }
+      }
+    },
+    "AIに渡す": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hand it to an AI"
+          }
+        }
+      }
+    },
+    "そのままチャット欄に貼るか、ファイルとして送ります。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste it into a chat, or share it as a file."
+          }
+        }
+      }
+    },
+    "読み取ったデータは端末の中だけで扱います。\nこのアプリが外部に送ることはありません。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your data stays on this device.\nThis app never sends it anywhere."
+          }
+        }
+      }
+    },
+    "はじめる": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get started"
+          }
+        }
+      }
+    },
+    "不具合の報告・要望を送る": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Report a problem or request a feature"
+          }
+        }
+      }
+    },
+    "メールが開かないときは %@ 宛に送ってください": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If Mail doesn't open, send it to %@"
+          }
+        }
+      }
+    },
+    "ありがとうございます": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thank you"
+          }
+        }
+      }
+    },
+    "いまは受け付けられません": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not available right now"
+          }
+        }
+      }
+    },
+    "このアプリが気に入ったら": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If you like this app"
+          }
+        }
+      }
+    },
+    "開発者にコーヒーを奢る": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buy the developer a coffee"
+          }
+        }
+      }
+    },
+    "奢ってくれてありがとうございました": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thanks for the coffee"
+          }
+        }
+      }
+    },
+    "%lld 回も奢ってくれてありがとうございました": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thanks for the coffee — %lld times over"
+          }
+        }
+      }
+    }
+  }
+}

@@ -122,7 +122,24 @@ enum DemoData {
         return .numbers(samples, total: samples.count)
     }
 
+    /// 擬似の記録は HealthKit を通らないので、単位の変換も自分でやる。
+    /// これをしないと、ヤード・ポンド法のときに km の数字が mi として出て、
+    /// 「1日10km歩く人」になってしまう。
+    private static func imperialFactor(_ metric: Metric) -> Double {
+        guard UnitSystem.forLocale() == .imperial else { return 1 }
+        switch metric.id {
+        case .distance, .walkingSpeed: return 0.621371   // km → mi, km/h → mph
+        case .bodyMass:                return 2.204623   // kg → lb
+        case .stepLength:              return 0.393701   // cm → in
+        default:                       return 1
+        }
+    }
+
     private static func center(_ metric: Metric) -> Double {
+        imperialFactor(metric) * centerBase(metric)
+    }
+
+    private static func centerBase(_ metric: Metric) -> Double {
         switch metric.id {
         case .steps: return 8000
         case .distance: return 5.8
@@ -150,6 +167,10 @@ enum DemoData {
     }
 
     private static func spread(_ metric: Metric) -> Double {
+        imperialFactor(metric) * spreadBase(metric)
+    }
+
+    private static func spreadBase(_ metric: Metric) -> Double {
         switch metric.id {
         case .steps: return 3500
         case .distance: return 2.6

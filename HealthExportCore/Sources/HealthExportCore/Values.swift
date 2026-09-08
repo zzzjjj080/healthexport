@@ -2,6 +2,12 @@ import Foundation
 
 public enum Language: String, Codable, Sendable, CaseIterable {
     case ja, en
+
+    /// 端末の言語から決める。日本語以外はすべて英語。
+    /// 引数で `Locale` を受けておくと、両方の言語をテストで固定できる。（引き継ぎ書 4-87）
+    public static func forLocale(_ locale: Locale = .current) -> Language {
+        locale.language.languageCode?.identifier == "ja" ? .ja : .en
+    }
 }
 
 /// その日の1項目ぶんの値。

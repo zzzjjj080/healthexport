@@ -170,7 +170,9 @@ struct ContentView: View {
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(.secondary)
                     Spacer()
-                    Text(model.phase == .scanning ? "調べています…" : "\(model.selectedMetrics.count)項目")
+                    Text(model.phase == .scanning
+                         ? L("調べています…", "Checking…")
+                         : L("\(model.selectedMetrics.count)項目", "\(model.selectedMetrics.count) metrics"))
                         .font(.system(.subheadline, design: .rounded, weight: .bold))
                         .monospacedDigit()
                     Image(systemName: detailExpanded ? "chevron.up" : "chevron.down")
@@ -187,10 +189,10 @@ struct ContentView: View {
                 Divider().padding(.horizontal, 14)
                 FlowLayout(spacing: 5) {
                     ForEach(shownMetrics) { metric in
-                        chip(metric.jaName)
+                        chip(metric.name(.ui))
                     }
                     if !detailExpanded, hiddenMetricCount > 0 {
-                        chip("ほか\(hiddenMetricCount)項目")
+                        chip(L("ほか\(hiddenMetricCount)項目", "+\(hiddenMetricCount) more"))
                     }
                 }
                 .padding(.horizontal, 14)
@@ -274,9 +276,7 @@ struct ContentView: View {
             Label("記録が1件も見つかりませんでした", systemImage: "questionmark.folder")
                 .font(.subheadline.weight(.semibold))
             // 読み取りを拒否されていても同じ見え方になる。両方の可能性を必ず書く
-            Text("この期間に記録が無いか、ヘルスケアの読み取りが許可されていない可能性があります。"
-                 + "「設定」→「プライバシーとセキュリティ」→「ヘルスケア」→「ヘルスケア書き出し」で、"
-                 + "読み取りがオンになっているか確かめてください。")
+            Text("この期間に記録が無いか、ヘルスケアの読み取りが許可されていない可能性があります。「設定」→「プライバシーとセキュリティ」→「ヘルスケア」→「ヘルスケア書き出し」で、読み取りがオンになっているか確かめてください。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Button("設定アプリを開く") {
@@ -295,8 +295,9 @@ struct ContentView: View {
 
     private func errorCard(_ messages: [String]) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label(messages.count == 1 ? "うまくいかなかったこと"
-                                      : "うまくいかなかったこと（\(messages.count)件）",
+            Label(messages.count == 1
+                  ? L("うまくいかなかったこと", "Something went wrong")
+                  : L("うまくいかなかったこと（\(messages.count)件）", "Something went wrong (\(messages.count))"),
                   systemImage: "exclamationmark.triangle.fill")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Palette.caution)
@@ -352,7 +353,8 @@ struct ContentView: View {
             .accessibilityIdentifier("exportButton")
 
             if model.exportedText != nil, let estimate = model.estimate {
-                Button("前回の結果を見る（\(estimate.characters.formatted())文字）") {
+                Button(L("前回の結果を見る（\(estimate.characters.formatted())文字）",
+                         "Show last result (\(estimate.characters.formatted()) chars)")) {
                     showingResult = true
                 }
                 .font(.caption)
@@ -421,10 +423,10 @@ private struct PurposeTile: View {
                         .background(Capsule().fill(Palette.accentGradient))
                 }
             }
-            Text(purpose.title(.ja))
+            Text(purpose.title(.ui))
                 .font(.system(.subheadline, design: .rounded, weight: .semibold))
                 .foregroundStyle(.primary)
-            Text(purpose.detail(.ja))
+            Text(purpose.detail(.ui))
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.leading)

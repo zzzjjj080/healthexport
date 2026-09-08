@@ -1,0 +1,1 @@
+Turn what Health has recorded into one text file for whichever AI you use. Pick a purpose, and the period, metrics and request are set for you.

@@ -56,7 +56,7 @@ public enum ExportText {
         let rawMetrics = request.metrics.filter { rawIDs.contains($0.id) && $0.supportsRawSamples }
 
         if options.shortColumnNames {
-            let legend = legendBlock(summaryMetrics, language: language)
+            let legend = legendBlock(summaryMetrics, language: language, system: options.unitSystem)
             if !legend.isEmpty { blocks.append(legend) }
         }
 
@@ -137,12 +137,13 @@ public enum ExportText {
 
     static func columnLabel(_ metric: Metric, key: String, options: ExportOptions) -> String {
         if options.shortColumnNames {
-            return key.isEmpty ? metric.shortKey : "\(metric.shortKey)_\(key)"
+            let short = metric.shortKey(options.unitSystem)
+            return key.isEmpty ? short : "\(short)_\(key)"
         }
         let language = options.language
         let name = metric.name(language)
         if key.isEmpty {
-            let unit = metric.unit(language)
+            let unit = metric.unit(language, options.unitSystem)
             return unit.isEmpty ? name : "\(name)(\(unit))"
         }
         return "\(name)(\(keyLabel(key, language)))"
@@ -250,7 +251,7 @@ public enum ExportText {
                 if value == nil && options.skipEmptyDays { continue }
                 rows.append([day.iso] + cells(metric, value: value, language: language))
             }
-            let unit = metric.unit(language)
+            let unit = metric.unit(language, options.unitSystem)
             let heading = "## \(metric.name(language))"
                 + (unit.isEmpty ? "" : (language == .ja ? "（\(unit)）" : " (\(unit))"))
                 + (language == .ja ? " ／\(metric.aggregation.label(language))"
@@ -308,7 +309,7 @@ public enum ExportText {
                              segment.stage(language)])
             }
         }
-        let unit = metric.unit(language)
+        let unit = metric.unit(language, options.unitSystem)
         var heading: String
         if language == .ja {
             heading = "## \(metric.name(language))" + (unit.isEmpty ? "" : "（\(unit)）")
@@ -366,14 +367,15 @@ public enum ExportText {
 
     // MARK: - 凡例
 
-    static func legendBlock(_ metrics: [Metric], language: Language) -> String {
+    static func legendBlock(_ metrics: [Metric], language: Language, system: UnitSystem = .metric) -> String {
         let listed = metrics.filter { $0.aggregation != .workoutList }
         guard !listed.isEmpty else { return "" }
         var lines = [language == .ja ? "## 列の意味" : "## Column meanings"]
         for metric in listed {
             let keys = columnKeys(metric)
-            let names = keys == [""] ? [metric.shortKey] : keys.map { "\(metric.shortKey)_\($0)" }
-            let unit = metric.unit(language)
+            let short = metric.shortKey(system)
+            let names = keys == [""] ? [short] : keys.map { "\(short)_\($0)" }
+            let unit = metric.unit(language, system)
             lines.append("\(names.joined(separator: ", ")) = \(metric.name(language))"
                          + (unit.isEmpty ? "" : " (\(unit))"))
         }

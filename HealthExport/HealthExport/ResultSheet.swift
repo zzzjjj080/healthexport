@@ -38,11 +38,11 @@ struct ResultSheet: View {
         VStack(spacing: 14) {
             if let estimate = model.estimate {
                 HStack(alignment: .firstTextBaseline, spacing: 0) {
-                    measure(estimate.characters.formatted(), "文字")
+                    measure(estimate.characters.formatted(), L("文字", "chars"))
                     Rectangle().fill(Color(.separator).opacity(0.5)).frame(width: 1, height: 30)
-                    measure("約" + estimate.approximateTokens.formatted(), "トークン")
+                    measure(L("約", "~") + estimate.approximateTokens.formatted(), L("トークン", "tokens"))
                     Rectangle().fill(Color(.separator).opacity(0.5)).frame(width: 1, height: 30)
-                    measure(estimate.lines.formatted(), "行")
+                    measure(estimate.lines.formatted(), L("行", "lines"))
                 }
                 verdictBanner(estimate.verdict)
             }
@@ -56,7 +56,7 @@ struct ResultSheet: View {
                         copied = false
                     }
                 } label: {
-                    Label(copied ? "コピーしました" : "コピー",
+                    Label(copied ? L("コピーしました", "Copied") : L("コピー", "Copy"),
                           systemImage: copied ? "checkmark" : "doc.on.doc.fill")
                         .font(.system(.subheadline, design: .rounded, weight: .semibold))
                         .foregroundStyle(.white)
@@ -118,11 +118,14 @@ struct ResultSheet: View {
     private func verdictText(_ verdict: SizeVerdict) -> String {
         switch verdict {
         case .comfortable:
-            return "この量なら、AIのチャット欄にそのまま貼れます。"
+            return L("この量なら、AIのチャット欄にそのまま貼れます。",
+                     "This will fit in an AI chat box as is.")
         case .heavy:
-            return "貼れますが重めです。項目を減らすか期間を短くすると扱いやすくなります。"
+            return L("貼れますが重めです。項目を減らすか期間を短くすると扱いやすくなります。",
+                     "It fits, but it's heavy. Fewer metrics or a shorter period will be easier to work with.")
         case .tooLarge:
-            return "大きすぎます。期間を短くするか、「1件ずつ全部」にした項目を「1日ごと」に戻してください。"
+            return L("大きすぎます。期間を短くするか、「1件ずつ全部」にした項目を「1日ごと」に戻してください。",
+                     "Too large. Shorten the period, or switch any 'every sample' metric back to one row per day.")
         }
     }
 }

@@ -1,0 +1,54 @@
+{
+  "sourceLanguage": "ja",
+  "version": "1.0",
+  "strings": {
+    "CFBundleDisplayName": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ヘルスケア書き出し"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health Export"
+          }
+        }
+      }
+    },
+    "NSHealthShareUsageDescription": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ヘルスケアに記録されている歩数・心拍・睡眠などのデータを読み取り、あなたが選んだ期間ぶんをテキストにまとめます。読み取ったデータは端末の中だけで扱い、このアプリが外部へ送信することはありません。書き出したテキストを誰に渡すかは、あなたが決めます。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reads steps, heart rate, sleep and other records from Health and gathers the period you choose into one text file. Data is handled only on this device; this app never sends it anywhere. You decide who receives the exported text."
+          }
+        }
+      }
+    },
+    "NSHealthUpdateUsageDescription": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このアプリはヘルスケアへの書き込みを行いません。読み取りだけです。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This app never writes to Health. It only reads."
+          }
+        }
+      }
+    }
+  }
+}
