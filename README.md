@@ -72,6 +72,15 @@ SIMCTL_CHILD_HEALTHEXPORT_DEMO=1 xcrun simctl launch booted com.zzzjjj080.Health
 
 **配信地域は175か国すべて。** 投げ銭も175か国。どちらも「新しい国を自動追加」を有効にした。
 
+**次のバージョンでやること: プライマリ言語を `en-US` にする。**
+App Store は、その国の言語のローカライズが無いと**プライマリ言語に落ちる**。
+いまプライマリが日本語なので、**ドイツ・フランス・韓国・中国などでは
+「ヘルスケア書き出し」と日本語のページが出ている**（英語圏だけ Health for AI）。
+英語に変えれば、日本語ローカライズを持つ日本以外は英語で出る。
+
+`PATCH /v1/appInfos/<id> {"primaryLocale":"en-US"}`。ただし**編集できる appInfo は
+「次のバージョン」が無いと現れない**（公開済みのものは `READY_FOR_SALE` で触れない）。
+
 配信地域の広げ方に癖がある。**`appAvailabilities` は UPDATE を許さない**（403）ので、
 `territoryAvailabilities` を**1件ずつ** PATCH する（174件で数分）。
 課金のほうは `inAppPurchaseAvailabilities` を **DELETE してから CREATE** し直す。
