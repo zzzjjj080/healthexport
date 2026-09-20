@@ -1,5 +1,5 @@
 {
-  "sourceLanguage": "ja",
+  "sourceLanguage": "en",
   "version": "1.0",
   "strings": {
     "ヘルスケア書き出し": {
@@ -8,6 +8,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Health for AI"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ヘルスケア書き出し"
           }
         }
       }
@@ -19,6 +25,12 @@
             "state": "translated",
             "value": "Period"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "期間"
+          }
         }
       }
     },
@@ -28,6 +40,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pick dates"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日付で指定"
           }
         }
       }
@@ -39,6 +57,12 @@
             "state": "translated",
             "value": "What gets exported"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "書き出されるデータ"
+          }
         }
       }
     },
@@ -48,6 +72,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Change metrics or format"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目や形式を変える"
           }
         }
       }
@@ -59,6 +89,12 @@
             "state": "translated",
             "value": "A request for the AI is included"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AIへの依頼文がつきます"
+          }
         }
       }
     },
@@ -68,6 +104,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "No records found"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "記録が1件も見つかりませんでした"
           }
         }
       }
@@ -79,6 +121,12 @@
             "state": "translated",
             "value": "Either there are no records in this period, or Health access hasn't been granted. Check Settings → Privacy & Security → Health → Health Export and make sure reading is on."
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この期間に記録が無いか、ヘルスケアの読み取りが許可されていない可能性があります。「設定」→「プライバシーとセキュリティ」→「ヘルスケア」→「ヘルスケア書き出し」で、読み取りがオンになっているか確かめてください。"
+          }
         }
       }
     },
@@ -88,6 +136,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Open Settings"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定アプリを開く"
           }
         }
       }
@@ -99,6 +153,12 @@
             "state": "translated",
             "value": "Close"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "閉じる"
+          }
         }
       }
     },
@@ -108,6 +168,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Export"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "書き出す"
           }
         }
       }
@@ -119,6 +185,12 @@
             "state": "translated",
             "value": "Start here"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まずはこれ"
+          }
         }
       }
     },
@@ -128,6 +200,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Exported text"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "書き出したもの"
           }
         }
       }
@@ -139,6 +217,12 @@
             "state": "translated",
             "value": "Share"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "共有"
+          }
         }
       }
     },
@@ -148,6 +232,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Copy to paste into a chat, or Share to send it as a file."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "チャット欄に貼るなら「コピー」、ファイルで送るなら「共有」。"
           }
         }
       }
@@ -159,6 +249,12 @@
             "state": "translated",
             "value": "Metrics"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目"
+          }
         }
       }
     },
@@ -168,6 +264,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Format"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "形式"
           }
         }
       }
@@ -179,6 +281,12 @@
             "state": "translated",
             "value": "Detailed settings"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "詳しい設定"
+          }
         }
       }
     },
@@ -188,6 +296,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Done"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完了"
           }
         }
       }
@@ -199,6 +313,12 @@
             "state": "translated",
             "value": "Reset to purpose"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目的にまかせる"
+          }
         }
       }
     },
@@ -208,6 +328,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Recent"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "直近"
           }
         }
       }
@@ -219,6 +345,12 @@
             "state": "translated",
             "value": "From"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "はじめ"
+          }
         }
       }
     },
@@ -228,6 +360,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "To"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "おわり"
           }
         }
       }
@@ -239,6 +377,12 @@
             "state": "translated",
             "value": "Clear dates"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日付の指定をやめる"
+          }
         }
       }
     },
@@ -248,6 +392,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Picked dates take priority over the presets above."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日付を選ぶと、上の「直近」より優先されます。"
           }
         }
       }
@@ -259,6 +409,12 @@
             "state": "translated",
             "value": "Only metrics with records in this period are listed. Uncheck one to leave it out."
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この期間に記録があった項目だけを出しています。チェックを外すと書き出しから抜けます。"
+          }
         }
       }
     },
@@ -268,6 +424,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ask for Health access again"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ヘルスケアの許可をもう一度求める"
           }
         }
       }
@@ -279,6 +441,12 @@
             "state": "translated",
             "value": "If you chose Don't Allow the first time, this may not show a prompt. Change it in the Settings app instead."
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最初に「許可しない」を選んだ場合、この操作では画面が出ないことがあります。そのときは設定アプリから変えてください。"
+          }
         }
       }
     },
@@ -288,6 +456,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Metrics with no records in this period"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この期間に記録が無かった項目"
           }
         }
       }
@@ -299,6 +473,12 @@
             "state": "translated",
             "value": "This includes things your devices can't measure, and anything Health access hasn't been granted for."
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "持っている端末で測れないもののほか、ヘルスケアの読み取りが許可されていない場合もここに入ります。"
+          }
         }
       }
     },
@@ -308,6 +488,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Detail"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まとめ方"
           }
         }
       }
@@ -319,6 +505,12 @@
             "state": "translated",
             "value": "One row per day (recommended)"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1日ごとにまとめる（おすすめ）"
+          }
         }
       }
     },
@@ -328,6 +520,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Export language"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "書き出す言語"
           }
         }
       }
@@ -339,6 +537,12 @@
             "state": "translated",
             "value": "Language"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言語"
+          }
         }
       }
     },
@@ -348,6 +552,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Japanese"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日本語"
           }
         }
       }
@@ -359,6 +569,12 @@
             "state": "translated",
             "value": "Units for distance and weight"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "距離と体重の単位"
+          }
         }
       }
     },
@@ -368,6 +584,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Units"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "単位"
           }
         }
       }
@@ -379,6 +601,12 @@
             "state": "translated",
             "value": "Metric (km, kg)"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メートル法（km・kg）"
+          }
         }
       }
     },
@@ -388,6 +616,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "US (mi, lb)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ヤード・ポンド法（mi・lb）"
           }
         }
       }
@@ -399,6 +633,12 @@
             "state": "translated",
             "value": "Include a request for the AI"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AIへの依頼文を付ける"
+          }
         }
       }
     },
@@ -408,6 +648,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Request text"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "依頼文"
           }
         }
       }
@@ -419,6 +665,12 @@
             "state": "translated",
             "value": "Changes with the purpose you pick."
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目的を変えると内容も変わります。"
+          }
         }
       }
     },
@@ -428,6 +680,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Include device names"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "端末の名前を入れる"
           }
         }
       }
@@ -439,6 +697,12 @@
             "state": "translated",
             "value": "Device names in Health often contain your own name (e.g. “Jin's Apple Watch”). Turn this off if that matters for who you're sending it to."
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ヘルスケアの端末名は「〇〇のApple Watch」のように、名前が入っていることがあります。渡す相手によっては外してください。"
+          }
         }
       }
     },
@@ -448,6 +712,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Table layout"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表のかたち"
           }
         }
       }
@@ -459,6 +729,12 @@
             "state": "translated",
             "value": "Layout"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "並べ方"
+          }
         }
       }
     },
@@ -468,6 +744,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "One table by date"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日付でそろえた1枚の表"
           }
         }
       }
@@ -479,6 +761,12 @@
             "state": "translated",
             "value": "One table per metric"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "項目ごとに分ける"
+          }
         }
       }
     },
@@ -488,6 +776,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Separator"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "列の区切り"
           }
         }
       }
@@ -499,6 +793,12 @@
             "state": "translated",
             "value": "Tab"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "タブ"
+          }
         }
       }
     },
@@ -508,6 +808,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Comma"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カンマ"
           }
         }
       }
@@ -519,6 +825,12 @@
             "state": "translated",
             "value": "Aligned columns"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "見やすく揃える"
+          }
         }
       }
     },
@@ -528,6 +840,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Short column names"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "列名を英字の略称にする"
           }
         }
       }
@@ -539,6 +857,12 @@
             "state": "translated",
             "value": "Header notes"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先頭の説明文"
+          }
         }
       }
     },
@@ -548,6 +872,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Full"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "くわしく"
           }
         }
       }
@@ -559,6 +889,12 @@
             "state": "translated",
             "value": "Minimal"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最小限"
+          }
         }
       }
     },
@@ -568,6 +904,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "None"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "なし"
           }
         }
       }
@@ -579,6 +921,12 @@
             "state": "translated",
             "value": "Skip days with no records"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "記録が無い日は行ごと省く"
+          }
         }
       }
     },
@@ -588,6 +936,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "The header explains that values are deduplicated and that a blank means no record, not zero. It keeps the AI from misreading the data, so leaving it on is recommended."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "説明文には「値は重複を除いたあとの数字」「空欄は記録が無いという意味で、0ではない」という断りが入ります。AIの読み違いを防ぐためのものなので、残しておくのがおすすめです。"
           }
         }
       }
@@ -599,6 +953,12 @@
             "state": "translated",
             "value": "Turn your Health records\ninto text an AI can read."
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ヘルスケアの記録を、\nAIに渡せる文章に。"
+          }
         }
       }
     },
@@ -608,6 +968,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pick a purpose"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目的を選ぶ"
           }
         }
       }
@@ -619,6 +985,12 @@
             "state": "translated",
             "value": "That alone sets the period, the metrics, and the request for the AI."
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "期間も項目も、AIへの依頼文も、それだけで決まります。"
+          }
         }
       }
     },
@@ -628,6 +1000,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Reads from Health and builds one text file."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ヘルスケアから読んで、1枚のテキストにまとめます。"
           }
         }
       }
@@ -639,6 +1017,12 @@
             "state": "translated",
             "value": "Hand it to an AI"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AIに渡す"
+          }
         }
       }
     },
@@ -648,6 +1032,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Paste it into a chat, or share it as a file."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "そのままチャット欄に貼るか、ファイルとして送ります。"
           }
         }
       }
@@ -659,6 +1049,12 @@
             "state": "translated",
             "value": "Your data stays on this device.\nThis app never sends it anywhere."
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取ったデータは端末の中だけで扱います。\nこのアプリが外部に送ることはありません。"
+          }
         }
       }
     },
@@ -668,6 +1064,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Get started"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "はじめる"
           }
         }
       }
@@ -679,6 +1081,12 @@
             "state": "translated",
             "value": "Report a problem or request a feature"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不具合の報告・要望を送る"
+          }
         }
       }
     },
@@ -688,6 +1096,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "If Mail doesn't open, send it to %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "メールが開かないときは %@ 宛に送ってください"
           }
         }
       }
@@ -699,6 +1113,12 @@
             "state": "translated",
             "value": "Thank you"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ありがとうございます"
+          }
         }
       }
     },
@@ -708,6 +1128,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Not available right now"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "いまは受け付けられません"
           }
         }
       }
@@ -719,6 +1145,12 @@
             "state": "translated",
             "value": "If you like this app"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このアプリが気に入ったら"
+          }
         }
       }
     },
@@ -728,6 +1160,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Buy the developer a coffee"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開発者にコーヒーを奢る"
           }
         }
       }
@@ -739,6 +1177,12 @@
             "state": "translated",
             "value": "Thanks for the coffee"
           }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "奢ってくれてありがとうございました"
+          }
         }
       }
     },
@@ -748,6 +1192,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Thanks for the coffee — %lld times over"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 回も奢ってくれてありがとうございました"
           }
         }
       }
