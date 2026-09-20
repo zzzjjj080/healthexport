@@ -99,8 +99,7 @@ struct SettingsSheet: View {
             } header: {
                 Text("直近")
             } footer: {
-                Text(L("いまの期間: \(model.range.from.iso) 〜 \(model.range.to.iso)（\(model.range.dayCount)日間）",
-                       "Current period: \(model.range.from.iso) – \(model.range.to.iso) (\(model.range.dayCount) days)"))
+                Text(String(localized: "いまの期間: \(model.range.from.iso) 〜 \(model.range.to.iso)（\(model.range.dayCount)日間）"))
             }
 
             Section {
@@ -191,7 +190,7 @@ struct SettingsSheet: View {
             let missing = MetricCatalog.all.filter { !(model.availability[$0.id]?.hasData ?? false) }
             if !missing.isEmpty {
                 Section {
-                    Text(missing.map { $0.name(.ui) }.joined(separator: L("、", ", ")))
+                    Text(missing.map { $0.name(.ui) }.joined(separator: String(localized: "、")))
                         .font(.caption).foregroundStyle(.secondary)
                 } header: {
                     Text("この期間に記録が無かった項目")
@@ -230,8 +229,7 @@ struct SettingsSheet: View {
             if selected, metric.supportsRawSamples, let availability {
                 Picker("まとめ方", selection: granularityBinding(metric)) {
                     Text("1日ごとにまとめる（おすすめ）").tag(false)
-                    Text(L("記録を1件ずつ全部（およそ\(availability.estimatedSamples.formatted())件）",
-                           "Every sample (about \(availability.estimatedSamples.formatted()))")).tag(true)
+                    Text(String(localized: "記録を1件ずつ全部（およそ\(availability.estimatedSamples.formatted())件）")).tag(true)
                 }
                 .pickerStyle(.menu)
                 .font(.caption)
@@ -263,11 +261,15 @@ struct SettingsSheet: View {
     private var formatTab: some View {
         List {
             Section("書き出す言語") {
+                // 12言語あるので左右に並べる形（segmented）では入らない。
+                // それぞれの言語名は、その言語での書き方で出す（endonym）。
+                // 自分の言語を探す人は「Deutsch」を探すのであって「ドイツ語」ではない。
                 Picker("言語", selection: $model.settings.options.language) {
-                    Text("日本語").tag(Language.ja)
-                    Text("English").tag(Language.en)
+                    ForEach(Language.allCases, id: \.self) { language in
+                        Text(language.endonym).tag(language)
+                    }
                 }
-                .pickerStyle(.segmented)
+                .pickerStyle(.menu)
             }
 
             Section {

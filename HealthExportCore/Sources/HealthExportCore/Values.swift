@@ -2,11 +2,56 @@ import Foundation
 
 public enum Language: String, Codable, Sendable, CaseIterable {
     case ja, en
+    case zhHans = "zh-Hans", zhHant = "zh-Hant"
+    case ko, es, fr, de, it
+    case ptBR = "pt-BR"
+    case ru, ar
 
-    /// 端末の言語から決める。日本語以外はすべて英語。
-    /// 引数で `Locale` を受けておくと、両方の言語をテストで固定できる。（引き継ぎ書 4-87）
+    /// 訳が無いときに落ちる先。英語は必ず全項目そろえてある。
+    public static let fallback: Language = .en
+
+    /// 右から左へ書く言語。画面の向きを変える必要がある。
+    public var isRightToLeft: Bool { self == .ar }
+
+    /// この言語での言語名（設定の一覧に出す）。
+    public var endonym: String {
+        switch self {
+        case .ja: return "日本語"
+        case .en: return "English"
+        case .zhHans: return "简体中文"
+        case .zhHant: return "繁體中文"
+        case .ko: return "한국어"
+        case .es: return "Español"
+        case .fr: return "Français"
+        case .de: return "Deutsch"
+        case .it: return "Italiano"
+        case .ptBR: return "Português (Brasil)"
+        case .ru: return "Русский"
+        case .ar: return "العربية"
+        }
+    }
+
+    /// 端末の言語から決める。訳を持たない言語は英語にする。
+    ///
+    /// 中国語とポルトガル語は、地域まで見ないと簡体字か繁体字か、ブラジルか欧州かが決まらない。
+    /// `languageCode` だけで振り分けると、台湾の端末に簡体字を出してしまう。（引き継ぎ書 4-158）
+    /// 引数で `Locale` を受けておくと、全言語をテストで固定できる。（4-87）
     public static func forLocale(_ locale: Locale = .current) -> Language {
-        locale.language.languageCode?.identifier == "ja" ? .ja : .en
+        guard let code = locale.language.languageCode?.identifier else { return fallback }
+        switch code {
+        case "zh":
+            // 繁体字は台湾・香港・マカオ。文字体系が取れればそれを優先する。
+            if let script = locale.language.script?.identifier {
+                return script == "Hant" ? .zhHant : .zhHans
+            }
+            let region = locale.language.region?.identifier ?? ""
+            return ["TW", "HK", "MO"].contains(region) ? .zhHant : .zhHans
+        case "pt":
+            // ブラジル以外のポルトガル語は、訳を持たないので英語にする。
+            return locale.language.region?.identifier == "BR" ? .ptBR : fallback
+        default:
+            return Language(rawValue: code) ?? fallback
+        }
     }
 }
 
@@ -19,10 +64,15 @@ public enum MetricValue: Equatable, Sendable {
     case stats(average: Double, min: Double, max: Double)
     case sleep(SleepSummary)
     case text(String)
-    /// 言葉で表す値。**日英の両方を持つ。**
-    /// 気分の記録のように、読み出したときには書き出す言語が決まっていないものに使う。
-    /// 片方だけ持つと、英語で書き出したのに1列だけ日本語、ということが起きる。
-    case bilingual(ja: String, en: String)
+    /// 言葉で表す値を、**訳ではなくキーで持つ**（気分の記録の "neutral" など）。
+    /// 読み出した時点では書き出す言語が決まっていないので、訳を焼き付けてしまうと
+    /// あとから言語を切り替えたときに1列だけ前の言語のまま残る。
+    case localized(key: String, table: LocalizedTable)
+
+    /// `localized` がどの表を引くか。表そのものを値に持たせると Equatable が重くなる。
+    public enum LocalizedTable: String, Equatable, Sendable {
+        case mood
+    }
 }
 
 /// 1晩ぶんの睡眠。時間はすべて「時間」単位。
@@ -49,29 +99,29 @@ public struct SleepSummary: Equatable, Sendable {
 }
 
 /// 1件のワークアウト。
-/// 種目名は HealthKit の列挙から引くので、**日英ともアプリ層が埋めて渡す。**
-/// Core が種目番号を解釈すると、OSが種目を足したときに黙って間違える。
+///
+/// 種目は **名前ではなくキーで持つ**（`HKWorkoutActivityType` のケース名。"running" など）。
+/// アプリ層が名前を12言語ぶん埋めて渡すのは現実的でないし、書き出す言語を
+/// 切り替えるたびに読み直す羽目になる。Core が種目番号を解釈することもしない。
 public struct WorkoutEvent: Equatable, Sendable {
     public let day: YMD
     public let startMinute: Int
     public let minutes: Int
     public let kilocalories: Double?
     public let averageHeartRate: Double?
-    public let kindJa: String
-    public let kindEn: String
+    public let kindKey: String
 
     public init(day: YMD, startMinute: Int, minutes: Int, kilocalories: Double? = nil,
-                averageHeartRate: Double? = nil, kindJa: String, kindEn: String) {
+                averageHeartRate: Double? = nil, kindKey: String) {
         self.day = day
         self.startMinute = startMinute
         self.minutes = minutes
         self.kilocalories = kilocalories
         self.averageHeartRate = averageHeartRate
-        self.kindJa = kindJa
-        self.kindEn = kindEn
+        self.kindKey = kindKey
     }
 
-    public func kind(_ language: Language) -> String { language == .ja ? kindJa : kindEn }
+    public func kind(_ language: Language) -> String { Tr.get(Tr.workout, kindKey, language) }
 }
 
 /// 「1件ずつ全部」を選んだときの1サンプル。
@@ -88,22 +138,23 @@ public struct RawSample: Equatable, Sendable {
 }
 
 /// 睡眠を1件ずつ出すときの1区間。
+///
+/// 段階は日ごとの表の列名（deep / rem / core / awake）と同じ語なので、同じ表から引く。
+/// 二重に訳を持つと、片方だけ直したときに表と一覧で呼び名が食い違う。
 public struct SleepSegment: Equatable, Sendable {
     public let day: YMD
     public let startMinute: Int
     public let endMinute: Int
-    public let stageJa: String
-    public let stageEn: String
+    public let stageKey: String
 
-    public init(day: YMD, startMinute: Int, endMinute: Int, stageJa: String, stageEn: String) {
+    public init(day: YMD, startMinute: Int, endMinute: Int, stageKey: String) {
         self.day = day
         self.startMinute = startMinute
         self.endMinute = endMinute
-        self.stageJa = stageJa
-        self.stageEn = stageEn
+        self.stageKey = stageKey
     }
 
-    public func stage(_ language: Language) -> String { language == .ja ? stageJa : stageEn }
+    public func stage(_ language: Language) -> String { Tr.get(Tr.keyLabel, stageKey, language) }
 }
 
 /// 「1件ずつ全部」で読んだ結果。

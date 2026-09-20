@@ -1,0 +1,1 @@
+Mach aus dem, was Health aufgezeichnet hat, eine Textdatei für die KI deiner Wahl. Ein Zweck genügt – Zeitraum, Werte und Anfrage stehen damit fest.

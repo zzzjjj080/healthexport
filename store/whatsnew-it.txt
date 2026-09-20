@@ -1,0 +1,2 @@
+・Corretto un problema per cui compariva testo giapponese sui dispositivi impostati in altre lingue. Ora l'app è in 12 lingue.
+・Anche il testo esportato può essere prodotto in queste 12 lingue.

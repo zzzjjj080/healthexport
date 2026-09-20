@@ -104,20 +104,10 @@ public enum PeriodChoice {
     public static let steps = [14, 30, 90, 180, 365]
 
     public static func label(_ days: Int, _ language: Language) -> String {
-        switch (days, language) {
-        case (14, .ja):  return "2週間"
-        case (14, .en):  return "2 weeks"
-        case (30, .ja):  return "1ヶ月"
-        case (30, .en):  return "1 month"
-        case (90, .ja):  return "3ヶ月"
-        case (90, .en):  return "3 months"
-        case (180, .ja): return "6ヶ月"
-        case (180, .en): return "6 months"
-        case (365, .ja): return "1年"
-        case (365, .en): return "1 year"
-        case (_, .ja):   return "\(days)日間"
-        case (_, .en):   return "\(days) days"
-        }
+        // 決まった段（2週間・1ヶ月…）は言い回しが言語ごとに違うので、段ごとに訳を持つ。
+        // 段の外の日数だけ、%d に数字を差し込む。
+        let key = steps.contains(days) ? String(days) : "_"
+        return Tr.get(Tr.period, key, language).replacingOccurrences(of: "%d", with: String(days))
     }
 
     /// いまの日数から1段ずらす。端では止まる。

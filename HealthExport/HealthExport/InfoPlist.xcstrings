@@ -15,6 +15,66 @@
             "state": "translated",
             "value": "Health for AI"
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health for AI"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health for AI"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health for AI"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health for AI"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health for AI"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health for AI"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health for AI"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health for AI"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health for AI"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health for AI"
+          }
         }
       }
     },
@@ -31,6 +91,66 @@
             "state": "translated",
             "value": "Reads steps, heart rate, sleep and other records from Health and gathers the period you choose into one text file. Data is handled only on this device; this app never sends it anywhere. You decide who receives the exported text."
           }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "读取“健康”中记录的步数、心率、睡眠等数据，把你选定时间范围内的内容汇总成一份文本。读取的数据只在此设备上处理，本 App 不会将其发送到外部。导出的文本要交给谁，由你决定。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "讀取「健康」中記錄的步數、心率、睡眠等資料，把你選定時間範圍內的內容彙整成一份文字。讀取的資料只在此裝置上處理，本 App 不會將其傳送到外部。匯出的文字要交給誰，由你決定。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "건강 앱에 기록된 걸음 수, 심박수, 수면 등의 데이터를 읽어, 선택한 기간만큼을 하나의 텍스트로 정리합니다. 읽어 들인 데이터는 기기 안에서만 처리하며 이 앱이 외부로 보내지 않습니다. 내보낸 텍스트를 누구에게 전달할지는 사용자가 정합니다."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lee de Salud los pasos, la frecuencia cardíaca, el sueño y otros registros, y reúne el periodo que elijas en un único archivo de texto. Los datos se tratan solo en este dispositivo; esta app nunca los envía a ninguna parte. Tú decides quién recibe el texto exportado."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lit dans Santé vos pas, votre fréquence cardiaque, votre sommeil et d'autres données, et rassemble la période choisie dans un seul fichier texte. Les données sont traitées uniquement sur cet appareil ; cette app ne les envoie jamais nulle part. C'est vous qui décidez à qui remettre le texte exporté."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liest Schritte, Herzfrequenz, Schlaf und weitere Aufzeichnungen aus Health und fasst den gewählten Zeitraum in einer Textdatei zusammen. Die Daten werden nur auf diesem Gerät verarbeitet; diese App sendet sie nirgendwohin. Wem du den exportierten Text gibst, entscheidest du."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Legge da Salute passi, frequenza cardiaca, sonno e altri dati, e raccoglie il periodo scelto in un unico file di testo. I dati vengono trattati solo su questo dispositivo; questa app non li invia da nessuna parte. Sei tu a decidere a chi consegnare il testo esportato."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lê da Saúde os passos, a frequência cardíaca, o sono e outros registros, e reúne o período escolhido em um único arquivo de texto. Os dados são tratados apenas neste dispositivo; este app nunca os envia a lugar algum. Você decide a quem entregar o texto exportado."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Читает из «Здоровья» шаги, пульс, сон и другие записи и собирает выбранный период в один текстовый файл. Данные обрабатываются только на этом устройстве; приложение никуда их не отправляет. Кому передать выгруженный текст — решаете вы."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يقرأ من «الصحة» الخطوات ومعدل ضربات القلب والنوم وغيرها من السجلات، ويجمع الفترة التي تختارها في ملف نصي واحد. تُعالَج البيانات على هذا الجهاز فقط، ولا يرسلها هذا التطبيق إلى أي مكان. وأنت من يقرّر لمن يُسلّم النص المُصدَّر."
+          }
         }
       }
     },
@@ -46,6 +166,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "This app never writes to Health. It only reads."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本 App 不会向“健康”写入任何数据，只进行读取。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本 App 不會向「健康」寫入任何資料，只進行讀取。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 앱은 건강 앱에 기록을 쓰지 않습니다. 읽기만 합니다."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta app nunca escribe en Salud. Solo lee."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette app n'écrit jamais dans Santé. Elle se contente de lire."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese App schreibt nie in Health. Sie liest nur."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questa app non scrive mai in Salute. Si limita a leggere."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este app nunca escreve na Saúde. Apenas lê."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Это приложение ничего не записывает в «Здоровье». Только читает."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هذا التطبيق لا يكتب في «الصحة» إطلاقاً، بل يقرأ فقط."
           }
         }
       }

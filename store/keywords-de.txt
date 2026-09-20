@@ -1,0 +1,1 @@
+Gesundheit,Export,KI,Schritte,Schlaf,Herzfrequenz,Daten,Text,Verlauf,teilen,Fitness,csv

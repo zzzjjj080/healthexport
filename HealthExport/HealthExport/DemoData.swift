@@ -65,8 +65,7 @@ enum DemoData {
                 switch metric.aggregation {
                 case .workoutList:
                     guard noise(metric.id.rawValue, day) < 0.42 else { continue }
-                    let kinds = [("ウォーキング", "Walking"), ("ランニング", "Running"),
-                                 ("サイクリング", "Cycling"), ("筋力トレーニング", "Strength training")]
+                    let kinds = ["walking", "running", "cycling", "traditionalStrengthTraining"]
                     let kind = kinds[Int(noise(metric.id.rawValue, day, "k") * Double(kinds.count))]
                     let minutes = Int(18 + noise(metric.id.rawValue, day, "m") * 62)
                     result.workouts.append(WorkoutEvent(
@@ -75,7 +74,7 @@ enum DemoData {
                         minutes: minutes,
                         kilocalories: Double(minutes) * (4 + noise(metric.id.rawValue, day, "c") * 4),
                         averageHeartRate: 112 + noise(metric.id.rawValue, day, "h") * 30,
-                        kindJa: kind.0, kindEn: kind.1))
+                        kindKey: kind))
                 case .sleep:
                     let total = 6.2 + noise(metric.id.rawValue, day, "t") * 2.2
                     let deep = total * (0.12 + noise(metric.id.rawValue, day, "d") * 0.07)
@@ -87,11 +86,11 @@ enum DemoData {
                         wakeMinute: Int(5 * 60 + noise(metric.id.rawValue, day, "w") * 180)))
                 case .moodLatest:
                     guard noise(metric.id.rawValue, day, "mood") < 0.5 else { continue }
-                    let labels = ["とても快い", "快い", "やや快い", "ふつう", "やや不快", "不快"]
-                    let labelsEn = ["very pleasant", "pleasant", "slightly pleasant", "neutral", "slightly unpleasant", "unpleasant"]
-                    let index = Int(noise(metric.id.rawValue, day) * Double(labels.count))
+                    let keys = ["veryPleasant", "pleasant", "slightlyPleasant",
+                                "neutral", "slightlyUnpleasant", "unpleasant"]
+                    let index = Int(noise(metric.id.rawValue, day) * Double(keys.count))
                     result.daily[day, default: [:]][metric.id] =
-                        .bilingual(ja: labels[index], en: labelsEn[index])
+                        .localized(key: keys[index], table: .mood)
                 case .minMaxAverage:
                     let base = center(metric)
                     let average = base + (noise(metric.id.rawValue, day) - 0.5) * spread(metric) * 2

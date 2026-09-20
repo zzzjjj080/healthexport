@@ -17,24 +17,7 @@ public enum MetricCategory: String, CaseIterable, Codable, Sendable {
     case activity, heart, respiratory, sleep, body, mobility, hearing, mind
 
     public func name(_ language: Language) -> String {
-        switch (self, language) {
-        case (.activity, .ja):    return "アクティビティ"
-        case (.activity, .en):    return "Activity"
-        case (.heart, .ja):       return "心臓"
-        case (.heart, .en):       return "Heart"
-        case (.respiratory, .ja): return "呼吸・体温"
-        case (.respiratory, .en): return "Respiratory"
-        case (.sleep, .ja):       return "睡眠"
-        case (.sleep, .en):       return "Sleep"
-        case (.body, .ja):        return "からだ"
-        case (.body, .en):        return "Body"
-        case (.mobility, .ja):    return "歩行の質"
-        case (.mobility, .en):    return "Mobility"
-        case (.hearing, .ja):     return "聴覚"
-        case (.hearing, .en):     return "Hearing"
-        case (.mind, .ja):        return "こころ"
-        case (.mind, .en):        return "Mind"
-        }
+        Tr.get(Tr.category, rawValue, language)
     }
 }
 
@@ -49,22 +32,7 @@ public enum Aggregation: String, Codable, Sendable {
     case moodLatest     // 気分。数値ではなく言葉
 
     public func label(_ language: Language) -> String {
-        switch (self, language) {
-        case (.sum, .ja):           return "合計"
-        case (.sum, .en):           return "sum"
-        case (.average, .ja):       return "平均"
-        case (.average, .en):       return "average"
-        case (.minMaxAverage, .ja): return "平均/最小/最大"
-        case (.minMaxAverage, .en): return "avg/min/max"
-        case (.latest, .ja):        return "当日値"
-        case (.latest, .en):        return "daily value"
-        case (.sleep, .ja):         return "合計と内訳"
-        case (.sleep, .en):         return "total and stages"
-        case (.workoutList, .ja):   return "一覧"
-        case (.workoutList, .en):   return "list"
-        case (.moodLatest, .ja):    return "当日値"
-        case (.moodLatest, .en):    return "daily value"
-        }
+        Tr.get(Tr.aggregation, rawValue, language)
     }
 }
 
@@ -103,11 +71,17 @@ public struct Metric: Identifiable, Equatable, Sendable {
     /// ヤード・ポンド法での単位。無いものはどちらの単位系でも同じ表記。
     public var imperial: ImperialUnit? = nil
 
-    public func name(_ language: Language) -> String { language == .ja ? jaName : enName }
+    /// 項目名。訳は Translations.json（12言語）。jaName / enName は表に無いときの保険。
+    public func name(_ language: Language) -> String {
+        let table = Tr.metricName[id.rawValue]
+        return table?[language] ?? table?[Language.fallback] ?? (language == .ja ? jaName : enName)
+    }
 
     public func unit(_ language: Language, _ system: UnitSystem = .metric) -> String {
         if system == .imperial, let imperial { return imperial.label }
-        return language == .ja ? jaUnit : enUnit
+        // 記号の単位（km・kcal・bpm など）は訳を持たない。表に無ければ英語の表記を使う。
+        let table = Tr.metricUnit[id.rawValue]
+        return table?[language] ?? table?[Language.fallback] ?? (language == .ja ? jaUnit : enUnit)
     }
 
     public func shortKey(_ system: UnitSystem) -> String {

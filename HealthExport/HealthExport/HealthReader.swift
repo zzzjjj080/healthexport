@@ -88,7 +88,7 @@ final class HealthReader {
     /// 全項目ぶんを一度に求める。あとから足すと、そのたびにダイアログが出て煩わしい。
     func requestAuthorization() async -> Bool {
         guard Self.isAvailable else {
-            note(L("この端末ではヘルスケアを使えません。", "Health data is not available on this device."))
+            note(String(localized: "この端末ではヘルスケアを使えません。"))
             return false
         }
         let types = Set(MetricCatalog.all.compactMap { objectType(for: $0) })
@@ -98,8 +98,7 @@ final class HealthReader {
             return true
         } catch {
             // ここで握り潰すと、ボタンを押しても無反応になって原因が分からなくなる
-            note(L("ヘルスケアの許可を求められませんでした: \(error.localizedDescription)",
-                   "Could not request Health access: \(error.localizedDescription)"))
+            note(String(localized: "ヘルスケアの許可を求められませんでした: \(error.localizedDescription)"))
             return false
         }
     }
@@ -148,8 +147,7 @@ final class HealthReader {
                                       sourceNames: names.sorted(),
                                       estimatedSamples: metric.samplesPerDay * days)
         } catch {
-            note(L("\(metric.name(.ja))を調べられませんでした: \(error.localizedDescription)",
-                   "Could not check \(metric.name(.en)): \(error.localizedDescription)"))
+            note(String(localized: "\(metric.name(.ui))を調べられませんでした: \(error.localizedDescription)"))
             return empty
         }
     }
@@ -230,8 +228,7 @@ final class HealthReader {
                 if let value { result.daily[day, default: [:]][metric.id] = value }
             }
         } catch {
-            note(L("\(metric.name(.ja))を読めませんでした: \(error.localizedDescription)",
-                   "Could not read \(metric.name(.en)): \(error.localizedDescription)"))
+            note(String(localized: "\(metric.name(.ui))を読めませんでした: \(error.localizedDescription)"))
         }
     }
 
@@ -254,8 +251,7 @@ final class HealthReader {
                 result.daily[day, default: [:]][metric.id] = .number(value)
             }
         } catch {
-            note(L("\(metric.name(.ja))を読めませんでした: \(error.localizedDescription)",
-                   "Could not read \(metric.name(.en)): \(error.localizedDescription)"))
+            note(String(localized: "\(metric.name(.ui))を読めませんでした: \(error.localizedDescription)"))
         }
     }
 
@@ -323,8 +319,7 @@ final class HealthReader {
                 result.daily[day, default: [:]][metric.id] = .sleep(summary)
             }
         } catch {
-            note(L("睡眠を読めませんでした: \(error.localizedDescription)",
-                   "Could not read sleep: \(error.localizedDescription)"))
+            note(String(localized: "睡眠を読めませんでした: \(error.localizedDescription)"))
         }
     }
 
@@ -347,11 +342,10 @@ final class HealthReader {
                     guard let stage = stage(of: sample) else { continue }
                     let day = sleepDay(for: sample.endDate)
                     guard day >= range.from, day <= range.to else { continue }
-                    let names = Self.stageNames(stage)
                     segments.append(SleepSegment(day: YMD.from(sample.startDate),
                                                  startMinute: minuteOfDay(sample.startDate),
                                                  endMinute: minuteOfDay(sample.endDate),
-                                                 stageJa: names.ja, stageEn: names.en))
+                                                 stageKey: Self.stageKey(stage)))
                 }
                 return .sleepSegments(segments, total: segments.count)
             }
@@ -371,18 +365,18 @@ final class HealthReader {
                 : max(estimatedTotal, samples.count)
             return .numbers(values, total: total)
         } catch {
-            note(L("\(metric.name(.ja))の詳細を読めませんでした: \(error.localizedDescription)",
-                   "Could not read samples of \(metric.name(.en)): \(error.localizedDescription)"))
+            note(String(localized: "\(metric.name(.ui))の詳細を読めませんでした: \(error.localizedDescription)"))
             return nil
         }
     }
 
-    private static func stageNames(_ stage: SleepStage) -> (ja: String, en: String) {
+    /// 睡眠段階を表すキー。日ごとの表の列名と同じ語を使う（訳は Translations.json）。
+    private static func stageKey(_ stage: SleepStage) -> String {
         switch stage {
-        case .deep:  return ("深い", "deep")
-        case .rem:   return ("レム", "REM")
-        case .core:  return ("コア", "core")
-        case .awake: return ("覚醒", "awake")
+        case .deep:  return "deep"
+        case .rem:   return "rem"
+        case .core:  return "core"
+        case .awake: return "awake"
         }
     }
 
@@ -408,13 +402,11 @@ final class HealthReader {
                     minutes: Int((workout.duration / 60).rounded()),
                     kilocalories: energy,
                     averageHeartRate: heartRate,
-                    kindJa: WorkoutNames.name(workout.workoutActivityType, language: .ja),
-                    kindEn: WorkoutNames.name(workout.workoutActivityType, language: .en)))
+                    kindKey: WorkoutNames.key(workout.workoutActivityType)))
                 names.insert(workout.sourceRevision.source.name)
             }
         } catch {
-            note(L("ワークアウトを読めませんでした: \(error.localizedDescription)",
-                   "Could not read workouts: \(error.localizedDescription)"))
+            note(String(localized: "ワークアウトを読めませんでした: \(error.localizedDescription)"))
         }
     }
 
@@ -427,28 +419,27 @@ final class HealthReader {
                 sortDescriptors: [SortDescriptor(\.startDate)]).result(for: store)
             for sample in samples {
                 let day = YMD.from(sample.startDate)
-                let label = Self.valenceLabel(sample.valenceClassification)
-                result.daily[day, default: [:]][metric.id] = .bilingual(ja: label.ja, en: label.en)
+                let key = Self.valenceKey(sample.valenceClassification)
+                result.daily[day, default: [:]][metric.id] = .localized(key: key, table: .mood)
             }
         } catch {
-            note(L("気分の記録を読めませんでした: \(error.localizedDescription)",
-                   "Could not read state of mind: \(error.localizedDescription)"))
+            note(String(localized: "気分の記録を読めませんでした: \(error.localizedDescription)"))
         }
     }
 
-    /// 気分の言い表し方。**日英の両方を返す。**
-    /// 読み出す時点では、どちらの言語で書き出すか決まっていない。
+    /// 気分の段階を表すキー。**訳ではなくキーを返す。**
+    /// 読み出す時点では、どの言語で書き出すか決まっていない。訳は Translations.json（12言語）。
     @available(iOS 18.0, *)
-    static func valenceLabel(_ classification: HKStateOfMind.ValenceClassification) -> (ja: String, en: String) {
+    static func valenceKey(_ classification: HKStateOfMind.ValenceClassification) -> String {
         switch classification {
-        case .veryUnpleasant:     return ("とても不快", "very unpleasant")
-        case .unpleasant:         return ("不快", "unpleasant")
-        case .slightlyUnpleasant: return ("やや不快", "slightly unpleasant")
-        case .neutral:            return ("ふつう", "neutral")
-        case .slightlyPleasant:   return ("やや快い", "slightly pleasant")
-        case .pleasant:           return ("快い", "pleasant")
-        case .veryPleasant:       return ("とても快い", "very pleasant")
-        @unknown default:         return ("ふつう", "neutral")
+        case .veryUnpleasant:     return "veryUnpleasant"
+        case .unpleasant:         return "unpleasant"
+        case .slightlyUnpleasant: return "slightlyUnpleasant"
+        case .neutral:            return "neutral"
+        case .slightlyPleasant:   return "slightlyPleasant"
+        case .pleasant:           return "pleasant"
+        case .veryPleasant:       return "veryPleasant"
+        @unknown default:         return "neutral"
         }
     }
 }

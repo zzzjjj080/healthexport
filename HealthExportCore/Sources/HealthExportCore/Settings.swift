@@ -35,7 +35,7 @@ public struct ExportOptions: Equatable, Sendable, Codable {
     /// 距離・体重などの単位。既定はメートル法。
     public var unitSystem: UnitSystem
 
-    public init(language: Language = .ja,
+    public init(language: Language = Language.forLocale(),
                 layout: Layout = .wide,
                 separator: Separator = .tab,
                 shortColumnNames: Bool = false,
@@ -61,7 +61,9 @@ public struct ExportOptions: Equatable, Sendable, Codable {
     // `decode` は1つでも欠けると失敗するので、必ず decodeIfPresent と既定値で受ける。
     public init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        language = try c.decodeIfPresent(Language.self, forKey: .language) ?? .ja
+        // 言語を持たない古い設定は、日本語しか無かった頃のもの。
+        // ただし端末が日本語でないなら、その言語のほうが役に立つ。（引き継ぎ書 4-158）
+        language = try c.decodeIfPresent(Language.self, forKey: .language) ?? Language.forLocale()
         layout = try c.decodeIfPresent(Layout.self, forKey: .layout) ?? .wide
         separator = try c.decodeIfPresent(Separator.self, forKey: .separator) ?? .tab
         shortColumnNames = try c.decodeIfPresent(Bool.self, forKey: .shortColumnNames) ?? false

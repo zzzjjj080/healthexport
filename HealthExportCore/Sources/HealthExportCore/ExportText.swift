@@ -150,20 +150,8 @@ public enum ExportText {
     }
 
     static func keyLabel(_ key: String, _ language: Language) -> String {
-        guard language == .ja else { return key }
-        switch key {
-        case "total": return "合計"
-        case "deep":  return "深い"
-        case "rem":   return "レム"
-        case "core":  return "コア"
-        case "awake": return "覚醒"
-        case "bed":   return "就寝"
-        case "wake":  return "起床"
-        case "avg":   return "平均"
-        case "min":   return "最小"
-        case "max":   return "最大"
-        default:      return key
-        }
+        // 表に無いキー（項目ごとの独自の列名）はそのまま出す。
+        Tr.get(Tr.keyLabel, key, language)
     }
 
     /// 1項目ぶんのセル。値が無ければ列の数だけ空文字を返す。
@@ -186,8 +174,10 @@ public enum ExportText {
                     sleep.wakeMinute.map(clockLabel) ?? ""]
         case .text(let text):
             return [text]
-        case .bilingual(let ja, let en):
-            return [language == .ja ? ja : en]
+        case .localized(let key, let table):
+            switch table {
+            case .mood: return [Tr.get(Tr.mood, key, language)]
+            }
         }
     }
 

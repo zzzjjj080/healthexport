@@ -5,54 +5,53 @@ import HealthExportCore
 ///
 /// `HKWorkoutActivityType` には名前を返すAPIが無いので、ここで対応表を持つ。
 /// **番号ではなく列挙のケース名で書く。** 番号で書くとOSが種目を足したときに黙って間違える。
-/// 表に無いものは「その他」。嘘の名前を出すより正しい。
+/// 表が持つのは名前ではなくキーで、訳は Translations.json 側にある。
 enum WorkoutNames {
 
-    static func name(_ type: HKWorkoutActivityType, language: Language) -> String {
-        let pair = table[type]
-        switch language {
-        case .ja: return pair?.ja ?? "その他"
-        case .en: return pair?.en ?? "Other"
-        }
+    /// 種目を表すキー。**訳ではなくキーを返す。**
+    /// 訳は Translations.json（12言語）にあり、書き出すときの言語で引く。
+    /// 表に無いものは "other"。嘘の名前を出すより正しい。
+    static func key(_ type: HKWorkoutActivityType) -> String {
+        table[type] ?? "other"
     }
 
-    private static let table: [HKWorkoutActivityType: (ja: String, en: String)] = [
-        .walking:                       ("ウォーキング", "Walking"),
-        .running:                       ("ランニング", "Running"),
-        .cycling:                       ("サイクリング", "Cycling"),
-        .hiking:                        ("ハイキング", "Hiking"),
-        .swimming:                      ("スイミング", "Swimming"),
-        .yoga:                          ("ヨガ", "Yoga"),
-        .pilates:                       ("ピラティス", "Pilates"),
-        .traditionalStrengthTraining:   ("筋力トレーニング", "Strength training"),
-        .functionalStrengthTraining:    ("機能的筋力トレーニング", "Functional strength training"),
-        .coreTraining:                  ("体幹トレーニング", "Core training"),
-        .highIntensityIntervalTraining: ("HIIT", "HIIT"),
-        .elliptical:                    ("エリプティカル", "Elliptical"),
-        .rowing:                        ("ローイング", "Rowing"),
-        .stairClimbing:                 ("階段昇降", "Stair climbing"),
-        .stairs:                        ("ステップ", "Stairs"),
-        .dance:                         ("ダンス", "Dance"),
-        .cooldown:                      ("クールダウン", "Cooldown"),
-        .flexibility:                   ("ストレッチ", "Flexibility"),
-        .mixedCardio:                   ("有酸素運動", "Mixed cardio"),
-        .tennis:                        ("テニス", "Tennis"),
-        .golf:                          ("ゴルフ", "Golf"),
-        .basketball:                    ("バスケットボール", "Basketball"),
-        .soccer:                        ("サッカー", "Soccer"),
-        .baseball:                      ("野球", "Baseball"),
-        .badminton:                     ("バドミントン", "Badminton"),
-        .tableTennis:                   ("卓球", "Table tennis"),
-        .boxing:                        ("ボクシング", "Boxing"),
-        .climbing:                      ("クライミング", "Climbing"),
-        .skatingSports:                 ("スケート", "Skating"),
-        .snowSports:                    ("スノースポーツ", "Snow sports"),
-        .surfingSports:                 ("サーフィン", "Surfing"),
-        .martialArts:                   ("武術", "Martial arts"),
-        .mindAndBody:                   ("心と体", "Mind and body"),
-        .preparationAndRecovery:        ("準備と回復", "Preparation and recovery"),
-        .wheelchairWalkPace:            ("車椅子（ウォーキングペース）", "Wheelchair walk pace"),
-        .wheelchairRunPace:             ("車椅子（ランニングペース）", "Wheelchair run pace"),
-        .other:                         ("その他", "Other"),
+    private static let table: [HKWorkoutActivityType: String] = [
+        .walking:                         "walking",
+        .running:                         "running",
+        .cycling:                         "cycling",
+        .hiking:                          "hiking",
+        .swimming:                        "swimming",
+        .yoga:                            "yoga",
+        .pilates:                         "pilates",
+        .traditionalStrengthTraining:     "traditionalStrengthTraining",
+        .functionalStrengthTraining:      "functionalStrengthTraining",
+        .coreTraining:                    "coreTraining",
+        .highIntensityIntervalTraining:   "highIntensityIntervalTraining",
+        .elliptical:                      "elliptical",
+        .rowing:                          "rowing",
+        .stairClimbing:                   "stairClimbing",
+        .stairs:                          "stairs",
+        .dance:                           "dance",
+        .cooldown:                        "cooldown",
+        .flexibility:                     "flexibility",
+        .mixedCardio:                     "mixedCardio",
+        .tennis:                          "tennis",
+        .golf:                            "golf",
+        .basketball:                      "basketball",
+        .soccer:                          "soccer",
+        .baseball:                        "baseball",
+        .badminton:                       "badminton",
+        .tableTennis:                     "tableTennis",
+        .boxing:                          "boxing",
+        .climbing:                        "climbing",
+        .skatingSports:                   "skatingSports",
+        .snowSports:                      "snowSports",
+        .surfingSports:                   "surfingSports",
+        .martialArts:                     "martialArts",
+        .mindAndBody:                     "mindAndBody",
+        .preparationAndRecovery:          "preparationAndRecovery",
+        .wheelchairWalkPace:              "wheelchairWalkPace",
+        .wheelchairRunPace:               "wheelchairRunPace",
+        .other:                           "other",
     ]
 }

@@ -211,15 +211,17 @@ struct ExportTextTests {
 
     // MARK: - 区切り
 
+    /// 言葉で入る値（気分のメモなど）にカンマが混ざっても、列がずれない。
+    /// 種目名は表から引くようになったのでカンマは入らないが、自由記述の値は入りうる。
     @Test func カンマ区切りで値にカンマが混ざっても列がずれない() {
         var options = ExportOptions(includeAsk: false)
         options.separator = .comma
-        let workout = WorkoutEvent(day: Self.day1, startMinute: 7 * 60, minutes: 45,
-                                   kilocalories: 320, averageHeartRate: 128,
-                                   kindJa: "筋力トレーニング, 上半身", kindEn: "Strength, upper body")
-        let text = ExportText.build(Self.request(metrics: [.workouts], options: options, workouts: [workout]))
-        let row = Self.lines(text).first { $0.hasPrefix("2026-06-01") }!
-        #expect(row.contains("\"筋力トレーニング, 上半身\""))
+        let request = ExportRequest(range: DateRange(from: Self.day1, to: Self.day1),
+                                    metrics: MetricCatalog.metrics([.stateOfMind]),
+                                    daily: [Self.day1: [.stateOfMind: .text("やや快い, 寝不足")]],
+                                    options: options)
+        let row = Self.lines(ExportText.build(request)).first { $0.hasPrefix("2026-06-01") }!
+        #expect(row.contains("\"やや快い, 寝不足\""))
         #expect(row.components(separatedBy: "\"").count == 3)   // 引用符は1組だけ
     }
 
@@ -242,8 +244,8 @@ struct ExportTextTests {
     }
 
     @Test func 期間の外のワークアウトは混ざらない() {
-        let inside = WorkoutEvent(day: Self.day1, startMinute: 420, minutes: 30, kindJa: "散歩", kindEn: "Walk")
-        let outside = WorkoutEvent(day: YMD(2026, 5, 30), startMinute: 420, minutes: 30, kindJa: "散歩", kindEn: "Walk")
+        let inside = WorkoutEvent(day: Self.day1, startMinute: 420, minutes: 30, kindKey: "walking")
+        let outside = WorkoutEvent(day: YMD(2026, 5, 30), startMinute: 420, minutes: 30, kindKey: "walking")
         let text = ExportText.build(Self.request(metrics: [.workouts], workouts: [inside, outside]))
         #expect(text.contains("## ワークアウト（1）"))
         #expect(!text.contains("2026-05-30"))
@@ -266,7 +268,7 @@ struct ExportTextTests {
         var options = ExportOptions(includeAsk: false)
         options.rawMetrics = [.sleep]
         let segments = [SleepSegment(day: Self.day1, startMinute: 22 * 60, endMinute: 23 * 60,
-                                     stageJa: "コア", stageEn: "core")]
+                                     stageKey: "core")]
         let text = ExportText.build(Self.request(metrics: [.sleep], options: options,
                                                  rawSeries: [.sleep: .sleepSegments(segments, total: segments.count)]))
         #expect(text.contains("開始\t終了\t段階"))
@@ -299,14 +301,14 @@ struct ExportTextTests {
 }
 
 
-/// 気分のように言葉で表す値は、日英の両方を持たせる。
-/// 片方だけだと、英語で書き出したのに1列だけ日本語、ということが起きる。
-struct BilingualValueTests {
+/// 気分のように言葉で表す値は、訳ではなくキーで持たせる。
+/// 訳を焼き付けると、英語で書き出したのに1列だけ日本語、ということが起きる。
+struct LocalizedValueTests {
 
     static func request(_ options: ExportOptions) -> ExportRequest {
         ExportRequest(range: DateRange(from: YMD(2026, 6, 1), to: YMD(2026, 6, 1)),
                       metrics: MetricCatalog.metrics([.stateOfMind]),
-                      daily: [YMD(2026, 6, 1): [.stateOfMind: .bilingual(ja: "やや快い", en: "slightly pleasant")]],
+                      daily: [YMD(2026, 6, 1): [.stateOfMind: .localized(key: "slightlyPleasant", table: .mood)]],
                       options: options)
     }
 
@@ -320,6 +322,20 @@ struct BilingualValueTests {
         let text = ExportText.build(Self.request(en))
         #expect(text.contains("slightly pleasant"))
         #expect(!text.contains("やや快い"))   // 日本語が混ざらない
+    }
+
+    /// 12言語のどれで書き出しても、その言語の言葉が入り、日本語が残らない。
+    @Test func どの言語でも気分の言葉がその言語になる() {
+        for language in Language.allCases {
+            var options = ExportOptions(includeAsk: false)
+            options.language = language
+            let text = ExportText.build(Self.request(options))
+            let expected = Tr.get(Tr.mood, "slightlyPleasant", language)
+            #expect(text.contains(expected), "\(language) に \(expected) が無い")
+            if language != .ja {
+                #expect(!text.contains("やや快い"), "\(language) に日本語が混ざっている")
+            }
+        }
     }
 
     @Test func 項目ごとに分ける形でも切り替わる() {

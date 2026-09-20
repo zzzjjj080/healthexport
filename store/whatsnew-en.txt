@@ -1,1 +1,3 @@
-- Fixed an issue where Japanese text could appear on devices set to a language other than Japanese. Devices in any non-Japanese language now show the app entirely in English.
+- Now available in 12 languages: English, Japanese, Simplified and Traditional Chinese, Korean, Spanish, French, German, Italian, Brazilian Portuguese, Russian and Arabic. The app follows your device language, and Japanese no longer appears on devices set to another language.
+- The exported text can be written in any of those 12 languages too. The request for the AI is in the same language, so the answer comes back in it as well.
+- Metric names, workout types, sleep stages and mood entries are all written in the language you choose.

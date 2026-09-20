@@ -8,9 +8,17 @@ one plain-text document that the user can hand to an AI assistant of their choic
 It reformats existing data. It does not measure, diagnose or interpret anything.
 
 LANGUAGE ON THE REVIEW DEVICE
-The app ships in Japanese and English. A device set to Japanese shows Japanese; a
-device set to any other language shows English. On a review device set to English
-every label below appears in English, so the English labels are given first.
+The app ships in 12 languages: English, Japanese, Simplified and Traditional Chinese,
+Korean, Spanish, French, German, Italian, Brazilian Portuguese, Russian and Arabic.
+It follows the device language; a language without a translation falls back to English.
+On a review device set to English every label below appears in English.
+
+Arabic is right-to-left. SwiftUI mirrors the layout automatically; this was verified
+in the simulator.
+
+The screenshots are the English ones for every language in this version. Localized
+screenshots are planned for a later update. The listing text itself is translated
+for all 12 languages.
 
 IMPORTANT FOR REVIEW
 On a review device HealthKit is usually empty. In that case the app correctly shows
@@ -19,38 +27,33 @@ not a malfunction. The app cannot tell the difference between "no data" and "rea
 access denied" because HealthKit returns an empty result in both cases, so the
 message mentions both possibilities.
 
-To see the app working with data, please add a few samples first:
-1. Open the Health app, then Browse > Activity > Steps > Add Data.
-2. Enter a value for two or three different days.
-3. Return to Health for AI. The metric appears automatically.
+To see it working with data: Health app > Browse > Activity > Steps > Add Data,
+enter values for two or three days, then return. The metric appears automatically.
 
 HOW TO EXERCISE THE APP
-1. Launch the app and tap "Start" ("はじめる") on the intro screen.
+1. Launch the app and tap "Start" on the intro screen.
 2. In the HealthKit permission sheet, tap "Turn All Categories On", then "Allow".
-3. Choose one of six purposes. "General check-in" ("ふだんの管理") is selected by
-   default and includes every metric that has data.
+3. Choose one of six purposes. "General check-in" is selected by default and
+   includes every metric that has data.
 4. Optionally change the period with the - / + buttons (2 weeks to 1 year), or set
-   exact dates from "Pick dates" ("日付で指定").
-5. Tap "Export" ("書き出す"). A sheet appears with the generated text, its character
-   and token count, and Copy / Share buttons.
-6. "Copy" copies the text to the clipboard. "Share" opens the standard share sheet
-   with a .txt file.
-7. Detailed settings are reached from "What gets exported" > "Change metrics and format".
+   exact dates from "Pick dates".
+5. Tap "Export". A sheet appears with the generated text, its character and token
+   count, and Copy / Share buttons.
+6. "Copy" puts it on the clipboard; "Share" opens the share sheet with a .txt file.
+7. Detailed settings: "What gets exported" > "Change metrics or format".
 
 PERMISSIONS
 HealthKit read access only. The app never writes to HealthKit. It does not request
 clinical health records; the healthkit.access entitlement is an empty array.
 
 EXTERNAL SERVICES
-None. Only Apple frameworks (HealthKit, SwiftUI, StoreKit). All processing happens on
-device and nothing is transmitted by the app. What the user does with the exported
-text afterwards is their own choice; the privacy policy states this explicitly and
-explains how to omit device names, which can contain the owner's name.
+None. Only Apple frameworks (HealthKit, SwiftUI, StoreKit). Everything happens on
+device and nothing is transmitted. The privacy policy states this and explains how to
+omit device names, which can contain the owner's name.
 
 REGIONAL DIFFERENCES
-None. The app requires no network access, so it behaves identically in every region.
-Distance and weight can be shown in miles and pounds; the values are read from
-HealthKit in those units, not converted afterwards.
+None. No network access, so it behaves identically in every region. Distance and
+weight can be shown in miles and pounds, read from HealthKit in those units.
 
 NOT A MEDICAL APP
 No diagnosis, no treatment, no health claims. The request text the app attaches for
@@ -63,8 +66,9 @@ optional: nothing is locked behind it and nothing changes after buying. It sits 
 the bottom of the detailed settings (Format tab) and as one line under the Copy /
 Share buttons after an export.
 
-WHAT IS NEW IN 1.3
-A localization fix only. In 1.2 a device set to a language other than Japanese or
-English (for example French) showed a mixture of Japanese and English, because the
-development region did not match the string catalog. Those devices now show the app
-entirely in English. No functional change.
+WHAT IS NEW IN 1.4
+Localization only. No functional change. In 1.2 a device set to a language other than
+Japanese or English (for example French) showed a mixture of Japanese and English,
+because the development region did not match the string catalog. That is fixed, and
+the app is now translated into 12 languages. The exported text can be written in any
+of them, including metric names, workout types, sleep stages and mood entries.

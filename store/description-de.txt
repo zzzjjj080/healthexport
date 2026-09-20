@@ -1,0 +1,91 @@
+Dein iPhone sammelt seit Jahren Daten: Schritte, Schlaf, Herzfrequenz.
+Doch sobald du eine KI dazu befragen willst, hakt es: Wie bekommt man die Daten überhaupt heraus?
+
+Diese App fasst diese Aufzeichnungen in einer einzigen Textdatei zusammen, die eine KI lesen kann.
+
+
+■ Gib sie der KI, die du ohnehin nutzt
+
+Heraus kommt reiner Text. Nichts einzurichten, kein Konto anzulegen.
+
+・Auf „Kopieren“ tippen und in deinen gewohnten KI-Chat einfügen
+・Bei langen Zeiträumen stattdessen als Textdatei teilen
+
+Welche KI, ist egal. Die Aufgabe dieser App endet damit, einen lesbaren Text
+für den vorzubereiten, dem du ihn geben willst.
+
+
+■ Du wählst nur einen Zweck
+
+Was hineingehört und wie es zusammengefasst wird, ist schwer zu entscheiden,
+wenn man es noch nie getan hat. Sechs Zwecke legen deshalb alles für dich fest.
+
+・Allgemeiner Überblick … alles, was vorhanden ist. Im Zweifel hier anfangen
+・Schlaf … der Schlaf und was ihn beeinflusst
+・Training … die Belastung, und ob du dich erholst
+・Verfassung … Tage finden, die vom Normalen abweichen
+・Stimmung … deine Stimmung im Vergleich zu den Körperdaten
+・Ohne Fragen … nichts fragen, die KI frei schauen lassen
+
+Neben Zeitraum, Werten und Zusammenfassung schreibt die App auch die Anfrage an die KI.
+Oben steht ein Satz wie „Nenne mir die Trends in diesem Zeitraum“ – du musst dir
+nach dem Übergeben nicht überlegen, was du fragen sollst.
+
+
+■ Du musst nicht sagen, welche Geräte du hast
+
+Die App fragt nicht, ob du eine Apple Watch hast oder was deine Kopfhörer messen.
+Sie sieht sich den gewählten Zeitraum an und listet nur Werte mit echten Aufzeichnungen.
+Was du nicht messen kannst, taucht nicht auf, und in der Datei bleiben keine leeren Spalten.
+
+
+■ Du weißt vorher, ob es hineinpasst
+
+Chatfelder haben Grenzen. Nach dem Export siehst du die Zeichenzahl, eine grobe
+Token-Zahl und ob sich der Text so einfügen lässt. Ist er zu lang, sagt dir die App,
+was du kürzen solltest.
+
+Drei Monate mit allen Werten ergeben pro Tag zusammengefasst etwa 15.000 Zeichen.
+Einzelne Werte lassen sich auf „jede Einzelmessung“ umstellen, wenn du Details brauchst.
+
+
+■ Was exportiert wird
+
+Schritte, Geh- und Laufstrecke, gestiegene Etagen, aktive und Ruheenergie,
+Trainingsminuten, Stehminuten, Workouts, Herzfrequenz, Ruheherzfrequenz,
+Herzfrequenzvariabilität, Herzfrequenz beim Gehen, Cardiofitness, Blutsauerstoff,
+Atemfrequenz, Handgelenktemperatur-Abweichung, Schlaf (gesamt und Phasen),
+Körpergewicht, Körperfettanteil, Gehgeschwindigkeit, Schrittlänge, Gangasymmetrie,
+Kopfhörerpegel, Umgebungslautstärke, Achtsamkeitsminuten und Gemütszustand.
+
+Aufgenommen wird nur, wofür es im gewählten Zeitraum Aufzeichnungen gibt.
+
+Entfernung und Gewicht lassen sich in Meilen und Pfund oder in Kilometern und Kilogramm zeigen.
+
+
+■ Damit die Zahlen richtig ankommen
+
+・Manche Werte, etwa Schritte, schreiben iPhone und Apple Watch beide. Ein Aufaddieren
+  würde sie überhöhen, deshalb werden die Werte genommen, die Health nach Abzug
+  der Dubletten meldet.
+・Auch Schlaf kann für dieselbe Nacht doppelt erfasst sein; Überschneidungen werden vorher zusammengeführt.
+・Ein leeres Feld bedeutet „keine Aufzeichnung“, nicht null. Die Datei sagt das ausdrücklich.
+
+Diese Hinweise stehen ganz oben im Dokument, damit sie niemand falsch liest.
+
+
+■ Sie verbindet sich mit nichts
+
+Die Daten werden nur auf diesem Gerät verarbeitet. Diese App sendet sie nirgendwohin.
+Wem du den exportierten Text gibst, entscheidest du.
+Kein Konto, keine Anmeldung.
+
+
+■ Bitte beachten
+
+Dies ist kein Medizinprodukt und dient nicht zur Diagnose oder Behandlung.
+Wenn dich etwas beunruhigt, geh bitte zum Arzt.
+Die Antwort einer KI ist ein Anhaltspunkt, kein Ersatz für ärztliches Urteil.
+
+
+In 12 Sprachen verfügbar, und du wählst, in welcher Sprache der Text geschrieben wird.

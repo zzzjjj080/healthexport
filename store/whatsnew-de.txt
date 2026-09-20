@@ -1,0 +1,2 @@
+・Ein Fehler wurde behoben, durch den auf Geräten mit anderer Sprache japanischer Text erschien. Die App gibt es jetzt in 12 Sprachen.
+・Auch der exportierte Text lässt sich in diesen 12 Sprachen erzeugen.

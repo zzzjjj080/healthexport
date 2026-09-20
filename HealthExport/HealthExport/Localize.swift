@@ -7,8 +7,7 @@ extension Language {
     static var ui: Language { Language.forLocale() }
 }
 
-/// 数字や単位が混ざる文言は String Catalog では拾えないので、コードで言語ごとに組む。
-/// （引き継ぎ書 4-87）文字通りの `Text("…")` はカタログに任せ、こちらは使わない。
-func L(_ ja: String, _ en: String) -> String {
-    Language.ui == .ja ? ja : en
-}
+// 以前あった `L(ja, en)`（日本語と英語をコードに直書きして選ぶヘルパ）は廃止した。
+// 2言語しか扱えず、訳を足すたびにコードを触ることになるため。
+// 数字や名前が混ざる文言も `String(localized: "…")` にすれば String Catalog が
+// `%lld` `%@` の形で受け取れる。（引き継ぎ書 4-159）

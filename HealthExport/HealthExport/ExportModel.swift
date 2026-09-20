@@ -160,7 +160,7 @@ final class ExportModel {
 
     /// 期間の呼び名。日付で指定したときも幅が変わらないよう、日数で言う。
     var periodLabel: String {
-        if isCustomRange { return L("\(range.dayCount)日間", "\(range.dayCount) days") }
+        if isCustomRange { return String(localized: "\(range.dayCount)日間") }
         return PeriodChoice.label(currentDays, settings.options.language)
     }
 
@@ -191,11 +191,10 @@ final class ExportModel {
         guard !isBusy else { return }
         let metrics = selectedMetrics
         guard !metrics.isEmpty else {
-            errorMessage = L("書き出せる項目がありません。ヘルスケアの許可と、選んでいる期間を確かめてください。",
-                             "Nothing to export. Check Health access and the selected period.")
+            errorMessage = String(localized: "書き出せる項目がありません。ヘルスケアの許可と、選んでいる期間を確かめてください。")
             return
         }
-        phase = .reading(L("記録を読んでいます", "Reading records"))
+        phase = .reading(String(localized: "記録を読んでいます"))
         var daily: DailyReadResult
         var rawSeries: [MetricID: RawSeries] = [:]
         #if DEBUG
@@ -239,7 +238,7 @@ final class ExportModel {
         for id in settings.options.rawMetrics {
             let metric = MetricCatalog.metric(id)
             guard metric.supportsRawSamples, metrics.contains(where: { $0.id == id }) else { continue }
-            phase = .reading(L("\(metric.name(.ja))を1件ずつ読んでいます", "Reading every sample of \(metric.name(.en))"))
+            phase = .reading(String(localized: "\(metric.name(.ui))を1件ずつ読んでいます"))
             let estimated = availability[id]?.estimatedSamples ?? 0
             if let series = await reader.readRaw(metric: metric, range: range, estimatedTotal: estimated) {
                 rawSeries[id] = series
@@ -264,8 +263,7 @@ final class ExportModel {
         guard total > limit else { return text }
         let omitted = total - limit
         return lines.joined(separator: "\n")
-            + L("\n\n…… ここから先の \(omitted.formatted()) 行は画面に出していません。\nコピーと共有には全部入っています。",
-                "\n\n…… \(omitted.formatted()) more lines are not shown here.\nCopy and Share include everything.")
+            + String(localized: "\n\n…… ここから先の \(omitted.formatted()) 行は画面に出していません。\nコピーと共有には全部入っています。")
     }
 
     /// 共有シートに渡すファイル。名前で中身が分かるようにしておく。
@@ -277,8 +275,7 @@ final class ExportModel {
             try text.write(to: url, atomically: true, encoding: .utf8)
             return url
         } catch {
-            errorMessage = L("ファイルを作れませんでした: \(error.localizedDescription)",
-                             "Could not create the file: \(error.localizedDescription)")
+            errorMessage = String(localized: "ファイルを作れませんでした: \(error.localizedDescription)")
             return nil
         }
     }

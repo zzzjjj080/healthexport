@@ -1,0 +1,2 @@
+・Corregido un problema por el que aparecía texto en japonés en dispositivos configurados en otros idiomas. Ahora hay 12 idiomas y cada dispositivo se muestra en el suyo.
+・El texto exportado también puede generarse en los 12 idiomas.

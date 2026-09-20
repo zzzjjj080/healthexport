@@ -1,0 +1,93 @@
+Il tuo iPhone registra da anni: passi, sonno, frequenza cardiaca.
+Ma appena vuoi chiederne conto a un'IA ti fermi: come si tirano fuori quei dati?
+
+Questa app raccoglie quei dati in un unico file di testo che un'IA può leggere.
+
+
+■ Passalo all'IA che già usi
+
+Quello che esce è testo semplice. Niente integrazioni da configurare, nessun account da creare.
+
+・Tocca Copia e incollalo nella tua solita chat con l'IA
+・Per periodi lunghi, condividilo come file di testo
+
+Non importa quale IA usi. Il compito di questa app finisce nel preparare un testo
+leggibile per chi hai scelto.
+
+
+■ Scegli soltanto un obiettivo
+
+Decidere cosa includere e come riassumerlo è difficile se non l'hai mai fatto.
+Per questo sei obiettivi impostano tutto al posto tuo.
+
+・Panoramica generale … tutto ciò che hai. Se hai dubbi, parti da qui
+・Sonno … il sonno e ciò che lo influenza
+・Allenamento … il carico e se stai recuperando
+・Condizione … trova i giorni fuori dal solito
+・Umore … il tuo umore rispetto ai dati corporei
+・Senza domande … non chiedere nulla, lascia guardare l'IA
+
+Oltre al periodo, alle metriche e al modo di riassumere, scrive anche la richiesta per l'IA.
+In cima compare una frase come «dimmi le tendenze di questo periodo»: dopo aver
+consegnato il testo non devi pensare a cosa chiedere.
+
+
+■ Non serve dire quali dispositivi possiedi
+
+Non ti chiede se hai un Apple Watch né cosa misurano i tuoi auricolari.
+Guarda il periodo scelto ed elenca solo le metriche che hanno davvero dei dati.
+Ciò che non puoi misurare non compare, e nel file non restano colonne vuote.
+
+
+■ Sai se ci sta prima di inviarlo
+
+Le chat hanno dei limiti. Dopo l'esportazione vedi il numero di caratteri, una stima
+dei token e se si può incollare così com'è. Se è troppo lungo, ti dice cosa accorciare.
+
+Tre mesi con tutte le metriche fanno circa 15.000 caratteri riassunti per giorno.
+Puoi passare singole metriche a «ogni campione» quando ti serve il dettaglio.
+
+
+■ Cosa viene esportato
+
+Passi, distanza camminata+corsa, piani saliti, energia attiva e a riposo,
+minuti di esercizio, minuti in piedi, allenamenti, frequenza cardiaca,
+frequenza cardiaca a riposo, variabilità cardiaca, frequenza cardiaca camminando,
+forma cardiovascolare, ossigeno nel sangue, frequenza respiratoria,
+variazione di temperatura al polso, sonno (totale e fasi), peso corporeo,
+percentuale di grasso corporeo, velocità di camminata, lunghezza del passo,
+asimmetria della camminata, livello audio delle cuffie, livello del suono ambientale,
+minuti di mindfulness e stato d'animo.
+
+Sono inclusi solo quelli con dati nel periodo scelto.
+
+Distanza e peso possono essere mostrati in miglia e libbre, oppure in chilometri e chili.
+
+
+■ Perché i numeri arrivino giusti
+
+・Alcune metriche, come i passi, vengono scritte sia dall'iPhone sia dall'Apple Watch.
+  Sommarle le gonfierebbe, quindi si usano i valori che Salute riporta dopo aver
+  rimosso i duplicati.
+・Anche il sonno può essere registrato due volte per la stessa notte: le sovrapposizioni
+  vengono unite prima.
+・Una cella vuota significa che non c'è alcun dato, non zero. Il file lo dichiara.
+
+Queste note stanno in cima al documento, così chi legge non fraintende.
+
+
+■ Non si collega a nulla
+
+I dati vengono trattati solo su questo dispositivo. Questa app non li invia da nessuna parte.
+Sei tu a decidere a chi consegnare il testo esportato.
+Nessun account, nessun accesso.
+
+
+■ Da tenere presente
+
+Non è un dispositivo medico e non serve per diagnosi o cure.
+Se qualcosa ti preoccupa, rivolgiti a un medico.
+La risposta di un'IA è un riferimento, non sostituisce il giudizio medico.
+
+
+Disponibile in 12 lingue, e puoi scegliere in quale lingua viene scritto il testo.

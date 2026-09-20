@@ -99,9 +99,14 @@ struct ContentView: View {
     /// 期間は目的と切り離してある。押すたびに1段ずつ動く。
     private var periodCard: some View {
         HStack(spacing: 10) {
+            // ドイツ語の Zeitraum やロシア語の Период は「期間」より長く、
+            // そのままだと2行に折り返して「Пе-риод」のように割れる。1行に収めて縮める。
             Text("期間")
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                .fixedSize(horizontal: true, vertical: false)
 
             HStack(spacing: 0) {
                 stepButton(systemName: "minus", direction: -1, enabled: model.canStepShorter)
@@ -171,8 +176,8 @@ struct ContentView: View {
                         .foregroundStyle(.secondary)
                     Spacer()
                     Text(model.phase == .scanning
-                         ? L("調べています…", "Checking…")
-                         : L("\(model.selectedMetrics.count)項目", "\(model.selectedMetrics.count) metrics"))
+                         ? String(localized: "調べています…")
+                         : String(localized: "\(model.selectedMetrics.count)項目"))
                         .font(.system(.subheadline, design: .rounded, weight: .bold))
                         .monospacedDigit()
                     Image(systemName: detailExpanded ? "chevron.up" : "chevron.down")
@@ -192,7 +197,7 @@ struct ContentView: View {
                         chip(metric.name(.ui))
                     }
                     if !detailExpanded, hiddenMetricCount > 0 {
-                        chip(L("ほか\(hiddenMetricCount)項目", "+\(hiddenMetricCount) more"))
+                        chip(String(localized: "ほか\(hiddenMetricCount)項目"))
                     }
                 }
                 .padding(.horizontal, 14)
@@ -296,8 +301,8 @@ struct ContentView: View {
     private func errorCard(_ messages: [String]) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Label(messages.count == 1
-                  ? L("うまくいかなかったこと", "Something went wrong")
-                  : L("うまくいかなかったこと（\(messages.count)件）", "Something went wrong (\(messages.count))"),
+                  ? String(localized: "うまくいかなかったこと")
+                  : String(localized: "うまくいかなかったこと（\(messages.count)件）"),
                   systemImage: "exclamationmark.triangle.fill")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Palette.caution)
@@ -353,8 +358,7 @@ struct ContentView: View {
             .accessibilityIdentifier("exportButton")
 
             if model.exportedText != nil, let estimate = model.estimate {
-                Button(L("前回の結果を見る（\(estimate.characters.formatted())文字）",
-                         "Show last result (\(estimate.characters.formatted()) chars)")) {
+                Button(String(localized: "前回の結果を見る（\(estimate.characters.formatted())文字）")) {
                     showingResult = true
                 }
                 .font(.caption)

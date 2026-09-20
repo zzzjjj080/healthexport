@@ -61,12 +61,72 @@ struct UnitSystemTests {
         #expect(options.unitSystem == .metric)
     }
 
-    @Test func 端末の設定から単位系と言語が決まる() {
+    @Test func 端末の設定から単位系が決まる() {
         #expect(UnitSystem.forLocale(Locale(identifier: "en_US")) == .imperial)
         #expect(UnitSystem.forLocale(Locale(identifier: "ja_JP")) == .metric)
         #expect(UnitSystem.forLocale(Locale(identifier: "en_GB")) == .metric)   // 英国はメートル法
+    }
+
+    @Test func 端末の言語から表示する言語が決まる() {
         #expect(Language.forLocale(Locale(identifier: "ja_JP")) == .ja)
         #expect(Language.forLocale(Locale(identifier: "en_US")) == .en)
-        #expect(Language.forLocale(Locale(identifier: "fr_FR")) == .en)        // 日本語以外は英語
+        #expect(Language.forLocale(Locale(identifier: "fr_FR")) == .fr)
+        #expect(Language.forLocale(Locale(identifier: "de_DE")) == .de)
+        #expect(Language.forLocale(Locale(identifier: "ko_KR")) == .ko)
+        #expect(Language.forLocale(Locale(identifier: "ru_RU")) == .ru)
+        #expect(Language.forLocale(Locale(identifier: "ar_SA")) == .ar)
+        #expect(Language.forLocale(Locale(identifier: "es_MX")) == .es)
+        #expect(Language.forLocale(Locale(identifier: "it_IT")) == .it)
+    }
+
+    /// 中国語とポルトガル語は、言語コードだけでは決まらない（引き継ぎ書 4-158）。
+    @Test func 中国語とポルトガル語は地域まで見て決まる() {
+        #expect(Language.forLocale(Locale(identifier: "zh_CN")) == .zhHans)
+        #expect(Language.forLocale(Locale(identifier: "zh_SG")) == .zhHans)
+        #expect(Language.forLocale(Locale(identifier: "zh_TW")) == .zhHant)   // 台湾は繁体字
+        #expect(Language.forLocale(Locale(identifier: "zh_HK")) == .zhHant)   // 香港も繁体字
+        #expect(Language.forLocale(Locale(identifier: "pt_BR")) == .ptBR)
+        #expect(Language.forLocale(Locale(identifier: "pt_PT")) == .en)       // 欧州ポルトガル語は訳が無い
+    }
+
+    /// 訳を持たない言語は英語に落ちる。空白の画面を出さないための保険。
+    @Test func 訳が無い言語は英語になる() {
+        #expect(Language.forLocale(Locale(identifier: "th_TH")) == .en)
+        #expect(Language.forLocale(Locale(identifier: "vi_VN")) == .en)
+        #expect(Language.forLocale(Locale(identifier: "sv_SE")) == .en)
+    }
+
+    /// 12言語すべてで、画面と書き出しに出る言葉が空にならない。
+    @Test func すべての言語で訳が空にならない() {
+        for language in Language.allCases {
+            for purpose in Purpose.allCases {
+                #expect(!purpose.title(language).isEmpty, "\(language) の \(purpose) の見出しが空")
+                #expect(!purpose.detail(language).isEmpty, "\(language) の \(purpose) の説明が空")
+                #expect(purpose.askLines(language).count >= 2, "\(language) の \(purpose) の依頼文が短すぎる")
+            }
+            for metric in MetricCatalog.all {
+                #expect(!metric.name(language).isEmpty, "\(language) の \(metric.id) の項目名が空")
+            }
+            for category in MetricCategory.allCases {
+                #expect(!category.name(language).isEmpty, "\(language) の \(category) の分類名が空")
+            }
+            for days in PeriodChoice.steps {
+                #expect(!PeriodChoice.label(days, language).isEmpty, "\(language) の \(days)日の呼び名が空")
+            }
+            #expect(!PeriodChoice.label(45, language).contains("%d"), "\(language) で日数が差し込まれていない")
+        }
+    }
+
+    /// 日本語と英語以外でも、依頼文の末尾は必ず断りの一文で終わる。
+    @Test func どの言語でも依頼文の最後は断りの一文() {
+        for language in Language.allCases {
+            let disclaimer = Tr.disclaimer[language] ?? ""
+            #expect(!disclaimer.isEmpty, "\(language) の断りの一文が無い")
+            for purpose in Purpose.allCases {
+                #expect(purpose.askLines(language).last == disclaimer, "\(language) の \(purpose)")
+                #expect(!purpose.askText(language).contains(Tr.disclaimerPlaceholder),
+                        "\(language) の \(purpose) に目印が残っている")
+            }
+        }
     }
 }

@@ -1,0 +1,93 @@
+Votre iPhone accumule des données depuis des années : pas, sommeil, fréquence cardiaque.
+Mais dès que vous voulez en parler à une IA, vous bloquez : comment sortir ces données ?
+
+Cette app rassemble ces relevés dans un seul fichier texte qu'une IA peut lire.
+
+
+■ Confiez-le à l'IA que vous utilisez déjà
+
+Ce qui sort est du texte brut. Aucune intégration à configurer, aucun compte à créer.
+
+・Touchez Copier et collez-le dans votre conversation habituelle
+・Pour les longues périodes, partagez-le sous forme de fichier texte
+
+Peu importe l'IA. Le rôle de cette app s'arrête à préparer un texte lisible
+pour celui ou celle à qui vous choisissez de le confier.
+
+
+■ Vous choisissez seulement un objectif
+
+Décider quoi inclure et comment le résumer est difficile quand on ne l'a jamais fait.
+Six objectifs règlent donc tout à votre place.
+
+・Bilan général … tout ce que vous avez. Commencez ici en cas de doute
+・Sommeil … le sommeil et ce qui l'influence
+・Entraînement … la charge, et si vous récupérez
+・État de forme … repérer les jours inhabituels
+・Humeur … votre humeur au regard de vos données corporelles
+・Sans question … ne rien demander, laisser l'IA regarder
+
+Outre la période, les mesures et le résumé, la demande pour l'IA est écrite aussi.
+Une phrase comme « dites-moi les tendances sur cette période » figure en tête :
+vous n'avez plus à chercher quoi demander une fois le texte transmis.
+
+
+■ Inutile de dire quels appareils vous possédez
+
+L'app ne demande pas si vous avez une Apple Watch, ni ce que mesurent vos écouteurs.
+Elle regarde la période choisie et ne liste que les mesures qui ont réellement des relevés.
+Ce que vous ne pouvez pas mesurer n'apparaît pas, et aucune colonne vide ne reste dans le fichier.
+
+
+■ Vous savez si ça passe avant d'envoyer
+
+Les zones de conversation ont des limites. Après l'export, vous voyez le nombre de
+caractères, une estimation de jetons, et si le texte se colle tel quel.
+S'il est trop long, l'app vous dit quoi raccourcir.
+
+Trois mois de toutes les mesures représentent environ 15 000 caractères en résumé quotidien.
+Vous pouvez basculer certaines mesures sur « chaque échantillon » quand le détail compte.
+
+
+■ Ce qui est exporté
+
+Pas, distance marche+course, étages montés, énergie active et au repos, minutes
+d'exercice, minutes debout, entraînements, fréquence cardiaque, fréquence cardiaque
+au repos, variabilité cardiaque, fréquence cardiaque à la marche, capacité cardio,
+oxygène sanguin, fréquence respiratoire, écart de température au poignet,
+sommeil (total et phases), poids, masse grasse, vitesse de marche, longueur de pas,
+asymétrie de marche, niveau sonore du casque, niveau sonore ambiant,
+minutes de pleine conscience et état d'esprit.
+
+Seules celles ayant des relevés sur la période choisie sont incluses.
+
+La distance et le poids peuvent s'afficher en miles et livres, ou en kilomètres et kilos.
+
+
+■ Pour que les chiffres soient justes
+
+・Certaines mesures, comme les pas, sont écrites à la fois par l'iPhone et l'Apple Watch.
+  Les additionner les gonflerait : on utilise donc les valeurs que Santé fournit
+  après suppression des doublons.
+・Le sommeil peut aussi être enregistré deux fois pour la même nuit ; les chevauchements
+  sont fusionnés au préalable.
+・Une case vide signifie « aucun relevé », et non zéro. Le fichier le précise.
+
+Ces notes figurent en tête du document, pour que la lecture ne parte pas de travers.
+
+
+■ L'app ne se connecte à rien
+
+Les données sont traitées uniquement sur cet appareil. Cette app ne les envoie jamais nulle part.
+C'est vous qui décidez à qui remettre le texte exporté.
+Ni compte, ni connexion.
+
+
+■ À noter
+
+Ce n'est pas un dispositif médical, ni un outil de diagnostic ou de traitement.
+En cas d'inquiétude, consultez un médecin.
+La réponse d'une IA est une indication, pas un substitut à l'avis médical.
+
+
+Disponible en 12 langues, et vous choisissez la langue dans laquelle le texte est écrit.
