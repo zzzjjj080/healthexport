@@ -416,6 +416,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "ヘルスケア書き出し";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "ヘルスケアに記録されている歩数・心拍・睡眠などのデータを読み取り、あなたが選んだ期間ぶんをテキストにまとめます。読み取ったデータは端末の中だけで扱い、このアプリが外部へ送信することはありません。書き出したテキストを誰に渡すかは、あなたが決めます。";
@@ -464,6 +465,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "ヘルスケア書き出し";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "ヘルスケアに記録されている歩数・心拍・睡眠などのデータを読み取り、あなたが選んだ期間ぶんをテキストにまとめます。読み取ったデータは端末の中だけで扱い、このアプリが外部へ送信することはありません。書き出したテキストを誰に渡すかは、あなたが決めます。";

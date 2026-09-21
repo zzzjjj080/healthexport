@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- どのビルドが実機に入っているかを設定画面に出すための印（引き継ぎ書 4-145）。
+	     install-device.sh が HEALTHEXPORT_BUILD_STAMP を渡す。Xcode から直接ビルドしたときは空になる。
+	     同期フォルダの外に置く（4-22） -->
+	<key>HealthExportBuildStamp</key>
+	<string>$(HEALTHEXPORT_BUILD_STAMP)</string>
+	<!-- 実ファイルの Info.plist を足すと、Xcode が入れるはずの CFBundleIconName が入らない。
+	     無いと App Store へのアップロードで弾かれるので自分で書く（引き継ぎ書 4-94） -->
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
+</dict>
+</plist>

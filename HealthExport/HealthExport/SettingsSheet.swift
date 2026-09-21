@@ -332,6 +332,27 @@ struct SettingsSheet: View {
 
             FeedbackSection()
             CoffeeTipSection(tipJar: tipJar)
+
+            // 実機にどのビルドが入っているかを、画面で確かめられるようにする（引き継ぎ書 4-145）
+            Section {
+                Text(BuildInfo.label)
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(.tertiary)
+                    .frame(maxWidth: .infinity)
+                    .accessibilityIdentifier("buildStamp")
+            }
+            .listRowBackground(Color.clear)
         }
+    }
+}
+
+enum BuildInfo {
+    /// "1.5 (8) · b12 09/21 13:40"。Xcode から直接ビルドしたときは版番号だけ
+    static var label: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = info?["CFBundleVersion"] as? String ?? "?"
+        let stamp = (info?["HealthExportBuildStamp"] as? String) ?? ""
+        return "\(version) (\(build))" + (stamp.isEmpty ? "" : " · \(stamp)")
     }
 }
