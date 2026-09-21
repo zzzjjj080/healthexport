@@ -16,6 +16,10 @@ struct MonospacedTextView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> UIScrollView {
         let scroll = UIScrollView()
+        // 表は左から右に並べる。アラビア語の端末では画面全体が右から左になり、
+        // そのままだと本文が右端へ寄って上半分が空白になり、表の列も左右が入れ替わった。
+        // 本文そのもの（コピーされるもの）は正しいので、見せ方だけ左からに固定する。（引き継ぎ書 4-159）
+        scroll.semanticContentAttribute = .forceLeftToRight
         scroll.backgroundColor = .secondarySystemGroupedBackground
         scroll.alwaysBounceVertical = true
         scroll.alwaysBounceHorizontal = true
@@ -25,15 +29,19 @@ struct MonospacedTextView: UIViewRepresentable {
         label.numberOfLines = 0
         label.lineBreakMode = .byClipping
         label.tag = Self.labelTag
+        label.semanticContentAttribute = .forceLeftToRight
+        label.textAlignment = .left
         scroll.addSubview(label)
         return scroll
     }
 
     func updateUIView(_ scroll: UIScrollView, context: Context) {
         guard let label = scroll.viewWithTag(Self.labelTag) as? UILabel else { return }
-        let font = UIFont.monospacedSystemFont(ofSize: 11, weight: .regular)
+        let font = Self.font(for: text)
         let style = NSMutableParagraphStyle()
         style.lineBreakMode = .byClipping
+        style.baseWritingDirection = .leftToRight
+        style.alignment = .left
         style.tabStops = Self.tabStops(for: text, font: font)
         style.defaultTabInterval = font.pointSize * 6
         label.attributedText = NSAttributedString(string: text, attributes: [
@@ -46,6 +54,16 @@ struct MonospacedTextView: UIViewRepresentable {
         label.frame = CGRect(x: Self.inset, y: Self.inset, width: size.width, height: size.height)
         scroll.contentSize = CGSize(width: size.width + Self.inset * 2,
                                     height: size.height + Self.inset * 2)
+    }
+
+    /// 等幅の字形はアラビア文字をつなげて書けず、1文字ずつばらばらに並ぶ。
+    /// アラビア文字が入るときだけ、数字だけ等幅の標準の字形にする。
+    /// 列はタブ位置を実際に測って揃えているので、字形が等幅でなくても表は崩れない。
+    private static func font(for text: String) -> UIFont {
+        let hasArabic = text.unicodeScalars.contains { (0x0600...0x06FF).contains($0.value) }
+        return hasArabic
+            ? UIFont.monospacedDigitSystemFont(ofSize: 12, weight: .regular)
+            : UIFont.monospacedSystemFont(ofSize: 11, weight: .regular)
     }
 
     /// 列の中身を実際に測ってタブ位置を決める。

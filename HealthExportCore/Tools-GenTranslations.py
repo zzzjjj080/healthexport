@@ -21,7 +21,7 @@ def lit(s):
     プレースホルダ `%d` に置き換えて、使う側で差し込む。
     """
     s = s.replace("\\(days)", "%d")
-    return '"' + s.replace("\\", "\\\\").replace('"', '\\"') + '"'
+    return '"' + s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n") + '"'
 
 def table(name, section, indent="    "):
     out = [f"{indent}static let {name}: [String: [Language: String]] = ["]
@@ -60,6 +60,14 @@ public enum Tr {{
         return entry[language] ?? entry[Language.fallback] ?? key
     }}
 
+    /// 書き出しの枠の文言。`{{from}}` のような目印に値を差し込む。
+    /// 語順が言語ごとに違う（「期間: A 〜 B」と「du A au B」）ので、文を丸ごと訳して目印で埋める。
+    public static func frame(_ key: String, _ language: Language, _ values: [String: String] = [:]) -> String {{
+        var text = get(export, key, language)
+        for (name, value) in values {{ text = text.replacingOccurrences(of: "{{\(name)}}", with: value) }}
+        return text
+    }}
+
     /// 依頼文のなかで、免責の一文が入る場所を指す目印。
     /// 6つの目的すべてで同じ文を使うので、訳を12言語 × 6回持たずに済ませている。
     public static let disclaimerPlaceholder = "__DISCLAIMER__"
@@ -85,6 +93,8 @@ public enum Tr {{
 {table("workout", "workout")}
 
 {table("mood", "mood")}
+
+{table("export", "export")}
 
 {askTable()}
 }}

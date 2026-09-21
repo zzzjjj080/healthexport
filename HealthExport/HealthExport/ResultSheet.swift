@@ -11,6 +11,16 @@ struct ResultSheet: View {
     @State private var copied = false
     @State private var tipJar = TipJar(productID: TipJar.productID)
 
+    /// ストア用の撮影中は投げ銭の行を出さない。シミュレータの課金設定は米ドル固定で、
+    /// 日本語やドイツ語の画像にも「$0.99」が載ってしまう（実際のストアでは各国の通貨になる）。
+    private static var isTakingStoreScreenshot: Bool {
+        #if DEBUG
+        ProcessInfo.processInfo.environment["HEALTHEXPORT_SHOT"] != nil
+        #else
+        false
+        #endif
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -86,8 +96,10 @@ struct ResultSheet: View {
                 .foregroundStyle(.tertiary)
             // 役に立った直後がいちばん自然な置き場所。
             // 主張はさせない（書き出す前のメイン画面には置かない）
-            CoffeeTipLink(tipJar: tipJar, tint: Palette.accent)
-                .padding(.top, 2)
+            if !Self.isTakingStoreScreenshot {
+                CoffeeTipLink(tipJar: tipJar, tint: Palette.accent)
+                    .padding(.top, 2)
+            }
         }
         .padding(.horizontal, 18)
         .padding(.top, 6)

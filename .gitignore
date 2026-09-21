@@ -4,3 +4,7 @@ DerivedData/
 *.xcuserdatad/
 xcuserdata/
 /tmp/
+
+# 各言語のストア画像は MakeScreenshots-l10n.swift と captions-l10n.json から作り直せる（計70MB超）
+store/raw-l10n/
+store/screenshots-l10n/

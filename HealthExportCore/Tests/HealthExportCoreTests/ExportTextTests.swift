@@ -399,3 +399,75 @@ struct GroupedNumberTests {
         #expect(ExportText.grouped(-4500) == "-4,500")
     }
 }
+
+/// 12言語のどれで書き出しても、枠（見出し・断り書き・表の列名）に英語が残らない。
+///
+/// 1.4 では項目名や依頼文は訳せていたのに、ExportText の `language == .ja ? … : …` が
+/// 14箇所残っていて、フランス語で書き出すと見出しと断り書きだけ英語になっていた。
+/// 「日本語が混ざらないか」しか確かめていなかったので、テストが通ってしまった。（引き継ぎ書 4-159）
+struct ExportFrameLanguageTests {
+
+    /// 枠に出る文言をすべて通る材料：全文の説明・凡例・日ごと・項目ごと・ワークアウト・1件ずつ全部。
+    static func everything(_ language: Language, layout: Layout) -> String {
+        var options = ExportOptions(includeAsk: true)
+        options.language = language
+        options.header = .full
+        options.shortColumnNames = true
+        options.layout = layout
+        let day = YMD(2026, 6, 1)
+        let samples = (0..<3).map { RawSample(day: day, minute: $0 * 60, value: 70) }
+        let segments = [SleepSegment(day: day, startMinute: 60, endMinute: 120, stageKey: "core")]
+        let request = ExportRequest(
+            range: DateRange(from: day, to: day),
+            metrics: MetricCatalog.metrics([.steps, .heartRate, .sleep, .workouts, .respiratoryRate]),
+            daily: [day: [.steps: .number(8000), .sleep: .sleep(SleepSummary(total: 7, deep: 1, rem: 1.5,
+                          core: 4.5, awake: 0.3, bedMinute: 1380, wakeMinute: 390))]],
+            workouts: [WorkoutEvent(day: day, startMinute: 420, minutes: 30, kindKey: "running")],
+            rawSeries: [.heartRate: .numbers(samples, total: 5000),
+                        .sleep: .sleepSegments(segments, total: 1)],
+            options: options)
+        return ExportText.build(request)
+    }
+
+    /// 英語の枠の文言。英語以外で書き出したときに、これが1つでも残っていたら取りこぼし。
+    static let englishFrame = [
+        "Health data export", "Period:", "Exported:", "Recorded by:", "Metrics:",
+        "Exported by the owner", "removing duplicates", "no record exists",
+        "## Daily values", "## Workouts", "## Column meanings",
+        "datetime", "detail (", "samples)", "too many to include",
+    ]
+    // 入れていないもの：
+    // ・hr_avg などの略称。「列名を英字の略称にする」はわざと英字にしていて、凡例がその言語で説明する
+    // ・ドイツ語の「## Workouts」。Apple のドイツ語版ヘルスケアでも Workouts と呼ぶので、訳として正しい
+    static func allowed(_ phrase: String, in language: Language) -> Bool {
+        language == .de && phrase == "## Workouts"
+    }
+
+    @Test func 英語以外で書き出すと枠に英語が残らない() {
+        for language in Language.allCases where language != .en {
+            for layout in [Layout.wide, .block] {
+                let text = Self.everything(language, layout: layout)
+                for phrase in Self.englishFrame where !Self.allowed(phrase, in: language) {
+                    #expect(!text.contains(phrase), "\(language) / \(layout) に英語の枠「\(phrase)」が残っている")
+                }
+            }
+        }
+    }
+
+    /// 枠の文言は、英語に落ちて埋まるのではなく、12言語それぞれの訳を持っている。
+    @Test func 枠の文言はすべての言語に訳がある() {
+        for (key, entry) in Tr.export {
+            for language in Language.allCases {
+                #expect(entry[language] != nil, "\(key) に \(language) の訳が無い")
+            }
+        }
+    }
+
+    /// 差し込みの目印（{from} など）が本文に残らない。
+    @Test func 差し込みの目印が本文に残らない() {
+        for language in Language.allCases {
+            let text = Self.everything(language, layout: .block)
+            #expect(!text.contains("{"), "\(language) に目印が残っている")
+        }
+    }
+}

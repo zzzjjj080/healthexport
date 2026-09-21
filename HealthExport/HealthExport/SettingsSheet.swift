@@ -46,12 +46,17 @@ struct SettingsSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) { Button("完了") { dismiss() } }
+                // 文字のボタンにすると、ドイツ語（Auf den Zweck zurücksetzen）などで
+                // 見出しが押し出されて消える。印だけにして、読み上げには言葉を残す。
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("目的にまかせる") {
+                    Button {
                         model.choose(model.settings.purpose)
                         Task { await model.rescan() }
+                    } label: {
+                        Label("目的にまかせる", systemImage: "arrow.counterclockwise")
+                            .labelStyle(.iconOnly)
                     }
-                    .font(.callout)
+                    .accessibilityIdentifier("resetToPurpose")
                 }
             }
         }

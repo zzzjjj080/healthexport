@@ -83,36 +83,24 @@ public enum ExportText {
         let language = request.options.language
         let range = request.range
         var lines: [String] = []
-        if language == .ja {
-            lines.append("# ヘルスケアの記録")
-            lines.append("期間: \(range.from.iso) 〜 \(range.to.iso)（\(range.dayCount)日間）")
-        } else {
-            lines.append("# Health data export")
-            lines.append("Period: \(range.from.iso) to \(range.to.iso) (\(range.dayCount) days)")
-        }
+        // 枠の文言は Translations.json の export にある（12言語）。
+        // 日英だけ分岐していた頃は、ほかの言語で書き出すと見出しと断り書きが英語のまま残った。
+        lines.append(Tr.frame("title", language))
+        lines.append(Tr.frame("period", language, ["from": range.from.iso, "to": range.to.iso,
+                                                   "days": String(range.dayCount)]))
         guard request.options.header == .full else { return lines.joined(separator: "\n") }
 
         let stamp = timestamp(request.exportedAt)
         let devices = (request.options.includeDeviceNames && !request.devices.isEmpty)
             ? request.devices.joined(separator: " / ")
-            : (language == .ja ? "（記載しない）" : "(not listed)")
-        if language == .ja {
-            lines.append("書き出し: \(stamp) / ヘルスケア書き出し")
-            lines.append("記録した端末: \(devices)")
-            lines.append("項目数: \(request.metrics.count)")
-            lines.append("")
-            lines.append("この文書はiPhoneのヘルスケアから本人が書き出したもの。")
-            lines.append("値は同じ項目に複数の端末が記録した重複を、ヘルスケアが除いたあとの数字。")
-            lines.append("空欄・欠けている日は「記録が無い」ことを表す（値が0という意味ではない）。")
-        } else {
-            lines.append("Exported: \(stamp) / Health Export")
-            lines.append("Recorded by: \(devices)")
-            lines.append("Metrics: \(request.metrics.count)")
-            lines.append("")
-            lines.append("Exported by the owner from the Health app on iPhone.")
-            lines.append("Values are what Health reports after removing duplicates recorded by more than one device.")
-            lines.append("A blank or missing day means no record exists (it does not mean zero).")
-        }
+            : Tr.frame("notListed", language)
+        lines.append(Tr.frame("exported", language, ["stamp": stamp]))
+        lines.append(Tr.frame("recordedBy", language, ["devices": devices]))
+        lines.append(Tr.frame("metricCount", language, ["count": String(request.metrics.count)]))
+        lines.append("")
+        lines.append(Tr.frame("note1", language))
+        lines.append(Tr.frame("note2", language))
+        lines.append(Tr.frame("note3", language))
         return lines.joined(separator: "\n")
     }
 
@@ -219,7 +207,7 @@ public enum ExportText {
             if !hasAny && options.skipEmptyDays { continue }
             rows.append(row)
         }
-        let title = options.language == .ja ? "## 日ごとの記録" : "## Daily values"
+        let title = Tr.frame("daily", options.language)
         return title + "\n" + table(rows, separator: options.separator)
     }
 
@@ -243,9 +231,8 @@ public enum ExportText {
             }
             let unit = metric.unit(language, options.unitSystem)
             let heading = "## \(metric.name(language))"
-                + (unit.isEmpty ? "" : (language == .ja ? "（\(unit)）" : " (\(unit))"))
-                + (language == .ja ? " ／\(metric.aggregation.label(language))"
-                                   : " / \(metric.aggregation.label(language))")
+                + (unit.isEmpty ? "" : Tr.frame("unitWrap", language, ["unit": unit]))
+                + Tr.frame("aggSep", language, ["agg": metric.aggregation.label(language)])
             blocks.append(heading + "\n" + table(rows, separator: options.separator))
         }
         return blocks.joined(separator: "\n\n")
@@ -256,17 +243,16 @@ public enum ExportText {
     static func workoutBlock(_ request: ExportRequest) -> String {
         let options = request.options
         let language = options.language
-        let title = language == .ja ? "## ワークアウト" : "## Workouts"
+        let title = Tr.frame("workouts", language)
         let inRange = request.workouts
             .filter { $0.day >= request.range.from && $0.day <= request.range.to }
             .sorted { ($0.day, $0.startMinute) < ($1.day, $1.startMinute) }
         guard !inRange.isEmpty else {
-            let none = language == .ja ? "（この期間に記録なし）" : "(no records in this period)"
+            let none = Tr.frame("noRecords", language)
             return title + "\n" + none
         }
-        let head = language == .ja
-            ? ["date", "開始", "種目", "分", "kcal", "平均心拍"]
-            : ["date", "start", "kind", "minutes", "kcal", "hr_avg"]
+        let head = ["date", Tr.frame("wStart", language), Tr.frame("wKind", language),
+                    Tr.frame("wMinutes", language), "kcal", Tr.frame("wHr", language)]
         var rows = [head]
         for workout in inRange {
             rows.append([workout.day.iso,
@@ -276,7 +262,8 @@ public enum ExportText {
                          workout.kilocalories.map { number($0, decimals: 0) } ?? "",
                          workout.averageHeartRate.map { number($0, decimals: 0) } ?? ""])
         }
-        return "\(title)（\(inRange.count)）\n" + table(rows, separator: options.separator)
+        return title + Tr.frame("countWrap", language, ["n": String(inRange.count)]) + "\n"
+            + table(rows, separator: options.separator)
     }
 
     // MARK: - 1件ずつ全部
@@ -286,13 +273,13 @@ public enum ExportText {
         var rows: [[String]] = []
         switch series {
         case .numbers(let samples, _):
-            rows.append(language == .ja ? ["日時", "値"] : ["datetime", "value"])
+            rows.append([Tr.frame("rawDatetime", language), Tr.frame("rawValue", language)])
             for sample in samples {
                 rows.append(["\(sample.day.iso) \(clockLabel(sample.minute))",
                              number(sample.value, decimals: metric.decimals)])
             }
         case .sleepSegments(let segments, _):
-            rows.append(language == .ja ? ["開始", "終了", "段階"] : ["start", "end", "stage"])
+            rows.append([Tr.frame("rawStart", language), Tr.frame("rawEnd", language), Tr.frame("rawStage", language)])
             for segment in segments {
                 rows.append(["\(segment.day.iso) \(clockLabel(segment.startMinute))",
                              clockLabel(segment.endMinute),
@@ -300,19 +287,12 @@ public enum ExportText {
             }
         }
         let unit = metric.unit(language, options.unitSystem)
-        var heading: String
-        if language == .ja {
-            heading = "## \(metric.name(language))" + (unit.isEmpty ? "" : "（\(unit)）")
-                + " 詳細（全 \(grouped(series.total)) 件）"
-        } else {
-            heading = "## \(metric.name(language))" + (unit.isEmpty ? "" : " (\(unit))")
-                + " detail (\(grouped(series.total)) samples)"
-        }
+        var heading = "## \(metric.name(language))"
+            + (unit.isEmpty ? "" : Tr.frame("unitWrap", language, ["unit": unit]))
+            + Tr.frame("rawDetail", language, ["n": grouped(series.total)])
         // 黙って減らすと、AIが「この期間はこれだけしか記録が無い」と誤解する
         if series.isTruncated {
-            heading += language == .ja
-                ? "\n（多すぎるため、古いほうから \(grouped(series.count)) 件だけ載せています）"
-                : "\n(too many to include; only the first \(grouped(series.count)) are listed)"
+            heading += Tr.frame("truncated", language, ["n": grouped(series.count)])
         }
         return heading + "\n" + table(rows, separator: options.separator)
     }
@@ -360,7 +340,7 @@ public enum ExportText {
     static func legendBlock(_ metrics: [Metric], language: Language, system: UnitSystem = .metric) -> String {
         let listed = metrics.filter { $0.aggregation != .workoutList }
         guard !listed.isEmpty else { return "" }
-        var lines = [language == .ja ? "## 列の意味" : "## Column meanings"]
+        var lines = [Tr.frame("columns", language)]
         for metric in listed {
             let keys = columnKeys(metric)
             let short = metric.shortKey(system)
