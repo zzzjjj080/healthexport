@@ -79,7 +79,7 @@ struct UnitSystemTests {
         #expect(Language.forLocale(Locale(identifier: "it_IT")) == .it)
     }
 
-    /// 中国語とポルトガル語は、言語コードだけでは決まらない（引き継ぎ書 4-158）。
+    /// 中国語とポルトガル語は、言語コードだけでは決まらない（引き継ぎ書 4-178）。
     @Test func 中国語とポルトガル語は地域まで見て決まる() {
         #expect(Language.forLocale(Locale(identifier: "zh_CN")) == .zhHans)
         #expect(Language.forLocale(Locale(identifier: "zh_SG")) == .zhHans)

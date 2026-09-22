@@ -18,7 +18,7 @@ struct MonospacedTextView: UIViewRepresentable {
         let scroll = UIScrollView()
         // 表は左から右に並べる。アラビア語の端末では画面全体が右から左になり、
         // そのままだと本文が右端へ寄って上半分が空白になり、表の列も左右が入れ替わった。
-        // 本文そのもの（コピーされるもの）は正しいので、見せ方だけ左からに固定する。（引き継ぎ書 4-159）
+        // 本文そのもの（コピーされるもの）は正しいので、見せ方だけ左からに固定する。（引き継ぎ書 4-179）
         scroll.semanticContentAttribute = .forceLeftToRight
         scroll.backgroundColor = .secondarySystemGroupedBackground
         scroll.alwaysBounceVertical = true

@@ -34,7 +34,7 @@ public enum Language: String, Codable, Sendable, CaseIterable {
     /// 端末の言語から決める。訳を持たない言語は英語にする。
     ///
     /// 中国語とポルトガル語は、地域まで見ないと簡体字か繁体字か、ブラジルか欧州かが決まらない。
-    /// `languageCode` だけで振り分けると、台湾の端末に簡体字を出してしまう。（引き継ぎ書 4-158）
+    /// `languageCode` だけで振り分けると、台湾の端末に簡体字を出してしまう。（引き継ぎ書 4-178）
     /// 引数で `Locale` を受けておくと、全言語をテストで固定できる。（4-87）
     public static func forLocale(_ locale: Locale = .current) -> Language {
         guard let code = locale.language.languageCode?.identifier else { return fallback }
