@@ -13,9 +13,6 @@ Korean, Spanish, French, German, Italian, Brazilian Portuguese, Russian and Arab
 It follows the device language; a language without a translation falls back to English.
 On a review device set to English every label below appears in English.
 
-Arabic is right-to-left. SwiftUI mirrors the layout automatically; this was verified
-in the simulator.
-
 Screenshots and listing text are localized for all 12 languages.
 
 IMPORTANT FOR REVIEW
@@ -64,9 +61,11 @@ optional: nothing is locked behind it and nothing changes after buying. It sits 
 the bottom of the detailed settings (Format tab) and as one line under the Copy /
 Share buttons after an export.
 
-WHAT IS NEW IN 1.5
-Localization fixes only. No functional change. In 1.4 the headings and notes of the
-exported text stayed in English for the ten newly added languages; they are now
-translated. The preview of the exported text was mis-laid-out in Arabic; it is now shown
-left to right so the table columns stay in order. The settings title no longer gets cut
-off in long languages (the reset button is now an icon).
+WHAT IS NEW IN 1.6
+1. Rows can be grouped by week or month (Detailed settings > Format > Rows). Values are
+   the daily average over days with records. A heavy result offers "Re-export by week".
+2. New read-only HealthKit types: blood pressure (systolic, diastolic), blood glucose,
+   dietary energy, water, protein, carbohydrates, fat, and menstrual flow.
+3. Menstrual flow is opt-in and OFF by default, and is not in the initial permission
+   request. Only when the user turns on "Include menstrual records" (Detailed settings >
+   Metrics) does the app request read access for that type. While off, it is never read.
