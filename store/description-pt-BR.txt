@@ -51,17 +51,22 @@ Dá para mudar métricas específicas para «cada amostra» quando o detalhe imp
 
 ■ O que é exportado
 
-Passos, distância caminhada+corrida, andares subidos, energia ativa e em repouso,
-minutos de exercício, minutos em pé, treinos, frequência cardíaca, frequência cardíaca
-em repouso, variabilidade cardíaca, frequência cardíaca ao caminhar, preparo
-cardiovascular, oxigênio no sangue, frequência respiratória, variação da temperatura
-do pulso, sono (total e fases), peso corporal, percentual de gordura corporal,
-velocidade da caminhada, comprimento da passada, assimetria da caminhada,
-nível de áudio dos fones, nível de som ambiente, minutos de mindfulness e estado emocional.
+Cerca de 30 métricas de atividade, coração, respiração, sono, corpo, nutrição, mobilidade, audição, mente e ciclo — de passos e frequência cardíaca a fases do sono, pressão arterial e humor.
 
 Só entram os que têm registros no período escolhido.
 
 Distância e peso podem aparecer em milhas e libras, ou em quilômetros e quilos.
+
+
+■ Pressão arterial, glicose, alimentação e ciclo
+
+Também dá para exportar a pressão arterial (sistólica e diastólica), a glicose no sangue e a alimentação (energia ingerida, água, proteínas, carboidratos, gorduras).
+Os registros de menstruação só entram se você ativá-los nos ajustes. Até lá, o app nem pede permissão para lê-los.
+
+
+■ Até um ano inteiro cabe
+
+As linhas podem ser agrupadas por semana ou por mês. Os valores são a média diária dos dias com registros, então as tendências longas ficam claras.
 
 
 ■ Para os números chegarem certos

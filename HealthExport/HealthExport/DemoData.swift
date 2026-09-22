@@ -26,7 +26,11 @@ enum DemoData {
             case .walkingSpeed, .stepLength, .walkingAsymmetry:   table[id] = phone
             case .stateOfMind:                                    table[id] = phone
             case .headphoneAudio:                                 table[id] = ["AirPods Pro"]
-            case .bodyMass, .bodyFat:                             continue   // 体組成計は持っていない想定
+            case .bodyMass, .bodyFat, .bloodGlucose:              continue   // 体組成計・血糖計は持っていない想定
+            // 血圧と食事は iPhone で手入力している想定。生理は設定でオンにしたときだけ見える
+            case .bloodPressureSystolic, .bloodPressureDiastolic,
+                 .dietaryEnergy, .dietaryWater, .dietaryProtein, .dietaryCarbs, .dietaryFat,
+                 .menstrualFlow:                                  table[id] = phone
             default:                                              table[id] = watch
             }
         }
@@ -43,9 +47,9 @@ enum DemoData {
         return Double(hash % 100_000) / 100_000
     }
 
-    static func availability(range: DateRange) -> [MetricID: MetricAvailability] {
+    static func availability(range: DateRange, includeCycle: Bool = false) -> [MetricID: MetricAvailability] {
         var result: [MetricID: MetricAvailability] = [:]
-        for metric in MetricCatalog.all {
+        for metric in MetricCatalog.all where includeCycle || metric.id != .menstrualFlow {
             if let names = sources[metric.id] {
                 result[metric.id] = MetricAvailability(hasData: true, sourceNames: names,
                                                        estimatedSamples: metric.samplesPerDay * range.dayCount)
@@ -91,6 +95,13 @@ enum DemoData {
                     let index = Int(noise(metric.id.rawValue, day) * Double(keys.count))
                     result.daily[day, default: [:]][metric.id] =
                         .localized(key: keys[index], table: .mood)
+                case .flowLevel:
+                    // 28日周期で、はじめの5日だけ記録がある
+                    let dayOfCycle = ((day.date()?.timeIntervalSince1970 ?? 0) / 86_400).rounded(.down)
+                        .truncatingRemainder(dividingBy: 28)
+                    let levels = ["medium", "heavy", "medium", "light", "light"]
+                    guard Int(dayOfCycle) < levels.count else { continue }
+                    result.daily[day, default: [:]][metric.id] = .localized(key: levels[Int(dayOfCycle)], table: .flow)
                 case .minMaxAverage:
                     let base = center(metric)
                     let average = base + (noise(metric.id.rawValue, day) - 0.5) * spread(metric) * 2
@@ -130,6 +141,7 @@ enum DemoData {
         case .distance, .walkingSpeed: return 0.621371   // km → mi, km/h → mph
         case .bodyMass:                return 2.204623   // kg → lb
         case .stepLength:              return 0.393701   // cm → in
+        case .dietaryWater:            return 0.033814   // mL → fl oz
         default:                       return 1
         }
     }
@@ -161,6 +173,13 @@ enum DemoData {
         case .headphoneAudio: return 73
         case .environmentalAudio: return 58
         case .mindful: return 6
+        case .bloodPressureSystolic: return 122
+        case .bloodPressureDiastolic: return 78
+        case .dietaryEnergy: return 1950
+        case .dietaryWater: return 1600
+        case .dietaryProtein: return 72
+        case .dietaryCarbs: return 250
+        case .dietaryFat: return 60
         default: return 1
         }
     }
@@ -192,6 +211,13 @@ enum DemoData {
         case .headphoneAudio: return 7
         case .environmentalAudio: return 9
         case .mindful: return 6
+        case .bloodPressureSystolic: return 8
+        case .bloodPressureDiastolic: return 6
+        case .dietaryEnergy: return 350
+        case .dietaryWater: return 400
+        case .dietaryProtein: return 15
+        case .dietaryCarbs: return 50
+        case .dietaryFat: return 15
         default: return 1
         }
     }

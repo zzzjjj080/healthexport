@@ -62,6 +62,13 @@ final class ExportModel {
             settings.customRange = nil
             settings.customDays = days
         }
+        // 週・月ごとと生理の見た目を確かめるため。HEALTHEXPORT_GROUPING=week / HEALTHEXPORT_CYCLE=1
+        if let raw = ProcessInfo.processInfo.environment["HEALTHEXPORT_GROUPING"], let g = Grouping(rawValue: raw) {
+            settings.options.grouping = g
+        }
+        if let raw = ProcessInfo.processInfo.environment["HEALTHEXPORT_CYCLE"] {
+            settings.includeCycle = raw == "1"
+        }
         #endif
     }
 
@@ -103,7 +110,7 @@ final class ExportModel {
         }
         #endif
         if !hasScanned {
-            guard await reader.requestAuthorization() else {
+            guard await reader.requestAuthorization(includeCycle: settings.includeCycle) else {
                 problems = reader.errors
                 return
             }
@@ -115,13 +122,13 @@ final class ExportModel {
         phase = .scanning
         #if DEBUG
         if DemoData.isEnabled {
-            availability = DemoData.availability(range: range)
+            availability = DemoData.availability(range: range, includeCycle: settings.includeCycle)
             hasScanned = true
             phase = .idle
             return
         }
         #endif
-        availability = await reader.scan(range: range)
+        availability = await reader.scan(range: range, includeCycle: settings.includeCycle)
         hasScanned = true
         problems = reader.errors
         phase = .idle
@@ -138,8 +145,27 @@ final class ExportModel {
         #if DEBUG
         if DemoData.isEnabled { await rescan(); return }
         #endif
-        _ = await reader.requestAuthorization()
+        _ = await reader.requestAuthorization(includeCycle: settings.includeCycle)
         await rescan()
+    }
+
+    /// 生理の記録を扱うかを切り替える。
+    ///
+    /// **オンにした瞬間に初めて、生理を読む許可を求める。** それまでは許可の画面にも出していない。
+    /// オフにしたら書き出しから外す（許可そのものは、アプリからは取り消せない。設定アプリで外す）。
+    func setIncludeCycle(_ on: Bool) async {
+        settings.includeCycle = on
+        #if DEBUG
+        if DemoData.isEnabled { await rescan(); return }
+        #endif
+        if on { _ = await reader.requestAuthorization(includeCycle: true) }
+        await rescan()
+    }
+
+    /// 重すぎて貼れないときに、週ごとにまとめて書き出し直す。
+    func regroupByWeekAndExport() async {
+        settings.options.grouping = .week
+        await export()
     }
 
     /// 目的を選び直す。

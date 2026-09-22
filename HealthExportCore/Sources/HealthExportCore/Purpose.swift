@@ -23,8 +23,9 @@ public enum Purpose: String, CaseIterable, Codable, Sendable {
             return [.workouts, .activeEnergy, .exerciseTime, .steps, .distance, .flights,
                     .heartRate, .restingHeartRate, .hrv, .vo2Max, .sleep]
         case .condition:
-            return [.restingHeartRate, .hrv, .oxygenSaturation, .respiratoryRate, .wristTemperature,
-                    .sleep, .steps, .activeEnergy, .stateOfMind]
+            return [.restingHeartRate, .hrv, .bloodPressureSystolic, .bloodPressureDiastolic,
+                    .oxygenSaturation, .respiratoryRate, .wristTemperature, .bloodGlucose,
+                    .sleep, .steps, .activeEnergy, .stateOfMind, .menstrualFlow]
         case .mind:
             return [.stateOfMind, .mindful, .sleep, .hrv, .restingHeartRate,
                     .respiratoryRate, .steps, .activeEnergy, .exerciseTime]

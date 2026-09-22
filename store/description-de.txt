@@ -45,22 +45,25 @@ Chatfelder haben Grenzen. Nach dem Export siehst du die Zeichenzahl, eine grobe
 Token-Zahl und ob sich der Text so einfügen lässt. Ist er zu lang, sagt dir die App,
 was du kürzen solltest.
 
-Drei Monate mit allen Werten ergeben pro Tag zusammengefasst etwa 15.000 Zeichen.
-Einzelne Werte lassen sich auf „jede Einzelmessung“ umstellen, wenn du Details brauchst.
-
 
 ■ Was exportiert wird
 
-Schritte, Geh- und Laufstrecke, gestiegene Etagen, aktive und Ruheenergie,
-Trainingsminuten, Stehminuten, Workouts, Herzfrequenz, Ruheherzfrequenz,
-Herzfrequenzvariabilität, Herzfrequenz beim Gehen, Cardiofitness, Blutsauerstoff,
-Atemfrequenz, Handgelenktemperatur-Abweichung, Schlaf (gesamt und Phasen),
-Körpergewicht, Körperfettanteil, Gehgeschwindigkeit, Schrittlänge, Gangasymmetrie,
-Kopfhörerpegel, Umgebungslautstärke, Achtsamkeitsminuten und Gemütszustand.
+Rund 30 Werte aus Aktivität, Herz, Atmung, Schlaf, Körper, Ernährung, Mobilität, Hören, Psyche und Zyklus – von Schritten und Herzfrequenz bis zu Schlafphasen, Blutdruck und Stimmung.
 
 Aufgenommen wird nur, wofür es im gewählten Zeitraum Aufzeichnungen gibt.
 
 Entfernung und Gewicht lassen sich in Meilen und Pfund oder in Kilometern und Kilogramm zeigen.
+
+
+■ Blutdruck, Blutzucker, Ernährung und Zyklus
+
+Auch Blutdruck (systolisch, diastolisch), Blutzucker und Ernährung (Energie, Wasser, Eiweiß, Kohlenhydrate, Fett) lassen sich exportieren.
+Menstruationsdaten kommen nur hinein, wenn du sie in den Einstellungen einschaltest. Vorher fragt die App nicht einmal nach dem Zugriff.
+
+
+■ Selbst ein ganzes Jahr passt
+
+Zeilen lassen sich nach Wochen oder Monaten zusammenfassen. Die Werte sind Tagesdurchschnitte der Tage mit Daten – lange Trends sind so auf einen Blick sichtbar.
 
 
 ■ Damit die Zahlen richtig ankommen

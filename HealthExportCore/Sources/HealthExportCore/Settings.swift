@@ -4,6 +4,11 @@ public enum Layout: String, Codable, Sendable, CaseIterable { case wide, block }
 public enum Separator: String, Codable, Sendable, CaseIterable { case tab, comma, aligned }
 public enum HeaderDetail: String, Codable, Sendable, CaseIterable { case full, minimal, none }
 
+/// 表の1行をどの長さにするか。
+/// 1日1行だと1年で365行になり、チャット欄に貼れる大きさを超える。
+/// 週や月にすると値は「記録のあった日の1日平均」になり、行数が 1/7・1/30 に減る。
+public enum Grouping: String, Codable, Sendable, CaseIterable { case day, week, month }
+
 /// 距離・体重などの単位系。
 /// HealthKit の中身はどの国でもメートル法で持っているが、
 /// 英語圏の人に km と kg を渡しても、AIも本人も実感が持てない。
@@ -34,6 +39,8 @@ public struct ExportOptions: Equatable, Sendable, Codable {
     public var includeDeviceNames: Bool
     /// 距離・体重などの単位。既定はメートル法。
     public var unitSystem: UnitSystem
+    /// 表の1行の長さ。既定は1日。
+    public var grouping: Grouping
 
     public init(language: Language = .ja,
                 layout: Layout = .wide,
@@ -44,7 +51,8 @@ public struct ExportOptions: Equatable, Sendable, Codable {
                 skipEmptyDays: Bool = true,
                 rawMetrics: Set<MetricID> = [],
                 includeDeviceNames: Bool = true,
-                unitSystem: UnitSystem = .metric) {
+                unitSystem: UnitSystem = .metric,
+                grouping: Grouping = .day) {
         self.language = language
         self.layout = layout
         self.separator = separator
@@ -55,6 +63,7 @@ public struct ExportOptions: Equatable, Sendable, Codable {
         self.rawMetrics = rawMetrics
         self.includeDeviceNames = includeDeviceNames
         self.unitSystem = unitSystem
+        self.grouping = grouping
     }
 
     // 項目を1つ足しただけで、それまでの設定が丸ごと読めなくなるのを防ぐ。
@@ -74,6 +83,7 @@ public struct ExportOptions: Equatable, Sendable, Codable {
         rawMetrics = try c.decodeIfPresent(Set<MetricID>.self, forKey: .rawMetrics) ?? []
         includeDeviceNames = try c.decodeIfPresent(Bool.self, forKey: .includeDeviceNames) ?? true
         unitSystem = try c.decodeIfPresent(UnitSystem.self, forKey: .unitSystem) ?? .metric
+        grouping = try c.decodeIfPresent(Grouping.self, forKey: .grouping) ?? .day
     }
 }
 
@@ -87,17 +97,22 @@ public struct AppSettings: Equatable, Sendable, Codable {
     public var customRange: DateRange?
     public var customMetrics: [MetricID]?
     public var options: ExportOptions
+    /// 生理の記録を扱うか。**既定はオフ。** 本人が設定でオンにしたときだけ、
+    /// 読み取りの許可を求め、書き出しに含める。オフのあいだは目的が「全部」でも入れない。
+    public var includeCycle: Bool
 
     public init(purpose: Purpose = .general,
                 customDays: Int? = nil,
                 customRange: DateRange? = nil,
                 customMetrics: [MetricID]? = nil,
-                options: ExportOptions = ExportOptions()) {
+                options: ExportOptions = ExportOptions(),
+                includeCycle: Bool = false) {
         self.purpose = purpose
         self.customDays = customDays
         self.customRange = customRange
         self.customMetrics = customMetrics
         self.options = options
+        self.includeCycle = includeCycle
     }
 
     public init(from decoder: any Decoder) throws {
@@ -107,6 +122,7 @@ public struct AppSettings: Equatable, Sendable, Codable {
         customRange = try c.decodeIfPresent(DateRange.self, forKey: .customRange)
         customMetrics = try c.decodeIfPresent([MetricID].self, forKey: .customMetrics)
         options = try c.decodeIfPresent(ExportOptions.self, forKey: .options) ?? ExportOptions()
+        includeCycle = try c.decodeIfPresent(Bool.self, forKey: .includeCycle) ?? false
     }
 
     /// 実際に書き出す期間。日付を直に指定していればそれを、無ければ目的の日数から作る。
@@ -130,6 +146,9 @@ public struct AppSettings: Equatable, Sendable, Codable {
             wanted = MetricID.allCases
         }
         // 並び順はカタログの順。目的ごとに列の順が変わると読み比べにくい。
-        return MetricCatalog.all.filter { wanted.contains($0.id) && available.contains($0.id) }
+        return MetricCatalog.all.filter {
+            wanted.contains($0.id) && available.contains($0.id)
+                && ($0.id != .menstrualFlow || includeCycle)
+        }
     }
 }

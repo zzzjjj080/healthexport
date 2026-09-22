@@ -101,6 +101,9 @@ public enum ExportText {
         lines.append(Tr.frame("note1", language))
         lines.append(Tr.frame("note2", language))
         lines.append(Tr.frame("note3", language))
+        if request.options.grouping != .day {
+            lines.append(Tr.frame("groupedNote", language))
+        }
         return lines.joined(separator: "\n")
     }
 
@@ -165,7 +168,10 @@ public enum ExportText {
         case .localized(let key, let table):
             switch table {
             case .mood: return [Tr.get(Tr.mood, key, language)]
+            case .flow: return [Tr.get(Tr.flow, key, language)]
             }
+        case .dayCount(let days):
+            return [Tr.frame("dayCount", language, ["n": String(days)])]
         }
     }
 
@@ -188,27 +194,45 @@ public enum ExportText {
 
     static func wideBlock(_ request: ExportRequest, metrics: [Metric]) -> String {
         let options = request.options
-        var head = ["date"]
+        let grouped = options.grouping != .day
+        var head = [periodHead(options.grouping)] + (grouped ? ["days"] : [])
         for metric in metrics {
             for key in columnKeys(metric) {
                 head.append(columnLabel(metric, key: key, options: options))
             }
         }
         var rows = [head]
-        for day in request.range.days {
-            let values = request.daily[day]
-            var row = [day.iso]
+        for period in Periods.rows(request) {
+            let values = period.values
+            var row = [period.label] + (grouped ? [String(period.days)] : [])
             var hasAny = false
             for metric in metrics {
-                let value = values?[metric.id]
+                let value = values[metric.id]
                 if value != nil { hasAny = true }
                 row.append(contentsOf: cells(metric, value: value, language: options.language))
             }
             if !hasAny && options.skipEmptyDays { continue }
             rows.append(row)
         }
-        let title = Tr.frame("daily", options.language)
+        let title = Tr.frame(tableTitleKey(options.grouping), options.language)
         return title + "\n" + table(rows, separator: options.separator)
+    }
+
+    /// 行の先頭の列名。日付と同じく英字の略号にしておく（列名は機械が読むもの）
+    static func periodHead(_ grouping: Grouping) -> String {
+        switch grouping {
+        case .day: return "date"
+        case .week: return "week"
+        case .month: return "month"
+        }
+    }
+
+    static func tableTitleKey(_ grouping: Grouping) -> String {
+        switch grouping {
+        case .day: return "daily"
+        case .week: return "weekly"
+        case .month: return "monthly"
+        }
     }
 
     static func perMetricBlocks(_ request: ExportRequest, metrics: [Metric]) -> String {
@@ -217,17 +241,19 @@ public enum ExportText {
         var blocks: [String] = []
         for metric in metrics {
             let keys = columnKeys(metric)
-            var head = ["date"]
+            let grouped = options.grouping != .day
+            var head = [periodHead(options.grouping)] + (grouped ? ["days"] : [])
             if keys == [""] {
                 head.append("value")
             } else {
                 head.append(contentsOf: keys)
             }
             var rows = [head]
-            for day in request.range.days {
-                let value = request.daily[day]?[metric.id]
+            for period in Periods.rows(request) {
+                let value = period.values[metric.id]
                 if value == nil && options.skipEmptyDays { continue }
-                rows.append([day.iso] + cells(metric, value: value, language: language))
+                rows.append([period.label] + (grouped ? [String(period.days)] : [])
+                            + cells(metric, value: value, language: language))
             }
             let unit = metric.unit(language, options.unitSystem)
             let heading = "## \(metric.name(language))"

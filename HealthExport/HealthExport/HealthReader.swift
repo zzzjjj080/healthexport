@@ -86,12 +86,17 @@ final class HealthReader {
     /// 読み取りの許可をまとめて求める。
     ///
     /// 全項目ぶんを一度に求める。あとから足すと、そのたびにダイアログが出て煩わしい。
-    func requestAuthorization() async -> Bool {
+    ///
+    /// **生理だけは例外。** 本人が設定でオンにするまで、許可の画面にも出さない。
+    /// 使わない人にまで「生理の記録を読みます」と見せるのは、それだけで引っかかる。
+    func requestAuthorization(includeCycle: Bool = false) async -> Bool {
         guard Self.isAvailable else {
             note(String(localized: "この端末ではヘルスケアを使えません。"))
             return false
         }
-        let types = Set(MetricCatalog.all.compactMap { objectType(for: $0) })
+        let types = Set(MetricCatalog.all
+            .filter { includeCycle || $0.id != .menstrualFlow }
+            .compactMap { objectType(for: $0) })
         do {
             try await store.requestAuthorization(toShare: [], read: types)
             errors.removeAll()
@@ -107,10 +112,11 @@ final class HealthReader {
 
     /// 期間内に記録がある項目を調べる。
     /// 端末の申告は求めない。**実際に記録があるかどうかは、読めば分かる。**
-    func scan(range: DateRange) async -> [MetricID: MetricAvailability] {
+    /// 生理はオンにしている人のときだけ調べる（オフの間は触れない）。
+    func scan(range: DateRange, includeCycle: Bool = false) async -> [MetricID: MetricAvailability] {
         guard let predicate = datePredicate(range) else { return [:] }
         var result: [MetricID: MetricAvailability] = [:]
-        for metric in MetricCatalog.all {
+        for metric in MetricCatalog.all where includeCycle || metric.id != .menstrualFlow {
             result[metric.id] = await availability(of: metric, predicate: predicate, days: range.dayCount)
         }
         return result
@@ -177,11 +183,13 @@ final class HealthReader {
                 await readWorkouts(range: range, predicate: predicate, into: &result, names: &names)
             case .moodLatest:
                 await readStateOfMind(metric, predicate: predicate, into: &result)
+            case .flowLevel:
+                await readMenstrualFlow(metric, predicate: predicate, into: &result)
             }
         }
 
         // 端末の名前は、実際に書き込んでいたソースから集める
-        let availability = await scan(range: range)
+        let availability = await scan(range: range, includeCycle: metrics.contains { $0.id == .menstrualFlow })
         for metric in metrics {
             availability[metric.id]?.sourceNames.forEach { names.insert($0) }
         }
@@ -249,6 +257,39 @@ final class HealthReader {
             }
             for (day, value) in minutes where day >= range.from && day <= range.to {
                 result.daily[day, default: [:]][metric.id] = .number(value)
+            }
+        } catch {
+            note(String(localized: "\(metric.name(.ui))を読めませんでした: \(error.localizedDescription)"))
+        }
+    }
+
+    // MARK: - 生理
+
+    /// 生理の量。1日に何件あっても、その日のいちばん多い段階を1つだけ出す。
+    ///
+    /// 値は HealthKit の番号で読む（iOS 18 で列挙の名前が変わったため、名前に頼らない）。
+    /// 1 = 量は未記録、2 = 少ない、3 = ふつう、4 = 多い、5 = なし
+    private func readMenstrualFlow(_ metric: Metric, predicate: NSPredicate,
+                                   into result: inout DailyReadResult) async {
+        guard case .category(let identifier) = metric.source,
+              let type = HKCategoryType.categoryType(forIdentifier: HKCategoryTypeIdentifier(rawValue: identifier))
+        else { return }
+        let keyForValue = [1: "unspecified", 2: "light", 3: "medium", 4: "heavy", 5: "none"]
+        // どれを「多い」とみなすか。「なし」がいちばん下
+        let rank = ["none": 0, "unspecified": 1, "light": 2, "medium": 3, "heavy": 4]
+        do {
+            let samples = try await HKSampleQueryDescriptor(
+                predicates: [.categorySample(type: type, predicate: predicate)],
+                sortDescriptors: [SortDescriptor(\.startDate)]).result(for: store)
+            var best: [YMD: String] = [:]
+            for sample in samples {
+                guard let key = keyForValue[sample.value] else { continue }
+                let day = YMD.from(sample.startDate)
+                if let current = best[day], rank[current]! >= rank[key]! { continue }
+                best[day] = key
+            }
+            for (day, key) in best {
+                result.daily[day, default: [:]][metric.id] = .localized(key: key, table: .flow)
             }
         } catch {
             note(String(localized: "\(metric.name(.ui))を読めませんでした: \(error.localizedDescription)"))

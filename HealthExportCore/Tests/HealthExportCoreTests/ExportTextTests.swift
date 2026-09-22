@@ -408,12 +408,13 @@ struct GroupedNumberTests {
 struct ExportFrameLanguageTests {
 
     /// 枠に出る文言をすべて通る材料：全文の説明・凡例・日ごと・項目ごと・ワークアウト・1件ずつ全部。
-    static func everything(_ language: Language, layout: Layout) -> String {
+    static func everything(_ language: Language, layout: Layout, grouping: Grouping = .day) -> String {
         var options = ExportOptions(includeAsk: true)
         options.language = language
         options.header = .full
         options.shortColumnNames = true
         options.layout = layout
+        options.grouping = grouping
         let day = YMD(2026, 6, 1)
         let samples = (0..<3).map { RawSample(day: day, minute: $0 * 60, value: 70) }
         let segments = [SleepSegment(day: day, startMinute: 60, endMinute: 120, stageKey: "core")]
@@ -435,6 +436,7 @@ struct ExportFrameLanguageTests {
         "Exported by the owner", "removing duplicates", "no record exists",
         "## Daily values", "## Workouts", "## Column meanings",
         "datetime", "detail (", "samples)", "too many to include",
+        "Weekly values", "Monthly values", "daily average over days", "days with bleeding",
     ]
     // 入れていないもの：
     // ・hr_avg などの略称。「列名を英字の略称にする」はわざと英字にしていて、凡例がその言語で説明する
@@ -445,12 +447,12 @@ struct ExportFrameLanguageTests {
 
     @Test func 英語以外で書き出すと枠に英語が残らない() {
         for language in Language.allCases where language != .en {
-            for layout in [Layout.wide, .block] {
-                let text = Self.everything(language, layout: layout)
+            for layout in [Layout.wide, .block] { for grouping in Grouping.allCases {
+                let text = Self.everything(language, layout: layout, grouping: grouping)
                 for phrase in Self.englishFrame where !Self.allowed(phrase, in: language) {
-                    #expect(!text.contains(phrase), "\(language) / \(layout) に英語の枠「\(phrase)」が残っている")
+                    #expect(!text.contains(phrase), "\(language) / \(layout) / \(grouping) に英語の枠「\(phrase)」が残っている")
                 }
-            }
+            } }
         }
     }
 

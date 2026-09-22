@@ -51,16 +51,22 @@ You can switch individual metrics to every single sample when you need the detai
 
 ■ What gets exported
 
-Steps, walking+running distance, flights climbed, active and resting energy,
-exercise minutes, stand minutes, workouts, heart rate, resting heart rate,
-heart rate variability, walking heart rate average, cardio fitness, blood oxygen,
-respiratory rate, wrist temperature deviation, sleep (total and stages), body mass,
-body fat percentage, walking speed, step length, walking asymmetry,
-headphone audio levels, environmental sound levels, mindful minutes, state of mind.
+Around 30 metrics across activity, heart, respiration, sleep, body, nutrition, mobility, hearing, mind and cycle tracking — from steps and heart rate to sleep stages, blood pressure and state of mind.
 
 Only the ones with records in your chosen period are included.
 
 Distance and weight can be shown in miles and pounds, or kilometres and kilograms.
+
+
+■ Blood pressure, glucose, nutrition and cycle tracking
+
+Blood pressure (systolic and diastolic), blood glucose and nutrition (dietary energy, water, protein, carbohydrates, fat) can be exported too.
+Menstrual records are only included if you turn them on in settings. Until then, the app doesn't even ask for permission to read them.
+
+
+■ Even a full year fits
+
+Rows can be grouped by week or by month. Values are the daily average over days with records, so long-term trends are easy to see.
 
 
 ■ Getting the numbers across correctly
@@ -88,4 +94,4 @@ If something concerns you, please see a doctor.
 An AI's answer is a reference, not a substitute for medical judgement.
 
 
-Available in English and Japanese, and you can choose which language the text is written in.
+Available in 12 languages, and you can choose which language the text is written in.

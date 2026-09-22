@@ -393,6 +393,9 @@ struct ContentView: View {
         case "period":
             settingsTab = .period
             showingSettings = true
+        case "format":
+            settingsTab = .format
+            showingSettings = true
         default:
             break
         }

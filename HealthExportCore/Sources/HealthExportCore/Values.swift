@@ -68,10 +68,13 @@ public enum MetricValue: Equatable, Sendable {
     /// 読み出した時点では書き出す言語が決まっていないので、訳を焼き付けてしまうと
     /// あとから言語を切り替えたときに1列だけ前の言語のまま残る。
     case localized(key: String, table: LocalizedTable)
+    /// 日数。生理を週・月にまとめたときの「出血のあった日数」。言葉は書き出す言語で付ける
+    case dayCount(Int)
 
     /// `localized` がどの表を引くか。表そのものを値に持たせると Equatable が重くなる。
     public enum LocalizedTable: String, Equatable, Sendable {
         case mood
+        case flow
     }
 }
 

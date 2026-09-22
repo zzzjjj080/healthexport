@@ -50,18 +50,22 @@ Puoi passare singole metriche a «ogni campione» quando ti serve il dettaglio.
 
 ■ Cosa viene esportato
 
-Passi, distanza camminata+corsa, piani saliti, energia attiva e a riposo,
-minuti di esercizio, minuti in piedi, allenamenti, frequenza cardiaca,
-frequenza cardiaca a riposo, variabilità cardiaca, frequenza cardiaca camminando,
-forma cardiovascolare, ossigeno nel sangue, frequenza respiratoria,
-variazione di temperatura al polso, sonno (totale e fasi), peso corporeo,
-percentuale di grasso corporeo, velocità di camminata, lunghezza del passo,
-asimmetria della camminata, livello audio delle cuffie, livello del suono ambientale,
-minuti di mindfulness e stato d'animo.
+Circa 30 metriche tra attività, cuore, respirazione, sonno, corpo, alimentazione, mobilità, udito, mente e ciclo: dai passi e dalla frequenza cardiaca alle fasi del sonno, alla pressione e all'umore.
 
 Sono inclusi solo quelli con dati nel periodo scelto.
 
 Distanza e peso possono essere mostrati in miglia e libbre, oppure in chilometri e chili.
+
+
+■ Pressione, glicemia, alimentazione e ciclo
+
+Puoi esportare anche la pressione (sistolica e diastolica), la glicemia e l'alimentazione (energia, acqua, proteine, carboidrati, grassi).
+I dati delle mestruazioni sono inclusi solo se li attivi nelle impostazioni. Prima di allora l'app non chiede nemmeno il permesso di leggerli.
+
+
+■ Ci sta anche un anno intero
+
+Le righe si possono raggruppare per settimana o per mese. I valori sono la media giornaliera dei giorni con dati, così le tendenze lunghe si vedono subito.
 
 
 ■ Perché i numeri arrivino giusti

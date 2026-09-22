@@ -5,16 +5,20 @@ import Foundation
 public enum MetricID: String, CaseIterable, Codable, Sendable {
     case steps, distance, flights, activeEnergy, basalEnergy, exerciseTime, standTime, workouts
     case heartRate, restingHeartRate, hrv, walkingHeartRate, vo2Max
+    case bloodPressureSystolic, bloodPressureDiastolic
     case oxygenSaturation, respiratoryRate, wristTemperature
     case sleep
-    case bodyMass, bodyFat
+    case bodyMass, bodyFat, bloodGlucose
+    case dietaryEnergy, dietaryWater, dietaryProtein, dietaryCarbs, dietaryFat
     case walkingSpeed, stepLength, walkingAsymmetry
     case headphoneAudio, environmentalAudio
     case mindful, stateOfMind
+    /// 生理。**設定でオンにした人だけが対象。** オフの間は許可も求めず、読みもしない（AppSettings.includeCycle）
+    case menstrualFlow
 }
 
 public enum MetricCategory: String, CaseIterable, Codable, Sendable {
-    case activity, heart, respiratory, sleep, body, mobility, hearing, mind
+    case activity, heart, respiratory, sleep, body, nutrition, mobility, hearing, mind, cycle
 
     public func name(_ language: Language) -> String {
         Tr.get(Tr.category, rawValue, language)
@@ -30,6 +34,7 @@ public enum Aggregation: String, Codable, Sendable {
     case sleep          // 合計と内訳
     case workoutList    // 日ごとの表には載らない。別の一覧にする
     case moodLatest     // 気分。数値ではなく言葉
+    case flowLevel      // 生理の量。その日のいちばん多い段階を言葉で。週・月にまとめると出血のあった日数
 
     public func label(_ language: Language) -> String {
         Tr.get(Tr.aggregation, rawValue, language)
@@ -99,7 +104,7 @@ public struct Metric: Identifiable, Equatable, Sendable {
     /// 1件ずつの書き出しに意味があるか。ワークアウトと気分は元から件数が少ない。
     public var supportsRawSamples: Bool {
         switch aggregation {
-        case .workoutList, .moodLatest, .latest: return false
+        case .workoutList, .moodLatest, .latest, .flowLevel: return false
         default: return samplesPerDay > 1
         }
     }
@@ -161,6 +166,14 @@ public enum MetricCatalog {
                jaUnit: "mL/kg/min", enUnit: "mL/kg/min", shortKey: "vo2",
                source: .quantity(identifier: "HKQuantityTypeIdentifierVO2Max", unit: "ml/kg*min", scale: 1),
                aggregation: .latest, decimals: 1, samplesPerDay: 1),
+        Metric(id: .bloodPressureSystolic, category: .heart, jaName: "血圧（上）", enName: "Blood pressure (systolic)",
+               jaUnit: "mmHg", enUnit: "mmHg", shortKey: "bp_sys",
+               source: .quantity(identifier: "HKQuantityTypeIdentifierBloodPressureSystolic", unit: "mmHg", scale: 1),
+               aggregation: .average, decimals: 0, samplesPerDay: 2),
+        Metric(id: .bloodPressureDiastolic, category: .heart, jaName: "血圧（下）", enName: "Blood pressure (diastolic)",
+               jaUnit: "mmHg", enUnit: "mmHg", shortKey: "bp_dia",
+               source: .quantity(identifier: "HKQuantityTypeIdentifierBloodPressureDiastolic", unit: "mmHg", scale: 1),
+               aggregation: .average, decimals: 0, samplesPerDay: 2),
 
         // 割合の単位は HealthKit では 0〜1 で返ってくる。100倍して%にする。
         Metric(id: .oxygenSaturation, category: .respiratory, jaName: "血中酸素", enName: "Blood oxygen",
@@ -190,6 +203,34 @@ public enum MetricCatalog {
                jaUnit: "%", enUnit: "%", shortKey: "fat_pct",
                source: .quantity(identifier: "HKQuantityTypeIdentifierBodyFatPercentage", unit: "%", scale: 100),
                aggregation: .latest, decimals: 1, samplesPerDay: 1),
+
+        // 血糖は1日のうちで大きく動くので、平均だけでなく最小と最大も出す
+        Metric(id: .bloodGlucose, category: .body, jaName: "血糖値", enName: "Blood glucose",
+               jaUnit: "mg/dL", enUnit: "mg/dL", shortKey: "glucose",
+               source: .quantity(identifier: "HKQuantityTypeIdentifierBloodGlucose", unit: "mg/dL", scale: 1),
+               aggregation: .minMaxAverage, decimals: 0, samplesPerDay: 288),
+
+        Metric(id: .dietaryEnergy, category: .nutrition, jaName: "摂取エネルギー", enName: "Dietary energy",
+               jaUnit: "kcal", enUnit: "kcal", shortKey: "kcal_in",
+               source: .quantity(identifier: "HKQuantityTypeIdentifierDietaryEnergyConsumed", unit: "kcal", scale: 1),
+               aggregation: .sum, decimals: 0, samplesPerDay: 6),
+        Metric(id: .dietaryWater, category: .nutrition, jaName: "水分", enName: "Water",
+               jaUnit: "mL", enUnit: "mL", shortKey: "water_ml",
+               source: .quantity(identifier: "HKQuantityTypeIdentifierDietaryWater", unit: "mL", scale: 1),
+               aggregation: .sum, decimals: 0, samplesPerDay: 6,
+               imperial: ImperialUnit(label: "fl oz", hkUnit: "fl_oz_us", shortKey: "water_oz")),
+        Metric(id: .dietaryProtein, category: .nutrition, jaName: "たんぱく質", enName: "Protein",
+               jaUnit: "g", enUnit: "g", shortKey: "protein_g",
+               source: .quantity(identifier: "HKQuantityTypeIdentifierDietaryProtein", unit: "g", scale: 1),
+               aggregation: .sum, decimals: 0, samplesPerDay: 6),
+        Metric(id: .dietaryCarbs, category: .nutrition, jaName: "炭水化物", enName: "Carbohydrates",
+               jaUnit: "g", enUnit: "g", shortKey: "carbs_g",
+               source: .quantity(identifier: "HKQuantityTypeIdentifierDietaryCarbohydrates", unit: "g", scale: 1),
+               aggregation: .sum, decimals: 0, samplesPerDay: 6),
+        Metric(id: .dietaryFat, category: .nutrition, jaName: "脂質", enName: "Fat",
+               jaUnit: "g", enUnit: "g", shortKey: "fat_g",
+               source: .quantity(identifier: "HKQuantityTypeIdentifierDietaryFatTotal", unit: "g", scale: 1),
+               aggregation: .sum, decimals: 0, samplesPerDay: 6),
 
         Metric(id: .walkingSpeed, category: .mobility, jaName: "歩行速度", enName: "Walking speed",
                jaUnit: "km/h", enUnit: "km/h", shortKey: "w_speed",
@@ -222,6 +263,11 @@ public enum MetricCatalog {
         Metric(id: .stateOfMind, category: .mind, jaName: "気分の記録", enName: "State of mind",
                jaUnit: "", enUnit: "", shortKey: "mood",
                source: .stateOfMind, aggregation: .moodLatest, decimals: 0, samplesPerDay: 2),
+
+        Metric(id: .menstrualFlow, category: .cycle, jaName: "生理", enName: "Menstrual flow",
+               jaUnit: "", enUnit: "", shortKey: "flow",
+               source: .category(identifier: "HKCategoryTypeIdentifierMenstrualFlow"),
+               aggregation: .flowLevel, decimals: 0, samplesPerDay: 1),
     ]
 
     public static func metric(_ id: MetricID) -> Metric {

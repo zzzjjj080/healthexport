@@ -192,7 +192,13 @@ struct SettingsSheet: View {
                 }
             }
 
-            let missing = MetricCatalog.all.filter { !(model.availability[$0.id]?.hasData ?? false) }
+            cycleSection
+
+            // 生理はオフのあいだ調べてもいないので、「記録が無かった」側にも並べない
+            let missing = MetricCatalog.all.filter {
+                !(model.availability[$0.id]?.hasData ?? false)
+                    && ($0.id != .menstrualFlow || model.settings.includeCycle)
+            }
             if !missing.isEmpty {
                 Section {
                     Text(missing.map { $0.name(.ui) }.joined(separator: String(localized: "、")))
@@ -203,6 +209,25 @@ struct SettingsSheet: View {
                     Text("持っている端末で測れないもののほか、ヘルスケアの読み取りが許可されていない場合もここに入ります。")
                 }
             }
+        }
+    }
+
+    /// 生理の記録。**既定はオフ。** オンにしたときに初めて読み取りの許可を求める。
+    private var cycleSection: some View {
+        Section {
+            Toggle(isOn: Binding(
+                get: { model.settings.includeCycle },
+                set: { on in
+                    Haptics.tap()
+                    Task { await model.setIncludeCycle(on) }
+                })) {
+                Label("生理の記録を含める", systemImage: "drop")
+            }
+            .accessibilityIdentifier("includeCycleToggle")
+        } header: {
+            Text(MetricCategory.cycle.name(.ui))
+        } footer: {
+            Text("オンにしたときだけ、ヘルスケアに生理の記録を読む許可を求め、書き出しに含めます。オフのあいだは読み取りません。")
         }
     }
 
@@ -275,6 +300,20 @@ struct SettingsSheet: View {
                     }
                 }
                 .pickerStyle(.menu)
+            }
+
+            Section {
+                Picker("表の1行", selection: $model.settings.options.grouping) {
+                    Text("1日ごと").tag(Grouping.day)
+                    Text("週ごと").tag(Grouping.week)
+                    Text("月ごと").tag(Grouping.month)
+                }
+                .pickerStyle(.segmented)
+                .accessibilityIdentifier("groupingPicker")
+            } header: {
+                Text("表の1行")
+            } footer: {
+                Text("週・月ごとにすると、1年ぶんでもチャット欄に貼れる大きさになります。値は記録のあった日の1日平均です。")
             }
 
             Section {

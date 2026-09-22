@@ -45,23 +45,25 @@ Les zones de conversation ont des limites. Après l'export, vous voyez le nombre
 caractères, une estimation de jetons, et si le texte se colle tel quel.
 S'il est trop long, l'app vous dit quoi raccourcir.
 
-Trois mois de toutes les mesures représentent environ 15 000 caractères en résumé quotidien.
-Vous pouvez basculer certaines mesures sur « chaque échantillon » quand le détail compte.
-
 
 ■ Ce qui est exporté
 
-Pas, distance marche+course, étages montés, énergie active et au repos, minutes
-d'exercice, minutes debout, entraînements, fréquence cardiaque, fréquence cardiaque
-au repos, variabilité cardiaque, fréquence cardiaque à la marche, capacité cardio,
-oxygène sanguin, fréquence respiratoire, écart de température au poignet,
-sommeil (total et phases), poids, masse grasse, vitesse de marche, longueur de pas,
-asymétrie de marche, niveau sonore du casque, niveau sonore ambiant,
-minutes de pleine conscience et état d'esprit.
+Une trentaine de mesures : activité, cœur, respiration, sommeil, corps, nutrition, mobilité, audition, esprit et cycle — des pas et de la fréquence cardiaque aux phases de sommeil, à la tension et à l'humeur.
 
 Seules celles ayant des relevés sur la période choisie sont incluses.
 
 La distance et le poids peuvent s'afficher en miles et livres, ou en kilomètres et kilos.
+
+
+■ Tension, glycémie, nutrition et suivi du cycle
+
+Vous pouvez aussi exporter la tension artérielle (systolique et diastolique), la glycémie et la nutrition (énergie, eau, protéines, glucides, lipides).
+Les données de règles ne sont incluses que si vous les activez dans les réglages. Avant cela, l'app ne demande même pas l'accès.
+
+
+■ Même une année entière tient
+
+Les lignes peuvent être regroupées par semaine ou par mois. Les valeurs sont la moyenne quotidienne des jours enregistrés : les tendances longues se lisent d'un coup d'œil.
 
 
 ■ Pour que les chiffres soient justes

@@ -94,6 +94,8 @@ public enum Tr {{
 
 {table("mood", "mood")}
 
+{table("flow", "flow")}
+
 {table("export", "export")}
 
 {askTable()}

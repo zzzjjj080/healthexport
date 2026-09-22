@@ -41,6 +41,8 @@ struct ResultSheet: View {
                 }
             }
             .onAppear { fileURL = model.writeTemporaryFile() }
+            // 「週ごとにまとめて書き出し直す」で本文が変わったら、共有するファイルも作り直す
+            .onChange(of: model.exportedText) { fileURL = model.writeTemporaryFile() }
         }
     }
 
@@ -119,12 +121,27 @@ struct ResultSheet: View {
     private func verdictBanner(_ verdict: SizeVerdict) -> some View {
         let tint = verdict == .comfortable ? Palette.good : Palette.caution
         let symbol = verdict == .comfortable ? "checkmark.seal.fill" : "exclamationmark.triangle.fill"
-        return Label(verdictText(verdict), systemImage: symbol)
-            .font(.caption)
-            .foregroundStyle(tint)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(11)
-            .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(tint.opacity(0.12)))
+        return VStack(alignment: .leading, spacing: 8) {
+            Label(verdictText(verdict), systemImage: symbol)
+                .font(.caption)
+                .foregroundStyle(tint)
+            // 重いときは、その場で週ごとにまとめ直せるようにする。設定を探しに行かせない
+            // 「1件ずつ全部」が重さの原因のときは、週にまとめても軽くならないので出さない
+            if verdict != .comfortable && model.settings.options.grouping == .day
+                && model.settings.options.rawMetrics.isEmpty {
+                Button {
+                    Haptics.tap()
+                    Task { await model.regroupByWeekAndExport() }
+                } label: {
+                    Label("週ごとにまとめて書き出し直す", systemImage: "calendar")
+                        .font(.caption.weight(.semibold))
+                }
+                .accessibilityIdentifier("regroupByWeekButton")
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(11)
+        .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(tint.opacity(0.12)))
     }
 
     private func verdictText(_ verdict: SizeVerdict) -> String {
