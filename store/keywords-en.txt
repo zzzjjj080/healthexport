@@ -1,1 +1,1 @@
-health,export,AI,steps,sleep,heart rate,records,data,text,share,fitness,tracker,log,csv
+ai,ai chat,assistant,apple health,healthkit,export,summary,report,doctor,checkup,sleep,steps,hrv,csv

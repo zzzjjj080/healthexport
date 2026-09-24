@@ -1,1 +1,1 @@
-saúde,exportar,IA,passos,sono,frequência,dados,texto,registro,compartilhar,fitness,csv
+ia,saúde,exportar,dados,resumo,relatório,análise,sono,passos,batimentos,pressão,glicose,médico

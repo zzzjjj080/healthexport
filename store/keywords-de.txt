@@ -1,1 +1,1 @@
-Gesundheit,Export,KI,Schritte,Schlaf,Herzfrequenz,Daten,Text,Verlauf,teilen,Fitness,csv
+ki,gesundheit,export,daten,zusammenfassung,bericht,analyse,schlaf,schritte,puls,blutdruck,arzt,csv
