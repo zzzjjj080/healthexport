@@ -8,31 +8,14 @@ import Foundation
 public enum Purpose: String, CaseIterable, Codable, Sendable {
     case general, sleep, training, condition, mind, everything
 
-    /// nil は「記録がある項目すべて」。
-    public var metricIDs: [MetricID]? {
-        switch self {
-        // 既定は「記録がある項目を全部」。
-        // 何が役に立つかは渡してみないと分からないし、日ごとにまとめてあれば
-        // 全項目でも3ヶ月で2万字ほどにしかならない。選ぶ手間をかけさせない。
-        case .general:
-            return nil
-        case .sleep:
-            return [.sleep, .heartRate, .restingHeartRate, .hrv, .respiratoryRate,
-                    .oxygenSaturation, .wristTemperature, .steps, .activeEnergy, .exerciseTime]
-        case .training:
-            return [.workouts, .activeEnergy, .exerciseTime, .steps, .distance, .flights,
-                    .heartRate, .restingHeartRate, .hrv, .vo2Max, .sleep]
-        case .condition:
-            return [.restingHeartRate, .hrv, .bloodPressureSystolic, .bloodPressureDiastolic,
-                    .oxygenSaturation, .respiratoryRate, .wristTemperature, .bloodGlucose,
-                    .sleep, .steps, .activeEnergy, .stateOfMind, .menstrualFlow]
-        case .mind:
-            return [.stateOfMind, .mindful, .sleep, .hrv, .restingHeartRate,
-                    .respiratoryRate, .steps, .activeEnergy, .exerciseTime]
-        case .everything:
-            return nil
-        }
-    }
+    /// **どの目的でも、記録がある項目をすべて出す。**
+    ///
+    /// 以前は目的ごとに項目を絞っていたが、やめた（2026-09-25 本人判断）。
+    /// 絞る理由が弱いため：日ごとにまとめれば全項目でも3ヶ月で2万字ほどにしかならないし、
+    /// 何が効いているかは渡してみないと分からない（睡眠の話に食事や血圧が効くこともある）。
+    /// **目的が決めるのは「AIへの聞き方」だけ**にして、選ぶ側の迷いを減らす。
+    /// 項目を自分で絞りたい人は、詳しい設定から外せる。
+    public var metricIDs: [MetricID]? { nil }
 
     public func title(_ language: Language) -> String {
         Tr.get(Tr.purposeTitle, rawValue, language)

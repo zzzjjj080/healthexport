@@ -10109,6 +10109,82 @@
           }
         }
       }
+    },
+    "どの目的でも、記録があるもの全部": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "どの目的でも、記録があるもの全部"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every metric with records, whatever you pick"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无论选哪个目的，都包含全部有记录的项目"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無論選哪個目的，都包含全部有記錄的項目"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "어떤 목적을 골라도, 기록이 있는 모든 항목"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todas las métricas con registros, elijas lo que elijas"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toutes les mesures enregistrées, quel que soit l'objectif"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Werte mit Daten – unabhängig von der Wahl"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tutte le metriche con dati, qualunque cosa scegli"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todas as métricas com registros, escolha o que escolher"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Все показатели с записями, что бы вы ни выбрали"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "كل البيانات المسجَّلة، أياً كان ما تختاره"
+          }
+        }
+      }
     }
   }
 }

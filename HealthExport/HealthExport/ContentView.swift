@@ -171,9 +171,16 @@ struct ContentView: View {
                 withAnimation(.snappy(duration: 0.2)) { detailExpanded.toggle() }
             } label: {
                 HStack(spacing: 6) {
-                    Text("書き出されるデータ")
-                        .font(.footnote.weight(.semibold))
-                        .foregroundStyle(.secondary)
+                    // 目的は「聞き方」だけを変える。データはどれを選んでも同じなので、
+                    // ここで一度言っておく（選ぶたびに中身が変わると思わせない）
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("書き出されるデータ")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                        Text("どの目的でも、記録があるもの全部")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                    }
                     Spacer()
                     Text(model.phase == .scanning
                          ? String(localized: "調べています…")

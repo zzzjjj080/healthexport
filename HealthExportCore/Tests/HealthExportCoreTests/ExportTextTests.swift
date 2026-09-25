@@ -473,3 +473,25 @@ struct ExportFrameLanguageTests {
         }
     }
 }
+
+/// 目的は「AIへの聞き方」だけを決める。**データはどれを選んでも同じ**（2026-09-25 本人判断）。
+struct PurposePicksNoMetricsTests {
+
+    @Test func どの目的でも記録がある項目がすべて入る() {
+        let available = Set(MetricID.allCases)
+        for purpose in Purpose.allCases {
+            #expect(purpose.metricIDs == nil, "\(purpose) が項目を絞っている")
+            let settings = AppSettings(purpose: purpose, includeCycle: true)
+            let ids = settings.effectiveMetrics(available: available).map(\.id)
+            #expect(ids.count == MetricID.allCases.count, "\(purpose) で項目が欠けている")
+        }
+    }
+
+    /// 聞き方は目的ごとに違う（同じ文を出していたら、選ぶ意味が無い）
+    @Test func 目的ごとに依頼文は違う() {
+        for language in Language.allCases {
+            let texts = Purpose.allCases.map { $0.askText(language) }
+            #expect(Set(texts).count == texts.count, "\(language) で同じ依頼文が複数ある")
+        }
+    }
+}
