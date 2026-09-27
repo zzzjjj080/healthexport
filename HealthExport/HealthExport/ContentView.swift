@@ -9,7 +9,6 @@ extension Purpose {
         case .general:    return "square.grid.2x2.fill"
         case .sleep:      return "moon.stars.fill"
         case .training:   return "figure.run"
-        case .condition:  return "waveform.path.ecg"
         case .mind:       return "brain.head.profile"
         case .everything: return "text.append"
         }
@@ -76,9 +75,23 @@ struct ContentView: View {
 
     // MARK: - 目的
 
+    /// 目的の選び方。**メイン（全体を見てもらう）だけ横いっぱいの別枠**にして、
+    /// 残り（絞って聞く3つと、聞かずに渡す）を2列に並べる。
+    /// 迷ったらいちばん上を押せばよい、と形で分かるようにするため。
     private var purposeGrid: some View {
-        LazyVGrid(columns: columns, spacing: 11) {
-            ForEach(Purpose.allCases, id: \.self) { purpose in
+        VStack(spacing: 11) {
+            purposeButton(.general, wide: true)
+            LazyVGrid(columns: columns, spacing: 11) {
+                ForEach(Purpose.allCases.filter { $0 != .general }, id: \.self) { purpose in
+                    purposeButton(purpose, wide: false)
+                }
+            }
+        }
+    }
+
+    private func purposeButton(_ purpose: Purpose, wide: Bool) -> some View {
+        Group {
+            ForEach([purpose], id: \.self) { purpose in
                 Button {
                     Haptics.tap()
                     withAnimation(.snappy(duration: 0.22)) {
@@ -86,7 +99,7 @@ struct ContentView: View {
                         askExpanded = false
                     }
                 } label: {
-                    PurposeTile(purpose: purpose, isSelected: model.settings.purpose == purpose)
+                    PurposeTile(purpose: purpose, isSelected: model.settings.purpose == purpose, wide: wide)
                 }
                 .buttonStyle(.plain)   // 付けないと中の文字色が青に染まる（引き継ぎ書 4-13）
                 .accessibilityIdentifier("purpose-\(purpose.rawValue)")
@@ -414,6 +427,8 @@ struct ContentView: View {
 private struct PurposeTile: View {
     let purpose: Purpose
     let isSelected: Bool
+    /// 横いっぱいに置くメインの枠。字を少し大きくし、高さを詰める
+    var wide = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -438,10 +453,10 @@ private struct PurposeTile: View {
                 }
             }
             Text(purpose.title(.ui))
-                .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                .font(.system(wide ? .body : .subheadline, design: .rounded, weight: .semibold))
                 .foregroundStyle(.primary)
             Text(purpose.detail(.ui))
-                .font(.system(size: 11))
+                .font(.system(size: wide ? 12 : 11))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.leading)
                 .lineLimit(2)
@@ -449,7 +464,7 @@ private struct PurposeTile: View {
             Spacer(minLength: 0)
         }
         .padding(11)
-        .frame(maxWidth: .infinity, minHeight: 104, alignment: .topLeading)
+        .frame(maxWidth: .infinity, minHeight: wide ? 84 : 104, alignment: .topLeading)
         .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
             .fill(Color(.secondarySystemGroupedBackground)))
         .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous)

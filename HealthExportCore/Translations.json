@@ -1,18 +1,18 @@
 {
   "purposeTitle": {
     "general": {
-      "ja": "ふだんの管理",
-      "en": "General check-in",
-      "zh-Hans": "日常管理",
-      "zh-Hant": "日常管理",
-      "ko": "일상 관리",
-      "es": "Revisión general",
-      "fr": "Bilan général",
-      "de": "Allgemeiner Überblick",
-      "it": "Panoramica generale",
-      "pt-BR": "Visão geral",
-      "ru": "Общий обзор",
-      "ar": "نظرة عامة"
+      "ja": "全体を見てもらう",
+      "en": "Overall",
+      "zh-Hans": "整体查看",
+      "zh-Hant": "整體查看",
+      "ko": "전체 보기",
+      "es": "Visión completa",
+      "fr": "Vue d'ensemble",
+      "de": "Gesamtbild",
+      "it": "Quadro generale",
+      "pt-BR": "Visão completa",
+      "ru": "Общая картина",
+      "ar": "الصورة العامة"
     },
     "sleep": {
       "ja": "睡眠のこと",
@@ -41,20 +41,6 @@
       "pt-BR": "Treino",
       "ru": "Тренировки",
       "ar": "التمارين"
-    },
-    "condition": {
-      "ja": "体調の変化",
-      "en": "Condition",
-      "zh-Hans": "身体状况",
-      "zh-Hant": "身體狀況",
-      "ko": "컨디션",
-      "es": "Estado físico",
-      "fr": "État de forme",
-      "de": "Verfassung",
-      "it": "Condizione",
-      "pt-BR": "Condição",
-      "ru": "Самочувствие",
-      "ar": "الحالة الصحية"
     },
     "mind": {
       "ja": "こころの調子",
@@ -87,74 +73,60 @@
   },
   "purposeDetail": {
     "general": {
-      "ja": "記録があるもの全部",
-      "en": "Everything you have",
-      "zh-Hans": "你记录的全部数据",
-      "zh-Hant": "你記錄的全部數據",
-      "ko": "기록된 모든 항목",
-      "es": "Todo lo que tengas",
-      "fr": "Tout ce que vous avez",
-      "de": "Alles, was vorhanden ist",
-      "it": "Tutto ciò che hai",
-      "pt-BR": "Tudo o que você tem",
-      "ru": "Всё, что записано",
-      "ar": "كل ما لديك من بيانات"
+      "ja": "傾向と、これからどうするか",
+      "en": "Trends and what to do next",
+      "zh-Hans": "趋势和接下来怎么做",
+      "zh-Hant": "趨勢和接下來怎麼做",
+      "ko": "경향과 앞으로 할 일",
+      "es": "Tendencias y qué hacer ahora",
+      "fr": "Tendances et quoi faire ensuite",
+      "de": "Trends und nächste Schritte",
+      "it": "Tendenze e cosa fare",
+      "pt-BR": "Tendências e o que fazer",
+      "ru": "Тенденции и что делать дальше",
+      "ar": "الاتجاهات وما العمل بعدها"
     },
     "sleep": {
-      "ja": "睡眠と、影響する項目",
-      "en": "Sleep and what affects it",
-      "zh-Hans": "睡眠及其影响因素",
-      "zh-Hant": "睡眠及其影響因素",
-      "ko": "수면과 영향 요인",
-      "es": "El sueño y lo que le afecta",
-      "fr": "Le sommeil et ce qui l'influence",
-      "de": "Schlaf und was ihn beeinflusst",
-      "it": "Il sonno e ciò che lo influenza",
-      "pt-BR": "O sono e o que o afeta",
-      "ru": "Сон и что на него влияет",
-      "ar": "النوم وما يؤثر فيه"
+      "ja": "眠りの傾向と、よく眠るには",
+      "en": "Sleep trends and how to sleep better",
+      "zh-Hans": "睡眠趋势和如何睡得更好",
+      "zh-Hant": "睡眠趨勢和如何睡得更好",
+      "ko": "수면 경향과 더 잘 자는 법",
+      "es": "Tendencias del sueño y cómo dormir mejor",
+      "fr": "Tendances du sommeil et mieux dormir",
+      "de": "Schlaftrends und besser schlafen",
+      "it": "Tendenze del sonno e come dormire meglio",
+      "pt-BR": "Tendências do sono e como dormir melhor",
+      "ru": "Тенденции сна и как спать лучше",
+      "ar": "اتجاهات النوم وكيف أنام أفضل"
     },
     "training": {
-      "ja": "運動量と、疲れの回復",
-      "en": "Training load and recovery",
-      "zh-Hans": "训练量与恢复情况",
-      "zh-Hant": "訓練量與恢復情況",
-      "ko": "운동량과 회복",
-      "es": "Carga de entrenamiento y recuperación",
+      "ja": "負荷と、疲れが抜けているか",
+      "en": "Training load and whether you're recovering",
+      "zh-Hans": "训练量和疲劳是否恢复",
+      "zh-Hant": "訓練量和疲勞是否恢復",
+      "ko": "운동 부하와 회복 여부",
+      "es": "Carga de entrenamiento y si te recuperas",
       "fr": "Charge d'entraînement et récupération",
-      "de": "Trainingsbelastung und Erholung",
-      "it": "Carico di allenamento e recupero",
-      "pt-BR": "Carga de treino e recuperação",
+      "de": "Belastung und ob du dich erholst",
+      "it": "Carico e se stai recuperando",
+      "pt-BR": "Carga de treino e se você se recupera",
       "ru": "Нагрузка и восстановление",
-      "ar": "حمل التمرين والتعافي"
-    },
-    "condition": {
-      "ja": "ふだんと違う時期を探す",
-      "en": "Find days unlike your usual",
-      "zh-Hans": "找出与平时不同的日子",
-      "zh-Hant": "找出與平時不同的日子",
-      "ko": "평소와 다른 날 찾기",
-      "es": "Encuentra los días fuera de lo habitual",
-      "fr": "Repérer les jours inhabituels",
-      "de": "Tage finden, die vom Normalen abweichen",
-      "it": "Trova i giorni fuori dal solito",
-      "pt-BR": "Encontre os dias fora do normal",
-      "ru": "Найти дни, не похожие на обычные",
-      "ar": "ابحث عن الأيام المختلفة عن المعتاد"
+      "ar": "حمل التمرين وهل تتعافى"
     },
     "mind": {
       "ja": "気分と、体の記録の関係",
-      "en": "Mood against body data",
+      "en": "How your mood relates to your body data",
       "zh-Hans": "心情与身体数据的关系",
       "zh-Hant": "心情與身體數據的關係",
       "ko": "기분과 신체 기록의 관계",
-      "es": "El ánimo frente a los datos corporales",
-      "fr": "L'humeur au regard des données corporelles",
-      "de": "Stimmung im Vergleich zu Körperdaten",
-      "it": "L'umore rispetto ai dati corporei",
-      "pt-BR": "O humor em relação aos dados do corpo",
-      "ru": "Настроение и данные тела",
-      "ar": "المزاج مقارنةً ببيانات الجسم"
+      "es": "Cómo se relaciona tu ánimo con tu cuerpo",
+      "fr": "Le lien entre l'humeur et le corps",
+      "de": "Wie Stimmung und Körperdaten zusammenhängen",
+      "it": "Come l'umore si lega ai dati del corpo",
+      "pt-BR": "Como o humor se relaciona ao corpo",
+      "ru": "Как настроение связано с телом",
+      "ar": "كيف يرتبط مزاجك ببيانات جسمك"
     },
     "everything": {
       "ja": "何も聞かず、自由に見てもらう",
@@ -178,7 +150,7 @@
         "次のことを教えてください。",
         "1. この期間の全体的な傾向（良くなっている点・悪くなっている点）",
         "2. ほかの日と比べて明らかにずれている日と、その日に何があったと考えられるか",
-        "3. 数字から見て、生活のなかで続けるとよさそうなこと",
+        "3. これから1か月、生活のなかで気をつけるとよいこと（続けること・やめること）",
         "__DISCLAIMER__"
       ],
       "en": [
@@ -186,7 +158,7 @@
         "Please tell me:",
         "1. The overall trends in this period (what improved, what got worse)",
         "2. Days that clearly stand out from the rest, and what might explain them",
-        "3. Habits worth keeping, based on what the numbers show",
+        "3. What to watch over the next month — habits to keep and habits to drop",
         "__DISCLAIMER__"
       ],
       "zh-Hans": [
@@ -194,7 +166,7 @@
         "请告诉我：",
         "1. 这段时间的整体趋势（哪些在好转，哪些在变差）",
         "2. 明显偏离其他日子的那些天，以及可能的原因",
-        "3. 从数据来看，生活中值得继续保持的习惯",
+        "3. 今后一个月在生活中要注意的事（该继续的和该停止的）",
         "__DISCLAIMER__"
       ],
       "zh-Hant": [
@@ -202,7 +174,7 @@
         "請告訴我：",
         "1. 這段時間的整體趨勢（哪些在好轉，哪些在變差）",
         "2. 明顯偏離其他日子的那幾天，以及可能的原因",
-        "3. 從數據來看，生活中值得繼續保持的習慣",
+        "3. 今後一個月在生活中要注意的事（該繼續的和該停止的）",
         "__DISCLAIMER__"
       ],
       "ko": [
@@ -210,7 +182,7 @@
         "다음을 알려주세요:",
         "1. 이 기간의 전반적인 경향(좋아진 점과 나빠진 점)",
         "2. 다른 날과 뚜렷하게 다른 날과, 그 이유로 생각할 수 있는 것",
-        "3. 숫자로 볼 때 생활에서 계속하면 좋을 것",
+        "3. 앞으로 한 달 동안 생활에서 주의할 점(계속할 것과 그만둘 것)",
         "__DISCLAIMER__"
       ],
       "es": [
@@ -218,7 +190,7 @@
         "Dime, por favor:",
         "1. Las tendencias generales de este periodo (qué mejoró y qué empeoró)",
         "2. Los días que destacan claramente del resto y qué podría explicarlos",
-        "3. Hábitos que conviene mantener, según lo que muestran los números",
+        "3. Qué vigilar el próximo mes: hábitos que mantener y hábitos que dejar",
         "__DISCLAIMER__"
       ],
       "fr": [
@@ -226,7 +198,7 @@
         "Dites-moi :",
         "1. Les tendances générales sur cette période (ce qui s'améliore, ce qui se dégrade)",
         "2. Les jours qui se détachent nettement des autres, et ce qui pourrait l'expliquer",
-        "3. Les habitudes à conserver, d'après ce que montrent les chiffres",
+        "3. Ce à quoi faire attention le mois prochain : habitudes à garder et à abandonner",
         "__DISCLAIMER__"
       ],
       "de": [
@@ -234,7 +206,7 @@
         "Bitte sag mir:",
         "1. Die allgemeinen Trends in diesem Zeitraum (was besser wurde, was schlechter)",
         "2. Tage, die deutlich aus dem Rahmen fallen, und was sie erklären könnte",
-        "3. Gewohnheiten, die sich laut den Zahlen lohnen",
+        "3. Worauf ich im nächsten Monat achten sollte – Gewohnheiten behalten oder lassen",
         "__DISCLAIMER__"
       ],
       "it": [
@@ -242,7 +214,7 @@
         "Dimmi:",
         "1. Le tendenze generali del periodo (cosa è migliorato e cosa è peggiorato)",
         "2. I giorni che si distinguono nettamente dagli altri e cosa potrebbe spiegarli",
-        "3. Le abitudini da mantenere, in base a ciò che mostrano i numeri",
+        "3. A cosa fare attenzione il mese prossimo: abitudini da tenere e da lasciare",
         "__DISCLAIMER__"
       ],
       "pt-BR": [
@@ -250,7 +222,7 @@
         "Por favor, me diga:",
         "1. As tendências gerais do período (o que melhorou e o que piorou)",
         "2. Os dias que se destacam claramente dos demais e o que pode explicá-los",
-        "3. Hábitos que vale a pena manter, de acordo com os números",
+        "3. A que prestar atenção no próximo mês: hábitos a manter e a abandonar",
         "__DISCLAIMER__"
       ],
       "ru": [
@@ -258,7 +230,7 @@
         "Подскажите, пожалуйста:",
         "1. Общие тенденции за период (что улучшилось, что ухудшилось)",
         "2. Дни, которые заметно выделяются среди остальных, и чем это можно объяснить",
-        "3. Привычки, которые стоит сохранить, судя по цифрам",
+        "3. На что обратить внимание в следующем месяце: что сохранить, а что убрать",
         "__DISCLAIMER__"
       ],
       "ar": [
@@ -266,7 +238,7 @@
         "أخبرني من فضلك:",
         "1. الاتجاهات العامة في هذه الفترة (ما الذي تحسّن وما الذي ساء)",
         "2. الأيام التي تختلف بوضوح عن غيرها، وما الذي قد يفسّرها",
-        "3. العادات التي يُستحسن الاستمرار فيها بحسب ما تُظهره الأرقام",
+        "3. ما الذي ينبغي الانتباه له في الشهر المقبل: العادات التي أُبقيها وتلك التي أتركها",
         "__DISCLAIMER__"
       ]
     },
@@ -463,104 +435,6 @@
         "1. كيف تغيّر حمل التمرين لديّ، وما الفترات التي كانت شاقة أو خفيفة أكثر من اللازم",
         "2. هل أتعافى، استناداً إلى معدل ضربات القلب أثناء الراحة وتغيّره والنوم",
         "3. كيف أُنظّم شهر التمارين المقبل بناءً على ذلك",
-        "__DISCLAIMER__"
-      ]
-    },
-    "condition": {
-      "ja": [
-        "以下は私の直近の体調に関する記録です。",
-        "次のことを教えてください。",
-        "1. 安静時心拍・心拍変動・呼吸数・皮膚温から見て、ふだんと違っていた時期",
-        "2. その時期の睡眠や活動量に、いっしょに起きていた変化があるか",
-        "3. 記録のとり方として、足したほうがよい項目",
-        "__DISCLAIMER__"
-      ],
-      "en": [
-        "Below is my recent health data.",
-        "Please tell me:",
-        "1. Periods that differ from my baseline in resting heart rate, HRV, respiratory rate and skin temperature",
-        "2. Whether sleep or activity changed at the same time",
-        "3. What else I should start recording",
-        "__DISCLAIMER__"
-      ],
-      "zh-Hans": [
-        "以下是我最近的身体状况记录。",
-        "请告诉我：",
-        "1. 从静息心率、心率变异性、呼吸频率和皮温来看，与平时不同的时期",
-        "2. 那段时间的睡眠或活动量是否同时发生了变化",
-        "3. 作为记录方式，还应该补充哪些项目",
-        "__DISCLAIMER__"
-      ],
-      "zh-Hant": [
-        "以下是我最近的身體狀況記錄。",
-        "請告訴我：",
-        "1. 從靜息心率、心率變異性、呼吸頻率和皮溫來看，與平時不同的時期",
-        "2. 那段時間的睡眠或活動量是否同時發生了變化",
-        "3. 作為記錄方式，還應該補充哪些項目",
-        "__DISCLAIMER__"
-      ],
-      "ko": [
-        "다음은 최근 제 컨디션에 관한 기록입니다.",
-        "다음을 알려주세요:",
-        "1. 안정 시 심박수, 심박 변이도, 호흡수, 피부 온도로 볼 때 평소와 달랐던 시기",
-        "2. 그 시기에 수면이나 활동량에도 함께 일어난 변화가 있는지",
-        "3. 기록 항목으로 추가하면 좋을 것",
-        "__DISCLAIMER__"
-      ],
-      "es": [
-        "A continuación están mis datos de salud recientes.",
-        "Dime, por favor:",
-        "1. Los periodos que se apartan de mi línea base en frecuencia cardíaca en reposo, variabilidad, frecuencia respiratoria y temperatura de la piel",
-        "2. Si el sueño o la actividad cambiaron al mismo tiempo",
-        "3. Qué otros datos debería empezar a registrar",
-        "__DISCLAIMER__"
-      ],
-      "fr": [
-        "Voici mes données de santé récentes.",
-        "Dites-moi :",
-        "1. Les périodes qui s'écartent de ma normale pour la fréquence cardiaque au repos, la variabilité, la fréquence respiratoire et la température cutanée",
-        "2. Si le sommeil ou l'activité ont changé au même moment",
-        "3. Quelles autres données je devrais commencer à enregistrer",
-        "__DISCLAIMER__"
-      ],
-      "de": [
-        "Hier sind meine aktuellen Gesundheitsdaten.",
-        "Bitte sag mir:",
-        "1. Zeiträume, die bei Ruheherzfrequenz, HRV, Atemfrequenz und Hauttemperatur von meinem Normalwert abweichen",
-        "2. Ob sich Schlaf oder Aktivität zur gleichen Zeit verändert haben",
-        "3. Was ich zusätzlich aufzeichnen sollte",
-        "__DISCLAIMER__"
-      ],
-      "it": [
-        "Di seguito i miei dati di salute recenti.",
-        "Dimmi:",
-        "1. I periodi che si discostano dalla mia normalità per frequenza cardiaca a riposo, variabilità, frequenza respiratoria e temperatura cutanea",
-        "2. Se sonno o attività sono cambiati nello stesso momento",
-        "3. Quali altri dati dovrei iniziare a registrare",
-        "__DISCLAIMER__"
-      ],
-      "pt-BR": [
-        "Abaixo estão meus dados de saúde recentes.",
-        "Por favor, me diga:",
-        "1. Os períodos que fogem do meu padrão em frequência cardíaca em repouso, variabilidade, frequência respiratória e temperatura da pele",
-        "2. Se o sono ou a atividade mudaram ao mesmo tempo",
-        "3. Que outros dados eu deveria começar a registrar",
-        "__DISCLAIMER__"
-      ],
-      "ru": [
-        "Ниже — мои недавние данные о здоровье.",
-        "Подскажите, пожалуйста:",
-        "1. Периоды, отличающиеся от моей нормы по пульсу покоя, вариабельности, частоте дыхания и температуре кожи",
-        "2. Менялись ли в это же время сон или активность",
-        "3. Что ещё мне стоит начать записывать",
-        "__DISCLAIMER__"
-      ],
-      "ar": [
-        "في ما يلي بياناتي الصحية الأخيرة.",
-        "أخبرني من فضلك:",
-        "1. الفترات التي تختلف عن معدّلي المعتاد في معدل ضربات القلب أثناء الراحة وتغيّره ومعدل التنفس وحرارة الجلد",
-        "2. هل تغيّر النوم أو النشاط في الوقت نفسه",
-        "3. ما البيانات الأخرى التي ينبغي أن أبدأ بتسجيلها",
         "__DISCLAIMER__"
       ]
     },

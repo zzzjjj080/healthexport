@@ -114,7 +114,7 @@ struct SettingsCodableTests {
         var options = ExportOptions()
         options.rawMetrics = [.heartRate, .sleep]
         options.shortColumnNames = true
-        let original = AppSettings(purpose: .condition, customDays: 45,
+        let original = AppSettings(purpose: .sleep, customDays: 45,
                                    customMetrics: [.steps, .sleep], options: options)
         let data = try JSONEncoder().encode(original)
         let restored = try JSONDecoder().decode(AppSettings.self, from: data)
@@ -249,5 +249,16 @@ struct PeriodChoiceTests {
         #expect(PeriodChoice.label(90, .ja) == "3ヶ月")
         #expect(PeriodChoice.label(90, .en) == "3 months")
         #expect(PeriodChoice.label(51, .ja) == "51日間")
+    }
+
+    /// 1.6 までの「体調の変化」が保存されていても、設定を捨てずに読む。
+    /// Purpose として読むと、知らない値で decode ごと失敗して全部初期化されていた。
+    @Test func 無くなった目的が保存されていても他の設定は残る() throws {
+        let old = #"{"purpose":"condition","customDays":45,"options":{"language":"en","grouping":"week"}}"#
+        let settings = try JSONDecoder().decode(AppSettings.self, from: old.data(using: .utf8)!)
+        #expect(settings.purpose == .general)
+        #expect(settings.customDays == 45)
+        #expect(settings.options.language == .en)
+        #expect(settings.options.grouping == .week)
     }
 }

@@ -117,7 +117,9 @@ public struct AppSettings: Equatable, Sendable, Codable {
 
     public init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        purpose = try c.decodeIfPresent(Purpose.self, forKey: .purpose) ?? .general
+        // 無くなった目的（1.6 までの condition など）が入っていても設定を捨てない。
+        // Purpose として読むと、知らない値で decode ごと失敗して設定が丸ごと初期化される
+        purpose = (try? c.decodeIfPresent(Purpose.self, forKey: .purpose)) .flatMap { $0 } ?? .general
         customDays = try c.decodeIfPresent(Int.self, forKey: .customDays)
         customRange = try c.decodeIfPresent(DateRange.self, forKey: .customRange)
         customMetrics = try c.decodeIfPresent([MetricID].self, forKey: .customMetrics)

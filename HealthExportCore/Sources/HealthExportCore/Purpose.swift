@@ -6,7 +6,9 @@ import Foundation
 /// 「日ごとにまとめるか、1件ずつ全部か」を素人が判断できない以上、
 /// **既定でうまくいく組み合わせを用意しておくのがアプリの仕事。**
 public enum Purpose: String, CaseIterable, Codable, Sendable {
-    case general, sleep, training, condition, mind, everything
+    /// **選ぶのは「AIへの聞き方」だけ。** どれを選んでもデータは同じ（記録があるもの全部）。
+    /// `condition`（体調の変化）は 1.7 で外した。メインの「ふだんと違う日を探す」と重なるため。
+    case general, sleep, training, mind, everything
 
     /// **どの目的でも、記録がある項目をすべて出す。**
     ///
