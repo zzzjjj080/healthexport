@@ -31,9 +31,12 @@ struct ContentView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 12) {
-                    purposeGrid
+                    // 「いつの、どのデータを、どう聞くか」の順に上から並べる。
+                    // 依頼文はいちばん下に置いて、聞き方を変えると何が変わるのかを見せる
                     periodCard
-                    contentCard
+                    dataCard
+                    purposeGrid
+                    askCard
                     if model.foundNothing { emptyCard }
                     if !model.problems.isEmpty { errorCard(model.problems) }
                 }
@@ -79,7 +82,11 @@ struct ContentView: View {
     /// 残り（絞って聞く3つと、聞かずに渡す）を2列に並べる。
     /// 迷ったらいちばん上を押せばよい、と形で分かるようにするため。
     private var purposeGrid: some View {
-        VStack(spacing: 11) {
+        VStack(alignment: .leading, spacing: 11) {
+            Text("AIへの聞き方")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .padding(.leading, 2)
             purposeButton(.general, wide: true)
             LazyVGrid(columns: columns, spacing: 11) {
                 ForEach(Purpose.allCases.filter { $0 != .general }, id: \.self) { purpose in
@@ -99,7 +106,8 @@ struct ContentView: View {
                         askExpanded = false
                     }
                 } label: {
-                    PurposeTile(purpose: purpose, isSelected: model.settings.purpose == purpose, wide: wide)
+                    PurposeTile(purpose: purpose, isSelected: model.settings.purpose == purpose,
+                                wide: wide, compact: !wide)
                 }
                 .buttonStyle(.plain)   // 付けないと中の文字色が青に染まる（引き継ぎ書 4-13）
                 .accessibilityIdentifier("purpose-\(purpose.rawValue)")
@@ -178,7 +186,7 @@ struct ContentView: View {
 
     // MARK: - 書き出されるデータ
 
-    private var contentCard: some View {
+    private var dataCard: some View {
         VStack(alignment: .leading, spacing: 0) {
             Button {
                 withAnimation(.snappy(duration: 0.2)) { detailExpanded.toggle() }
@@ -244,35 +252,49 @@ struct ContentView: View {
                 }
             }
 
-            Divider().padding(.horizontal, 14)
-            Button {
-                withAnimation(.snappy(duration: 0.2)) { askExpanded.toggle() }
-            } label: {
-                VStack(alignment: .leading, spacing: 5) {
-                    HStack {
-                        Label("AIへの依頼文がつきます", systemImage: "text.bubble.fill")
-                            .font(.caption.weight(.medium))
-                            .foregroundStyle(Palette.accent)
-                        Spacer()
-                        Image(systemName: askExpanded ? "chevron.up" : "chevron.down")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                    if askExpanded {
-                        Text(model.settings.purpose.askText(model.settings.options.language))
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 11)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
         }
+        .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
+            .fill(Color(.secondarySystemGroupedBackground)))
+    }
+
+    // MARK: - AIへの依頼文
+
+    /// **上で選んだ聞き方が、そのままここに出る。**
+    /// 選び直すと文が入れ替わるので、「何を選ぶと何が変わるのか」が一目で分かる。
+    /// 折りたたむと頭の数行だけ。押すと全文。
+    private var askCard: some View {
+        Button {
+            withAnimation(.snappy(duration: 0.2)) { askExpanded.toggle() }
+        } label: {
+            VStack(alignment: .leading, spacing: 7) {
+                HStack(spacing: 6) {
+                    Label("AIへの依頼文", systemImage: "text.bubble.fill")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(Palette.accent)
+                    Spacer()
+                    Text(askExpanded ? String(localized: "たたむ") : String(localized: "全文を見る"))
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                    Image(systemName: askExpanded ? "chevron.up" : "chevron.down")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                Text(model.settings.purpose.askText(model.settings.options.language))
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(askExpanded ? nil : 4)
+                    .fixedSize(horizontal: false, vertical: true)
+                    // 聞き方を変えたときに、文が入れ替わったことが見えるように
+                    .id(model.settings.purpose)
+                    .transition(.opacity)
+                    .accessibilityIdentifier("askText")
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(14)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
         .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
             .fill(Color(.secondarySystemGroupedBackground)))
     }
@@ -429,6 +451,8 @@ private struct PurposeTile: View {
     let isSelected: Bool
     /// 横いっぱいに置くメインの枠。字を少し大きくし、高さを詰める
     var wide = false
+    /// サブの札。**説明文を出さない**（何が変わるかは下の依頼文で見せる）
+    var compact = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -455,16 +479,18 @@ private struct PurposeTile: View {
             Text(purpose.title(.ui))
                 .font(.system(wide ? .body : .subheadline, design: .rounded, weight: .semibold))
                 .foregroundStyle(.primary)
-            Text(purpose.detail(.ui))
-                .font(.system(size: wide ? 12 : 11))
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.leading)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
+            if !compact {
+                Text(purpose.detail(.ui))
+                    .font(.system(size: wide ? 12 : 11))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             Spacer(minLength: 0)
         }
         .padding(11)
-        .frame(maxWidth: .infinity, minHeight: wide ? 84 : 104, alignment: .topLeading)
+        .frame(maxWidth: .infinity, minHeight: wide ? 84 : 72, alignment: .topLeading)
         .background(RoundedRectangle(cornerRadius: 16, style: .continuous)
             .fill(Color(.secondarySystemGroupedBackground)))
         .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous)

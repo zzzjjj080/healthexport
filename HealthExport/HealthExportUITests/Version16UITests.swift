@@ -63,3 +63,52 @@ final class Version16UITests: XCTestCase {
         attach(app, "週ごとの書き出し")
     }
 }
+
+/// 画面の並びと、聞き方を変えると依頼文が入れ替わること（1.7）。
+final class LayoutUITests: XCTestCase {
+
+    override func setUp() { continueAfterFailure = false }
+
+    private func launchApp() -> XCUIApplication {
+        let app = XCUIApplication(bundleIdentifier: "com.zzzjjj080.HealthExport")
+        app.launchEnvironment["HEALTHEXPORT_DEMO"] = "1"
+        app.launchArguments += ["-hasSeenIntro.v1", "YES"]
+        app.launch()
+        XCTAssertTrue(app.staticTexts["ヘルスケア書き出し"].waitForExistence(timeout: 15),
+                      "別のアプリを見ている（バンドルIDを疑う）")
+        return app
+    }
+
+    /// 聞き方を選び直すと、下の依頼文がその聞き方のものに入れ替わる。
+    /// **ここが変わらないと、6つを選ぶ意味が画面から分からない。**
+    func testAskTextFollowsThePurpose() {
+        let app = launchApp()
+        // 前回どれを選んだかは端末に残る。始める前にメインへ戻す
+        XCTAssertTrue(app.buttons["purpose-general"].waitForExistence(timeout: 10))
+        app.buttons["purpose-general"].tap()
+        let ask = app.staticTexts["askText"]
+        XCTAssertTrue(ask.waitForExistence(timeout: 10), "依頼文が出ていない")
+        let general = ask.label
+        XCTAssertTrue(general.contains("全体的な傾向"), "メインの依頼文が違う: \(general)")
+
+        app.buttons["purpose-sleep"].tap()
+        let sleep = app.staticTexts["askText"]
+        XCTAssertTrue(sleep.waitForExistence(timeout: 5))
+        XCTAssertNotEqual(sleep.label, general, "聞き方を変えても依頼文が同じ")
+        XCTAssertTrue(sleep.label.contains("睡眠"), "睡眠の依頼文になっていない: \(sleep.label)")
+
+        let shot = XCTAttachment(screenshot: app.screenshot())
+        shot.name = "睡眠を選んだとき"; shot.lifetime = .keepAlways; add(shot)
+    }
+
+    /// どの聞き方でも項目数は変わらない（データは常に全部）。
+    func testMetricCountDoesNotChangeWithPurpose() {
+        let app = launchApp()
+        let count = app.staticTexts.matching(NSPredicate(format: "label ENDSWITH %@", "項目")).firstMatch
+        XCTAssertTrue(count.waitForExistence(timeout: 10), "項目数が出ていない")
+        let before = count.label
+        app.buttons["purpose-mind"].tap()
+        XCTAssertEqual(app.staticTexts.matching(NSPredicate(format: "label ENDSWITH %@", "項目")).firstMatch.label,
+                       before, "聞き方を変えたら項目数が変わった")
+    }
+}
