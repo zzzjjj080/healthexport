@@ -15,21 +15,21 @@ It doesn't matter which AI you use. This app's job ends at preparing one
 readable piece of text for whoever you choose to give it to.
 
 
-■ You only pick a purpose
+■ You only pick what to ask
 
-Deciding what to include, and how to summarise it, is hard if you haven't done it before.
-So six purposes each set everything for you.
+Every metric with records is exported, whatever you pick. The only choice is the question.
+Pick another one and the request for the AI changes on screen.
 
-・General check-in … everything you have. Start here if unsure
-・Sleep … sleep and the things that affect it
-・Training … training load, and whether you're recovering
-・Condition … find the days unlike your usual
-・Mood … your mood entries against your body data
+・Overall … trends, days unlike your usual, and what to do next. Start here if unsure
+・Sleep … sleep trends and how to sleep better
+・Training … training load and whether you're recovering
+・Mood … how your mood relates to your body data
 ・No questions … ask nothing, let the AI look freely
 
-Along with the period, metrics and summarising, it writes the request for the AI too.
+The request for the AI is written into the file as well.
 A line like "tell me the trends in this period" goes at the top, so you don't have to
 think about what to ask after handing it over.
+
 
 
 ■ No need to tell it what devices you own

@@ -15,21 +15,21 @@ Peu importe l'IA. Le rôle de cette app s'arrête à préparer un texte lisible
 pour celui ou celle à qui vous choisissez de le confier.
 
 
-■ Vous choisissez seulement un objectif
+■ Vous choisissez seulement ce qu'on demande
 
-Décider quoi inclure et comment le résumer est difficile quand on ne l'a jamais fait.
-Six objectifs règlent donc tout à votre place.
+Toutes les mesures enregistrées sont exportées, quel que soit votre choix. Vous ne choisissez que la question.
+Changez d'option et la demande pour l'IA change à l'écran.
 
-・Bilan général … tout ce que vous avez. Commencez ici en cas de doute
-・Sommeil … le sommeil et ce qui l'influence
-・Entraînement … la charge, et si vous récupérez
-・État de forme … repérer les jours inhabituels
-・Humeur … votre humeur au regard de vos données corporelles
+・Vue d'ensemble … tendances, jours inhabituels et quoi faire ensuite. Commencez ici en cas de doute
+・Sommeil … tendances du sommeil et comment mieux dormir
+・Entraînement … charge d'entraînement et récupération
+・Humeur … le lien entre l'humeur et les données corporelles
 ・Sans question … ne rien demander, laisser l'IA regarder
 
-Outre la période, les mesures et le résumé, la demande pour l'IA est écrite aussi.
-Une phrase comme « dites-moi les tendances sur cette période » figure en tête :
-vous n'avez plus à chercher quoi demander une fois le texte transmis.
+La demande pour l'IA est écrite dans le fichier.
+Une phrase comme « donnez-moi les tendances sur cette période » figure en tête : vous n'avez
+plus à chercher quoi demander une fois le texte transmis.
+
 
 
 ■ Inutile de dire quels appareils vous possédez

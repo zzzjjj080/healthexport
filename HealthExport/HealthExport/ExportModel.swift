@@ -74,6 +74,12 @@ final class ExportModel {
            let language = Language(rawValue: raw) {
             settings.options.language = language
         }
+        // 撮影とテストで、前に選んだ聞き方が残らないようにする
+        if let raw = ProcessInfo.processInfo.environment["HEALTHEXPORT_PURPOSE"],
+           let purpose = Purpose(rawValue: raw) {
+            settings.purpose = purpose
+            settings.customMetrics = nil
+        }
         #endif
     }
 

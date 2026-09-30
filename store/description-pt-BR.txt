@@ -15,21 +15,21 @@ Não importa qual IA você usa. O trabalho deste app termina em preparar um text
 legível para quem você escolher.
 
 
-■ Você só escolhe um objetivo
+■ Você só escolhe o que perguntar
 
-Decidir o que incluir e como resumir é difícil para quem nunca fez isso.
-Por isso seis objetivos deixam tudo pronto por você.
+Todas as métricas com registros são exportadas, escolha o que escolher. A escolha é só a pergunta.
+Ao trocar, a solicitação para a IA muda na tela.
 
-・Visão geral … tudo o que você tem. Comece por aqui na dúvida
-・Sono … o sono e o que o afeta
-・Treino … a carga e se você está se recuperando
-・Condição … encontre os dias fora do normal
-・Humor … seu humor em relação aos dados do corpo
+・Visão completa … tendências, dias fora do normal e o que fazer. Comece por aqui na dúvida
+・Sono … tendências do sono e como dormir melhor
+・Treino … carga de treino e se você se recupera
+・Humor … como o humor se relaciona ao corpo
 ・Sem perguntas … não pergunte nada, deixe a IA analisar
 
-Além do período, das métricas e do resumo, ele também escreve a solicitação para a IA.
-No topo entra uma frase como «me diga as tendências deste período», então você não
-precisa pensar no que perguntar depois de entregar.
+A solicitação para a IA também é escrita no arquivo.
+No topo entra uma frase como «me diga as tendências deste período», então você não precisa
+pensar no que perguntar depois de entregar.
+
 
 
 ■ Não precisa dizer quais aparelhos você tem

@@ -15,21 +15,21 @@ Non importa quale IA usi. Il compito di questa app finisce nel preparare un test
 leggibile per chi hai scelto.
 
 
-■ Scegli soltanto un obiettivo
+■ Scegli solo cosa chiedere
 
-Decidere cosa includere e come riassumerlo è difficile se non l'hai mai fatto.
-Per questo sei obiettivi impostano tutto al posto tuo.
+Tutte le metriche con dati vengono esportate, qualunque cosa scegli. Scegli solo la domanda.
+Cambiando scelta, la richiesta per l'IA cambia sullo schermo.
 
-・Panoramica generale … tutto ciò che hai. Se hai dubbi, parti da qui
-・Sonno … il sonno e ciò che lo influenza
-・Allenamento … il carico e se stai recuperando
-・Condizione … trova i giorni fuori dal solito
-・Umore … il tuo umore rispetto ai dati corporei
+・Quadro generale … tendenze, giorni fuori dal solito e cosa fare. Se hai dubbi, parti da qui
+・Sonno … tendenze del sonno e come dormire meglio
+・Allenamento … carico e se stai recuperando
+・Umore … come l'umore si lega ai dati del corpo
 ・Senza domande … non chiedere nulla, lascia guardare l'IA
 
-Oltre al periodo, alle metriche e al modo di riassumere, scrive anche la richiesta per l'IA.
-In cima compare una frase come «dimmi le tendenze di questo periodo»: dopo aver
-consegnato il testo non devi pensare a cosa chiedere.
+Anche la richiesta per l'IA viene scritta nel file.
+In cima compare una frase come «dimmi le tendenze di questo periodo»: dopo aver consegnato
+il testo non devi pensare a cosa chiedere.
+
 
 
 ■ Non serve dire quali dispositivi possiedi

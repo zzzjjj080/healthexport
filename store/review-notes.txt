@@ -55,11 +55,12 @@ No diagnosis, no treatment, no health claims. The request text the app attaches 
 the AI always ends with a sentence stating that the document is not for medical
 diagnosis and that the user will see a doctor if they have symptoms of concern.
 
-WHAT IS NEW IN 1.6
-1. Rows can be grouped by week or month (Detailed settings > Format > Rows). Values are
-   the daily average over days with records. A heavy result offers "Re-export by week".
-2. New read-only HealthKit types: blood pressure (systolic, diastolic), blood glucose,
-   dietary energy, water, protein, carbohydrates, fat, and menstrual flow.
-3. Menstrual flow is opt-in and OFF by default, and is not in the initial permission
-   request. Only when the user turns on "Include menstrual records" (Detailed settings >
-   Metrics) does the app request read access for that type. While off, it is never read.
+WHAT IS NEW IN 1.7
+1. The six "purposes" no longer change which data is exported. Every metric with records
+   is always included; a purpose only changes the request written for the AI. Picking a
+   different one swaps that request on screen, so it is clear what the choice does.
+2. Five choices now: Overall (the main one), Sleep, Training, Mood, and No questions.
+   "Condition" was removed because the main one already covers unusual days.
+3. The main screen is reordered: period, what gets exported, what to ask, the request.
+4. The tip jar ("One coffee") was removed. There is no in-app purchase in this version;
+   the bottom of the detailed settings now links to the developer's other apps instead.

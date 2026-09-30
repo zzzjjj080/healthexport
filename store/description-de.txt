@@ -15,21 +15,21 @@ Welche KI, ist egal. Die Aufgabe dieser App endet damit, einen lesbaren Text
 für den vorzubereiten, dem du ihn geben willst.
 
 
-■ Du wählst nur einen Zweck
+■ Du wählst nur, was gefragt wird
 
-Was hineingehört und wie es zusammengefasst wird, ist schwer zu entscheiden,
-wenn man es noch nie getan hat. Sechs Zwecke legen deshalb alles für dich fest.
+Alle Werte mit Daten werden exportiert – unabhängig von deiner Wahl. Du wählst nur die Frage.
+Wählst du anders, ändert sich die Anfrage an die KI auf dem Bildschirm.
 
-・Allgemeiner Überblick … alles, was vorhanden ist. Im Zweifel hier anfangen
-・Schlaf … der Schlaf und was ihn beeinflusst
-・Training … die Belastung, und ob du dich erholst
-・Verfassung … Tage finden, die vom Normalen abweichen
-・Stimmung … deine Stimmung im Vergleich zu den Körperdaten
+・Gesamtbild … Trends, ungewöhnliche Tage und die nächsten Schritte. Im Zweifel hier anfangen
+・Schlaf … Schlaftrends und besser schlafen
+・Training … Belastung und ob du dich erholst
+・Stimmung … wie Stimmung und Körperdaten zusammenhängen
 ・Ohne Fragen … nichts fragen, die KI frei schauen lassen
 
-Neben Zeitraum, Werten und Zusammenfassung schreibt die App auch die Anfrage an die KI.
-Oben steht ein Satz wie „Nenne mir die Trends in diesem Zeitraum“ – du musst dir
-nach dem Übergeben nicht überlegen, was du fragen sollst.
+Die Anfrage an die KI steht ebenfalls in der Datei.
+Oben steht ein Satz wie „Nenne mir die Trends in diesem Zeitraum“ – du musst dir nach dem
+Übergeben nicht überlegen, was du fragen sollst.
+
 
 
 ■ Du musst nicht sagen, welche Geräte du hast
