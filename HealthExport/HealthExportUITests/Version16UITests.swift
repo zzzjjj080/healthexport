@@ -11,10 +11,13 @@ final class Version16UITests: XCTestCase {
     private func launchApp(shot: String) -> XCUIApplication {
         let app = XCUIApplication(bundleIdentifier: "com.zzzjjj080.HealthExport")
         app.launchEnvironment["HEALTHEXPORT_DEMO"] = "1"
+        app.launchEnvironment["HEALTHEXPORT_LANG"] = "ja"   // 書き出す言語も固定する
         app.launchEnvironment["HEALTHEXPORT_SHOT"] = shot
         app.launchEnvironment["HEALTHEXPORT_CYCLE"] = "0"
         app.launchEnvironment["HEALTHEXPORT_GROUPING"] = "day"
-        app.launchArguments += ["-hasSeenIntro.v1", "YES"]
+        // **言語を指定して起動する。** シミュレータを消去すると英語に戻り、
+        // 日本語の文言を探すテストが「アプリが見えない」で落ちる（端末の設定に左右させない）
+        app.launchArguments += ["-hasSeenIntro.v1", "YES", "-AppleLanguages", "(ja)", "-AppleLocale", "ja_JP"]
         app.launch()
         XCTAssertTrue(app.staticTexts["詳しい設定"].waitForExistence(timeout: 15),
                       "設定が開いていない（別のアプリを見ていないかも疑う）")
@@ -72,7 +75,10 @@ final class LayoutUITests: XCTestCase {
     private func launchApp() -> XCUIApplication {
         let app = XCUIApplication(bundleIdentifier: "com.zzzjjj080.HealthExport")
         app.launchEnvironment["HEALTHEXPORT_DEMO"] = "1"
-        app.launchArguments += ["-hasSeenIntro.v1", "YES"]
+        app.launchEnvironment["HEALTHEXPORT_LANG"] = "ja"   // 書き出す言語も固定する
+        // **言語を指定して起動する。** シミュレータを消去すると英語に戻り、
+        // 日本語の文言を探すテストが「アプリが見えない」で落ちる（端末の設定に左右させない）
+        app.launchArguments += ["-hasSeenIntro.v1", "YES", "-AppleLanguages", "(ja)", "-AppleLocale", "ja_JP"]
         app.launch()
         XCTAssertTrue(app.staticTexts["ヘルスケア書き出し"].waitForExistence(timeout: 15),
                       "別のアプリを見ている（バンドルIDを疑う）")

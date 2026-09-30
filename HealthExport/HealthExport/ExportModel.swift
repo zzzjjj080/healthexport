@@ -69,6 +69,11 @@ final class ExportModel {
         if let raw = ProcessInfo.processInfo.environment["HEALTHEXPORT_CYCLE"] {
             settings.includeCycle = raw == "1"
         }
+        // 書き出す言語。テストと撮影で、端末の設定に左右されないようにする
+        if let raw = ProcessInfo.processInfo.environment["HEALTHEXPORT_LANG"],
+           let language = Language(rawValue: raw) {
+            settings.options.language = language
+        }
         #endif
     }
 
