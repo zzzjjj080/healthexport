@@ -9,7 +9,6 @@ struct SettingsSheet: View {
     var initialTab: Tab = .period
     @Environment(\.dismiss) private var dismiss
     @State private var tab: Tab = .period
-    @State private var tipJar = TipJar(productID: TipJar.productID)
 
     enum Tab: CaseIterable {
         case period, metrics, format
@@ -370,7 +369,7 @@ struct SettingsSheet: View {
             }
 
             FeedbackSection()
-            CoffeeTipSection(tipJar: tipJar)
+            OtherAppsLink()
 
             // 実機にどのビルドが入っているかを、画面で確かめられるようにする（引き継ぎ書 4-145）
             Section {

@@ -1,6 +1,6 @@
-No account, login, or credentials are required. There are no subscriptions, no
-user-generated content, and no network connections of any kind. There is one
-optional consumable in-app purchase (a tip), described at the end of these notes.
+No account, login, or credentials are required. There are no in-app purchases, no
+subscriptions, no user-generated content, and no network connections of any kind.
+The tip jar that earlier versions had was removed in this version.
 
 WHAT THE APP DOES
 Health for AI reads records the user already has in HealthKit and turns them into
@@ -42,7 +42,7 @@ HealthKit read access only. The app never writes to HealthKit. It does not reque
 clinical health records; the healthkit.access entitlement is an empty array.
 
 EXTERNAL SERVICES
-None. Only Apple frameworks (HealthKit, SwiftUI, StoreKit). Everything happens on
+None. Only Apple frameworks (HealthKit, SwiftUI). Everything happens on
 device and nothing is transmitted. The privacy policy states this and explains how to
 omit device names, which can contain the owner's name.
 
@@ -54,12 +54,6 @@ NOT A MEDICAL APP
 No diagnosis, no treatment, no health claims. The request text the app attaches for
 the AI always ends with a sentence stating that the document is not for medical
 diagnosis and that the user will see a doctor if they have symptoms of concern.
-
-IN-APP PURCHASE
-One consumable, "One coffee", approved with 1.1 and unchanged. It is entirely
-optional: nothing is locked behind it and nothing changes after buying. It sits at
-the bottom of the detailed settings (Format tab) and as one line under the Copy /
-Share buttons after an export.
 
 WHAT IS NEW IN 1.6
 1. Rows can be grouped by week or month (Detailed settings > Format > Rows). Values are
